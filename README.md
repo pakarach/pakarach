@@ -4,6 +4,8 @@ Source of truth: this GitHub repo (pakarach/pakarach). The Drive folder `shorts-
 
 Setup in a fresh sandbox (fact channel): `git clone --depth 1 https://github.com/pakarach/pakarach eng && cd eng && ./setup.sh` (npm deps + world.geo.json; playwright is preinstalled in the sandbox). Then copy example-fact.js -> video.js. Docs for the fact channel: docs/checklist.md (outline rules), docs/formats.md, docs/sound.md, docs/voiceover.md, docs/youtube-16x9.md, docs/dioramas.md; DONE.md lists finished clips.
 
+core v1.7: VE.beats(BEATS, vo) -> {at,end,dur,DUR}, VE.voice(DATA.vo, B), VE.voiceBed(voice) for both kits. Family channel docs: docs/family/{cast,music,blocking}.md.
+
 kit-fact v1.1 (Oct 2026): FK.beats(BEATS, vo) -> {at,end,dur,DUR}; FK.softSfx(); FK.chillBed({DUR,calm,voice,vol,gain}); FK.voice(DATA.vo, B); FK.land() / FK.subtitleY / FK.landGradients. example-fact.js uses all of them.
 
 

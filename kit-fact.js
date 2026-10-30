@@ -104,16 +104,7 @@
   };
   /* ---------- v1.1: beats, sound, voice, landscape (see docs/sound.md, docs/voiceover.md, docs/youtube-16x9.md) ---------- */
 
-  /* FK.beats(BEATS[, voData]) -> { at, end, dur, DUR }. BEATS = [[id, seconds], ...] in play order (start with 'cover', end with 'end').
-     When voData (DATA.vo) is given, each spoken beat grows to fit its clip BEFORE times are computed. */
-  FK.beats = function (BEATS, vo, lead) {
-    lead = lead == null ? 0.3 : lead;
-    const ids = BEATS.filter(([id]) => id !== 'cover' && id !== 'end').map(([id]) => id), segs = (vo && vo.segs) || [];
-    if (segs.length) ids.forEach((id, i) => { const s = segs[i]; if (!s) return; const b = BEATS.find((x) => x[0] === id); b[1] = Math.max(b[1], +(s[1] - s[0] + lead + 0.6).toFixed(2)); });
-    const START = {}, LEN = {}; let acc = 0; for (const [id, d] of BEATS) { START[id] = acc; LEN[id] = d; acc += d; }
-    const at = (id, off) => { if (!(id in START)) throw new Error('beat ' + id); return START[id] + (off || 0); };
-    return { at, end: (id) => at(id) + LEN[id], dur: (id) => LEN[id], DUR: acc, ids, lead };
-  };
+  FK.beats = VE.beats; // see core.js
 
   /* Soft SFX set (all quiet, nothing under ~100 Hz). Replaces thump/boom/riser/warn. */
   FK.softSfx = function () {
@@ -154,21 +145,7 @@
     } };
   };
 
-  /* Voice-over clips: FK.voice(DATA.vo, B) where B = FK.beats(BEATS, DATA.vo). Decodes the embedded mp3 once; pass the result as chillBed({voice}). */
-  FK.voice = function (vo, B, gain) {
-    const V = { ready: false, play() {} }; if (!vo || !vo.b64) return V;
-    const bin = atob(vo.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-    let PCM = null;
-    new OfflineAudioContext(1, 1, 24000).decodeAudioData(u8.buffer).then((b) => { PCM = { sr: b.sampleRate, data: b.getChannelData(0).slice() }; V.ready = true; window.__voiceOk = PCM.data.length / PCM.sr; });
-    V.play = function (base, from, A) {
-      if (!PCM || !A || !A.ctx) return;
-      const buf = A.ctx.createBuffer(1, PCM.data.length, PCM.sr); buf.copyToChannel(PCM.data, 0);
-      const g = A.ctx.createGain(); g.gain.value = gain == null ? 1.5 : gain; g.connect(A.bus);
-      B.ids.forEach((id, i) => { const s = vo.segs[i]; if (!s) return; const t0 = B.at(id, B.lead), len = s[1] - s[0] + 0.12; if (t0 + len <= from) return;
-        const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s[0] - 0.06) + skip, len - skip); });
-    };
-    return V;
-  };
+  FK.voice = VE.voice; // see core.js
 
   /* Landscape (YouTube 16:9) helpers: FK.land() -> { LAND, W, H, CX }. Build with --data cfg=land.json ({"land":true}).
      FK.subtitleY(cap) places a caption as a bottom subtitle band; FK.landGradients(g, W, H, {bottom, left}) draws the dark bands. */

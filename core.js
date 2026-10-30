@@ -1,4 +1,4 @@
-/* VE core v1.6 (iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol) — shared engine for Dan's two shorts channels.
+/* VE core v1.7 (VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -83,6 +83,33 @@
     boing: (t) => tone(t, 200, 0.25, { f2: 700, vol: 0.18 }),
     warn: (t) => { tone(t, 440, 0.14, { type: 'square', vol: 0.08 }); tone(t + 0.2, 330, 0.14, { type: 'square', vol: 0.08 }); },
   };
+  /* VE.beats(BEATS[, voData]) -> { at, end, dur, DUR }. BEATS = [[id, seconds], ...] in play order (start with 'cover', end with 'end').
+     When voData (DATA.vo) is given, each spoken beat grows to fit its clip BEFORE times are computed. */
+  VE.beats = function (BEATS, vo, lead) {
+    lead = lead == null ? 0.3 : lead;
+    const ids = BEATS.filter(([id]) => id !== 'cover' && id !== 'end').map(([id]) => id), segs = (vo && vo.segs) || [];
+    if (segs.length) ids.forEach((id, i) => { const s = segs[i]; if (!s) return; const b = BEATS.find((x) => x[0] === id); b[1] = Math.max(b[1], +(s[1] - s[0] + lead + 0.6).toFixed(2)); });
+    const START = {}, LEN = {}; let acc = 0; for (const [id, d] of BEATS) { START[id] = acc; LEN[id] = d; acc += d; }
+    const at = (id, off) => { if (!(id in START)) throw new Error('beat ' + id); return START[id] + (off || 0); };
+    return { at, end: (id) => at(id) + LEN[id], dur: (id) => LEN[id], DUR: acc, ids, lead };
+  };
+  /* Voice-over clips: VE.voice(DATA.vo, B) where B = FK.beats(BEATS, DATA.vo). Decodes the embedded mp3 once; fact kit: chillBed({voice}); clay kit: VE.voiceBed(voice) as the first bed entry. */
+  VE.voice = function (vo, B, gain) {
+    const V = { ready: false, play() {} }; if (!vo || !vo.b64) return V;
+    const bin = atob(vo.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    let PCM = null;
+    new OfflineAudioContext(1, 1, 24000).decodeAudioData(u8.buffer).then((b) => { PCM = { sr: b.sampleRate, data: b.getChannelData(0).slice() }; V.ready = true; window.__voiceOk = PCM.data.length / PCM.sr; });
+    V.play = function (base, from, A) {
+      if (!PCM || !A || !A.ctx) return;
+      const buf = A.ctx.createBuffer(1, PCM.data.length, PCM.sr); buf.copyToChannel(PCM.data, 0);
+      const g = A.ctx.createGain(); g.gain.value = gain == null ? 1.5 : gain; g.connect(A.bus);
+      B.ids.forEach((id, i) => { const s = vo.segs[i]; if (!s) return; const t0 = B.at(id, B.lead), len = s[1] - s[0] + 0.12; if (t0 + len <= from) return;
+        const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s[0] - 0.06) + skip, len - skip); });
+    };
+    return V;
+  };
+  /* VE.voiceBed(voice, gain=0.75) -> bed entry that sets the bus gain and plays the voice clips; put it first in `bed` next to the music beds (clay kit). */
+  VE.voiceBed = function (voice, gain) { return { play(base, from, A) { if (A && A.bus) { const g = gain == null ? 0.75 : gain; A.bus.gain.setValueAtTime(g, base + Math.max(0, from)); A.bus.gain.setValueAtTime(g, base + (window.__ve && __ve.DUR || 0) - 0.6); } if (voice) voice.play(base, from, A); } }; };
   VE.registerSfx = (name, fn) => { VE.sfx[name] = fn; };
 
   const MOODS = {

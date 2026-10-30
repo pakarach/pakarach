@@ -4,3 +4,6 @@ Add one line per approved clip: date | series | topic | hook | twist/ending ques
 Known clips before this file (Oct 2026, details in past chats): Lanna history, gecko (จิ้งจก), mosquito, heavens/Brahma ranking, Buddhist 'aliens' & flying wheel, ไฟกองเล็ก (mind as fire gauge), birth-year episode, Ayutthaya food, Vientiane, no-electricity what-if (10-year aftermath), Seoul history, Yama & wardens profile (พุทธวิธี), Mekong clip.
 
 Nostalgia editions: see Drive folder `nostalgia-series` (DONE files) until they are moved here.
+
+## Family-health page (พ่อแม่หัวจะปวด)
+Add one line per approved clip: date | topic | audience | hook. Earlier clips (Oct 2026): see past chats until listed here.
