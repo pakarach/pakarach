@@ -1,9 +1,16 @@
-# shorts-engine — shared engine for Dan's two shorts channels
+# shorts-engine — shared engine for Dan's shorts channels
+
+Source of truth: this GitHub repo (pakarach/pakarach). The Drive folder `shorts-engine` is a legacy mirror; update it only for skills that still read from Drive.
+
+Setup in a fresh sandbox (fact channel): `git clone --depth 1 https://github.com/pakarach/pakarach eng && cd eng && ./setup.sh` (npm deps + world.geo.json; playwright is preinstalled in the sandbox). Then copy example-fact.js -> video.js. Docs for the fact channel: docs/checklist.md (outline rules), docs/formats.md, docs/sound.md, docs/voiceover.md, docs/youtube-16x9.md, docs/dioramas.md; DONE.md lists finished clips.
+
+kit-fact v1.1 (Oct 2026): FK.beats(BEATS, vo) -> {at,end,dur,DUR}; FK.softSfx(); FK.chillBed({DUR,calm,voice,vol,gain}); FK.voice(DATA.vo, B); FK.land() / FK.subtitleY / FK.landGradients. example-fact.js uses all of them.
+
 
 Goal: a video file only holds DATA + scene builders (~100-200 lines). Everything else (captions, brand intro/end frame, transitions, audio, transport, export) lives in the engine, so no chat rewrites it.
 
 Files (this Drive folder)
-- core.js (v1.4) — VE: VE.run(cfg), VE.camAt, VE.sfx, VE.registerSfx, VE.audio {tone,noise}, VE.u {clamp,lerp,easeOut,easeIO,easeBack}, VE.mp4.mux (MP4 muxer)
+- core.js (v1.6) — VE: VE.run(cfg), VE.camAt, VE.sfx, VE.registerSfx, VE.audio {tone,noise}, VE.u {clamp,lerp,easeOut,easeIO,easeBack}, VE.mp4.mux (MP4 muxer)
 - kit-fact.js — FK (fact channel "RuNgee รู้งี้"): palette, lights, globe, landTest, project, regions (extruded GeoJSON), bar, label, platform/tree/building/person, particles, rankBadge
 - kit-clay.js (v2, Oct 2026) — CK (family-health page "พ่อแม่หัวจะปวด"): bright vinyl-toy look. chibi = clay/vinyl body + 2D-drawn anime face decal (big glossy eyes with iris, blush, mouth), sculpted hair locks growing from a hairline fill + shine, blob shadow. FIXED FAMILY CAST CK.family(T,'mom'|'dad'|'mama'|'nana'|'wawa'), CK.neighbor(T,i) for supporting cast, CK.room (wallpaper room), virus, bar, tube + health SFX (sneeze, cough, breath, wheeze, rain, bubble, heart, thud)
 - build.js — node build.js video.js out.html --kit fact|clay [--data name=file.json] [--title t] -> ONE .html (core + kit + data + video inlined; Three r128 + Kanit via CDN)

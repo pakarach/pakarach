@@ -5,7 +5,7 @@
    Needs node_modules next to this file (or NM=...): three@0.128.0 @fontsource/kanit playwright. Uses the sandbox's preinstalled Chrome. */
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const nm = process.env.NM || path.join(__dirname, 'node_modules');
-const { chromium } = require(path.join(nm, 'playwright'));
+const { chromium } = (() => { try { return require(path.join(nm, 'playwright')); } catch (e) { return require('playwright'); } })();
 const [html, outDir, count] = process.argv.slice(2);
 const opt = (n, d) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : d; };
 const step = +opt('--step', 10), at = +opt('--at', 2.5), prefix = opt('--prefix', 'slide'), q = +opt('--q', 0.93), sheet = +opt('--sheet', 0.25);

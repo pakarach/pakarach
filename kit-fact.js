@@ -1,4 +1,5 @@
-/* FK kit — low-poly 3D map + data helpers for the fact channel (fact-map-3d-shorts). */
+/* FK kit v1.1 — low-poly 3D map + data helpers for the fact channel (fact-map-3d-shorts).
+   v1.1 (Oct 2026): FK.softSfx, FK.chillBed, FK.voice, FK.land, FK.beats — the sound/voice/landscape code videos used to carry themselves. */
 (function () {
   const FK = (window.FK = {});
   FK.pal = { navy: '#0f1630', ocean: '#1b2a55', land: '#2e3f73', teal: '#2ee6c5', coral: '#ff5d73', gold: '#ffc94a', violet: '#8f7bff', white: '#ffffff' };
@@ -99,6 +100,84 @@
     g.beginPath(); g.roundRect ? g.roundRect(x - s / 2, y - s / 2, s, s, 26) : g.rect(x - s / 2, y - s / 2, s, s); g.fill();
     g.fillStyle = '#0f1630'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.font = '800 76px Kanit,sans-serif'; g.fillText('#' + n, x, y + 2);
     if (total) { g.font = '600 26px Kanit,sans-serif'; g.fillStyle = '#fff'; g.fillText(n + '/' + total, x, y + s / 2 + 26); }
+    g.restore();
+  };
+  /* ---------- v1.1: beats, sound, voice, landscape (see docs/sound.md, docs/voiceover.md, docs/youtube-16x9.md) ---------- */
+
+  /* FK.beats(BEATS[, voData]) -> { at, end, dur, DUR }. BEATS = [[id, seconds], ...] in play order (start with 'cover', end with 'end').
+     When voData (DATA.vo) is given, each spoken beat grows to fit its clip BEFORE times are computed. */
+  FK.beats = function (BEATS, vo, lead) {
+    lead = lead == null ? 0.3 : lead;
+    const ids = BEATS.filter(([id]) => id !== 'cover' && id !== 'end').map(([id]) => id), segs = (vo && vo.segs) || [];
+    if (segs.length) ids.forEach((id, i) => { const s = segs[i]; if (!s) return; const b = BEATS.find((x) => x[0] === id); b[1] = Math.max(b[1], +(s[1] - s[0] + lead + 0.6).toFixed(2)); });
+    const START = {}, LEN = {}; let acc = 0; for (const [id, d] of BEATS) { START[id] = acc; LEN[id] = d; acc += d; }
+    const at = (id, off) => { if (!(id in START)) throw new Error('beat ' + id); return START[id] + (off || 0); };
+    return { at, end: (id) => at(id) + LEN[id], dur: (id) => LEN[id], DUR: acc, ids, lead };
+  };
+
+  /* Soft SFX set (all quiet, nothing under ~100 Hz). Replaces thump/boom/riser/warn. */
+  FK.softSfx = function () {
+    const AU = VE.audio, R = VE.registerSfx;
+    R('soft', (t) => AU.tone(t, 523, 0.18, { type: 'sine', vol: 0.05, rel: 0.25 }));
+    R('chime', (t) => { AU.tone(t, 988, 0.5, { vol: 0.04, rel: 0.4 }); AU.tone(t + 0.05, 1319, 0.5, { vol: 0.035, rel: 0.4 }); });
+    R('bell', (t) => AU.tone(t, 784, 0.4, { vol: 0.05, rel: 0.45 }));
+    R('tok', (t) => AU.tone(t, 760, 0.05, { type: 'triangle', vol: 0.05, rel: 0.04 }));
+    R('glide', (t, o) => AU.noise(t, (o && o.dur) || 0.5, { type: 'bandpass', f: 500, f2: 1400, q: 0.9, vol: 0.05 }));
+    R('splash', (t) => AU.noise(t, 0.45, { type: 'bandpass', f: 1200, f2: 700, q: 0.7, vol: 0.05 }));
+    R('water', (t, o) => AU.noise(t, (o && o.dur) || 1.5, { type: 'bandpass', f: 900, q: 0.5, vol: 0.025, att: 0.3 }));
+    R('rain', (t, o) => AU.noise(t, (o && o.dur) || 2, { type: 'highpass', f: 1500, vol: 0.03, att: 0.4 }));
+    R('roar', (t, o) => AU.noise(t, (o && o.dur) || 1.2, { type: 'bandpass', f: 700, f2: 1100, q: 0.6, vol: 0.05, att: 0.3 }));
+    R('siren', (t) => { AU.tone(t, 520, 0.9, { type: 'sine', f2: 410, vol: 0.03, att: 0.35, rel: 0.3 }); });
+  };
+
+  /* Chill bed (~78 bpm, Fmaj7 Em7 Dm7 Cmaj7; minor colour while calm(t) is true). Returns a bed entry.
+     opts: { DUR, calm(t)->bool, gain (bus, default 0.75), vol (music scale, 1; use ~0.6 under a voice), voice (from FK.voice) }. */
+  FK.chillBed = function (o) {
+    const DUR = o.DUR, calm = o.calm || (() => false), gain = o.gain == null ? 0.75 : o.gain, V = o.vol == null ? 1 : o.vol;
+    const AU = VE.audio, hz = VE.midiHz, MB = 60 / 78 * 4;
+    const PA = [[65, 69, 72, 76], [64, 67, 71, 74], [62, 65, 69, 72], [60, 64, 67, 71]], PB = [[57, 60, 64, 67], [53, 57, 60, 64], [62, 65, 69, 72], [64, 67, 71, 74]], ARP = [0, 2, 1, 3, 2, 1];
+    function chill(base, from) {
+      const t1 = DUR - 1.6;
+      for (let b = 0, tb = 0.3; tb < t1; b++, tb += MB) {
+        const rev = calm(tb), ch = (rev ? PB : PA)[b % 4], len = Math.min(MB, t1 - tb);
+        if (tb + len < from) continue; const p0 = base + Math.max(tb, from);
+        for (const n of ch) AU.tone(p0, hz(n), Math.max(0.2, len - 0.3), { type: 'sine', vol: 0.016 * V, att: 0.5, rel: 0.6 });
+        AU.tone(p0, hz(ch[0] - 12), Math.max(0.2, len * 0.45), { type: 'sine', vol: 0.025 * V, att: 0.08, rel: 0.4 });
+        for (const k of rev ? [0, 3] : [0, 1, 2, 3, 4, 5]) { const tt = tb + k * MB / 6 + MB / 12; if (tt < from || tt > t1) continue; AU.tone(base + tt, hz(ch[ARP[k]] + 12), 0.25, { type: 'triangle', vol: (rev ? 0.012 : 0.016) * V, att: 0.01, rel: 0.35 }); }
+        if (!rev) for (const k of [1, 3]) { const tt = tb + k * MB / 4; if (tt < from || tt > t1) continue; AU.noise(base + tt, 0.06, { type: 'highpass', f: 7000, vol: 0.012 * V }); }
+      }
+    }
+    return { play(base, from, A) {
+      if (A && A.bus) { A.bus.gain.setValueAtTime(gain, base + Math.max(0, from)); A.bus.gain.setValueAtTime(gain, base + DUR - 0.6); }
+      if (o.voice) o.voice.play(base, from, A);
+      chill(base, from);
+    } };
+  };
+
+  /* Voice-over clips: FK.voice(DATA.vo, B) where B = FK.beats(BEATS, DATA.vo). Decodes the embedded mp3 once; pass the result as chillBed({voice}). */
+  FK.voice = function (vo, B, gain) {
+    const V = { ready: false, play() {} }; if (!vo || !vo.b64) return V;
+    const bin = atob(vo.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    let PCM = null;
+    new OfflineAudioContext(1, 1, 24000).decodeAudioData(u8.buffer).then((b) => { PCM = { sr: b.sampleRate, data: b.getChannelData(0).slice() }; V.ready = true; window.__voiceOk = PCM.data.length / PCM.sr; });
+    V.play = function (base, from, A) {
+      if (!PCM || !A || !A.ctx) return;
+      const buf = A.ctx.createBuffer(1, PCM.data.length, PCM.sr); buf.copyToChannel(PCM.data, 0);
+      const g = A.ctx.createGain(); g.gain.value = gain == null ? 1.5 : gain; g.connect(A.bus);
+      B.ids.forEach((id, i) => { const s = vo.segs[i]; if (!s) return; const t0 = B.at(id, B.lead), len = s[1] - s[0] + 0.12; if (t0 + len <= from) return;
+        const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s[0] - 0.06) + skip, len - skip); });
+    };
+    return V;
+  };
+
+  /* Landscape (YouTube 16:9) helpers: FK.land() -> { LAND, W, H, CX }. Build with --data cfg=land.json ({"land":true}).
+     FK.subtitleY(cap) places a caption as a bottom subtitle band; FK.landGradients(g, W, H, {bottom, left}) draws the dark bands. */
+  FK.land = function () { const LAND = !!(window.DATA && DATA.cfg && DATA.cfg.land); return { LAND, W: LAND ? 1920 : 1080, H: LAND ? 1080 : 1920, CX: LAND ? 960 : 540 }; };
+  FK.subtitleY = function (cap, bottom) { let h = 0; cap.lines.forEach((l, i) => { h += i === cap.lines.length - 1 ? l[0] * 0.6 : l[0] * 1.25; }); return (bottom || 1040) - h - (cap.foot ? 40 : 0); };
+  FK.landGradients = function (g, W, H, o) {
+    o = o || {}; g.save();
+    if (o.bottom !== false) { const gr = g.createLinearGradient(0, H - 320, 0, H); gr.addColorStop(0, 'rgba(15,22,48,0)'); gr.addColorStop(1, 'rgba(15,22,48,.85)'); g.fillStyle = gr; g.fillRect(0, H - 320, W, 320); }
+    if (o.left) { const gl = g.createLinearGradient(0, 0, W * 0.55, 0); gl.addColorStop(0, 'rgba(15,22,48,.85)'); gl.addColorStop(1, 'rgba(15,22,48,0)'); g.fillStyle = gl; g.fillRect(0, 0, W * 0.55, H); }
     g.restore();
   };
 })();

@@ -5,7 +5,7 @@
    Uses a preinstalled Chrome via executablePath (the Playwright browser download is blocked in the sandbox). */
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const nm = process.env.NM || path.join(__dirname, 'node_modules');
-const { chromium } = require(path.join(nm, 'playwright'));
+const { chromium } = (() => { try { return require(path.join(nm, 'playwright')); } catch (e) { return require('playwright'); } })();
 const [html, outDir, ts] = process.argv.slice(2);
 const opt = (n, d) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : d; };
 const times = ts.split(',').map(Number), scale = +opt('--scale', 0.25), cols = +opt('--cols', 4);
