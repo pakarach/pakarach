@@ -1,0 +1,8 @@
+node_modules/
+*.html
+*.frames/
+*.mp4
+*.webm
+*.png
+world.geo.json
+__pycache__/
