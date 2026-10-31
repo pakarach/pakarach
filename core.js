@@ -283,7 +283,7 @@
           }
           prev = size0;
         }
-        if (c.foot) { g.font = '400 28px Kanit,sans-serif'; g.textAlign = 'center'; g.fillStyle = 'rgba(255,255,255,.8)'; g.fillText(c.foot, W / 2, y + prev * 0.7 + 26); }
+        if (c.foot) { g.font = '400 28px Kanit,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 6; g.strokeStyle = 'rgba(10,12,30,.7)'; g.strokeText(c.foot, W / 2, y + prev * 0.7 + 26); g.fillStyle = 'rgba(255,255,255,.95)'; g.fillText(c.foot, W / 2, y + prev * 0.7 + 26); }
         g.restore();
       }
     }
