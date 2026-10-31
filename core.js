@@ -1,4 +1,4 @@
-/* VE core v1.7 (VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol) — shared engine for Dan's two shorts channels.
+/* VE core v1.7 (VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -324,7 +324,7 @@
       const vg = g.createRadialGradient(W / 2, H / 2, H * 0.3, W / 2, H / 2, H * 0.75); vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, cfg.vignette || 'rgba(0,0,0,.35)'); g.fillStyle = vg; g.fillRect(0, 0, W, H);
       if (cfg.danger) { const d = clamp(cfg.danger(t)); if (d > 0) { const beat = 1 + 0.35 * Math.max(0, Math.sin(t * 7.5)); const dv = g.createRadialGradient(W / 2, H / 2, H * 0.25, W / 2, H / 2, H * 0.7); dv.addColorStop(0, 'rgba(200,0,30,0)'); dv.addColorStop(1, 'rgba(200,0,30,' + 0.5 * d * beat + ')'); g.fillStyle = dv; g.fillRect(0, 0, W, H); } }
       if (cfg.hud) cfg.hud(g, t, { W, H, text, icon: drawIcon });
-      drawCaps(t); drawBrand(t); drawTrans(t); drawEnd(t);
+      drawCaps(t); if (cfg.brandBar !== false) drawBrand(t); drawTrans(t); drawEnd(t);
     }
     window.__renderAt = (t) => { renderFrame(t); };
 
