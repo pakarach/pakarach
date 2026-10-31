@@ -7,3 +7,4 @@ Nostalgia editions: see Drive folder `nostalgia-series` (DONE files) until they 
 
 ## Family-health page (พ่อแม่หัวจะปวด)
 Add one line per approved clip: date | topic | audience | hook. Earlier clips (Oct 2026): see past chats until listed here.
+2026-10-31 | ย้อนเวลา | ที่มาวันฮาโลวีน (Samhain → All Hallows' Eve → Stingy Jack โคมหัวผักกาด → souling/guising → ทุพภิกขภัยไอร์แลนด์ อพยพ → ฟักทอง → trick or treat 1927 Alberta → NRF 2569 $13.5B, ชุดสัตว์ $0.92B, AI 47% → Día de Muertos ไม่ใช่ฮาโลวีน) | hook: ฟักทองฮาโลวีน เดิมไม่ใช่ฟักทอง (หัวผักกาด) | ending: ถ้าไม่มีฟักทอง จะแกะหน้าผีจากผักอะไร? · 2:25 + 16:9
