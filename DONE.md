@@ -5,6 +5,9 @@ Known clips before this file (Oct 2026, details in past chats): Lanna history, g
 
 Nostalgia editions: see Drive folder `nostalgia-series` (DONE files) until they are moved here.
 
+## Fact channel clips
+2026-10-31 | ย้อนเวลา | 5 เชียง 4 ประเทศ: ตระกูลมังราย (ตา เชียงรุ่ง → เชียงราย/เชียงใหม่ → หลาน เชียงตุงถึง 2502 + ทีวี → หลานตาไชยเชษฐา เชียงทอง) + ชื่อนับเลข (ล้านนา/ล้านช้าง/สิบสองปันนา) + ยุคทอง เจดีย์หลวง 82 ม. + สังคายนา 2020 + แผ่นดินไหว 2088 + พระแก้วมรกต 3 ใน 5 เชียง + เหมือน 3 (อักษรธรรม/สาดน้ำ/ข้าวเหนียว) ต่าง 3 (เวลา/เงิน/ฝั่งถนน) + รถไฟจีน–ลาว | hook: ตระกูลเดียว มีเมือง 4 ประเทศ / หอบของล้ำค่าข้ามแดน | ending: เลือกเที่ยวได้ 1 เชียง เอาเชียงไหน (โพล 1–5) · 2:42 + 16:9 (remake of 13 ต.ค. clip with new angle)
+
 ## Family-health page (พ่อแม่หัวจะปวด)
 Add one line per approved clip: date | topic | audience | hook. Earlier clips (Oct 2026): see past chats until listed here.
 2026-10-31 | ย้อนเวลา | ที่มาวันฮาโลวีน (Samhain → All Hallows' Eve → Stingy Jack โคมหัวผักกาด → souling/guising → ทุพภิกขภัยไอร์แลนด์ อพยพ → ฟักทอง → trick or treat 1927 Alberta → NRF 2569 $13.5B, ชุดสัตว์ $0.92B, AI 47% → Día de Muertos ไม่ใช่ฮาโลวีน) | hook: ฟักทองฮาโลวีน เดิมไม่ใช่ฟักทอง (หัวผักกาด) | ending: ถ้าไม่มีฟักทอง จะแกะหน้าผีจากผักอะไร? · 2:25 + 16:9
