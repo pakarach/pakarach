@@ -1,4 +1,4 @@
-/* VE core v1.8 (cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
+/* VE core v1.9 (voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -98,16 +98,25 @@
   VE.voice = function (vo, B, gain) {
     const V = { ready: false, play() {} }; if (!vo || !vo.b64) return V;
     const bin = atob(vo.b64), u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-    let PCM = null;
-    new OfflineAudioContext(1, 1, 24000).decodeAudioData(u8.buffer).then((b) => { PCM = { sr: b.sampleRate, data: b.getChannelData(0).slice() }; V.ready = true; window.__voiceOk = PCM.data.length / PCM.sr; });
-    V.play = function (base, from, A) {
-      if (!PCM || !A || !A.ctx) return;
+    let PCM = null; const pending = [];
+    const say = (txt) => { const m = document.getElementById('msg'); if (m) m.textContent = txt; };
+    window.__voicePromise = new OfflineAudioContext(1, 1, 24000).decodeAudioData(u8.buffer).then((b) => {
+      PCM = { sr: b.sampleRate, data: b.getChannelData(0).slice() }; V.ready = true; window.__voiceOk = PCM.data.length / PCM.sr; say('');
+      // Play was pressed before the voice finished decoding: schedule it now for the part that is still ahead
+      pending.splice(0).forEach(([base, from, A, bus]) => { if (A.bus === bus && A.ctx && A.ctx.currentTime !== undefined) doPlay(base, Math.max(from, A.ctx.currentTime - base + 0.05), A); });
+    }).catch((e) => { console.error('voice decode failed', e); say('Voice-over decode failed: ' + (e && e.message || e)); });
+    setTimeout(() => { if (!PCM) say('Loading voice-over…'); }, 300);
+    function doPlay(base, from, A) {
       const buf = A.ctx.createBuffer(1, PCM.data.length, PCM.sr); buf.copyToChannel(PCM.data, 0);
       const g = A.ctx.createGain(); g.gain.value = gain == null ? 1.5 : gain; g.connect(A.bus);
       const clip = (t0, s0, s1) => { const len = s1 - s0 + 0.12; if (t0 + len <= from) return; const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s0 - 0.06) + skip, len - skip); };
       if (vo.cover) clip(0.15, vo.cover[0], vo.cover[1]);
-      B.ids.forEach((id, i) => { const s = vo.segs[i]; if (!s) return; const t0 = B.at(id, B.lead), len = s[1] - s[0] + 0.12; if (t0 + len <= from) return;
-        const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s[0] - 0.06) + skip, len - skip); });
+      B.ids.forEach((id, i) => { const s = vo.segs[i]; if (s) clip(B.at(id, B.lead), s[0], s[1]); });
+    }
+    V.play = function (base, from, A) {
+      if (!A || !A.ctx) return;
+      if (!PCM) { pending.push([base, from, A, A.bus]); return; }
+      doPlay(base, from, A);
     };
     return V;
   };
@@ -386,6 +395,7 @@
       return out;
     }
     async function renderAudio(sr) {
+      if (window.__voicePromise) await window.__voicePromise; // MP4 soundtrack must include the voice-over
       const off = new OfflineAudioContext(2, Math.ceil(DUR * sr), sr), keep = { ctx: A.ctx, master: A.master, bus: A.bus, noise: A.noise };
       try {
         A.ctx = off; A.master = off.createGain(); A.master.gain.value = 0.8;
