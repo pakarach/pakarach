@@ -1,4 +1,4 @@
-/* VE core v1.7 (VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
+/* VE core v1.8 (cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -88,6 +88,7 @@
   VE.beats = function (BEATS, vo, lead) {
     lead = lead == null ? 0.3 : lead;
     const ids = BEATS.filter(([id]) => id !== 'cover' && id !== 'end').map(([id]) => id), segs = (vo && vo.segs) || [];
+    if (vo && vo.cover) { const c = BEATS.find((x) => x[0] === 'cover'); if (c) c[1] = Math.max(c[1], +(vo.cover[1] - vo.cover[0] + 0.15 + 0.45).toFixed(2)); }
     if (segs.length) ids.forEach((id, i) => { const s = segs[i]; if (!s) return; const b = BEATS.find((x) => x[0] === id); b[1] = Math.max(b[1], +(s[1] - s[0] + lead + 0.6).toFixed(2)); });
     const START = {}, LEN = {}; let acc = 0; for (const [id, d] of BEATS) { START[id] = acc; LEN[id] = d; acc += d; }
     const at = (id, off) => { if (!(id in START)) throw new Error('beat ' + id); return START[id] + (off || 0); };
@@ -103,6 +104,8 @@
       if (!PCM || !A || !A.ctx) return;
       const buf = A.ctx.createBuffer(1, PCM.data.length, PCM.sr); buf.copyToChannel(PCM.data, 0);
       const g = A.ctx.createGain(); g.gain.value = gain == null ? 1.5 : gain; g.connect(A.bus);
+      const clip = (t0, s0, s1) => { const len = s1 - s0 + 0.12; if (t0 + len <= from) return; const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s0 - 0.06) + skip, len - skip); };
+      if (vo.cover) clip(0.15, vo.cover[0], vo.cover[1]);
       B.ids.forEach((id, i) => { const s = vo.segs[i]; if (!s) return; const t0 = B.at(id, B.lead), len = s[1] - s[0] + 0.12; if (t0 + len <= from) return;
         const skip = Math.max(0, from - t0), src = A.ctx.createBufferSource(); src.buffer = buf; src.connect(g); src.start(base + t0 + skip, Math.max(0, s[0] - 0.06) + skip, len - skip); });
     };
