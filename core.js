@@ -1,4 +1,4 @@
-/* VE core v1.9 (voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
+/* VE core v1.10 (live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -44,9 +44,16 @@
     const n = A.ctx.sampleRate * 2, buf = A.ctx.createBuffer(1, n, A.ctx.sampleRate), d = buf.getChannelData(0);
     for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1;
     A.noise = buf;
+    LAZY.timer = setInterval(flushLazy, 400);
     return A.ctx;
   }
+  /* v1.10: live playback creates music/SFX nodes only ~6 s ahead (a long clip used to schedule ~900 sources at once,
+     which can starve the real-time audio thread and make the voice-over stutter). Offline renders (MP4) are not deferred. */
+  const LAZY = { q: [], ahead: 6, timer: 0 };
+  const defer = (t0, fn) => { if (!A.ctx || A.ctx instanceof OfflineAudioContext || t0 <= A.ctx.currentTime + LAZY.ahead) return false; LAZY.q.push([t0, fn, A.bus]); return true; };
+  function flushLazy() { if (!LAZY.q.length || !A.ctx) return; const lim = A.ctx.currentTime + LAZY.ahead, keep = []; for (const it of LAZY.q) { if (it[2] !== A.bus || !A.bus) continue; if (it[0] <= lim) it[1](); else keep.push(it); } LAZY.q = keep; }
   function tone(t0, f, dur, o = {}) {
+    if (defer(t0, () => tone(t0, f, dur, o))) return;
     const c = A.ctx, os = c.createOscillator(), g = c.createGain();
     const vol = o.vol == null ? 0.2 : o.vol, att = o.att || 0.005, rel = o.rel == null ? 0.1 : o.rel;
     os.type = o.type || 'sine'; os.frequency.setValueAtTime(f, t0);
@@ -57,6 +64,7 @@
     os.connect(g); g.connect(A.bus); os.start(t0); os.stop(t0 + dur + rel + 0.05);
   }
   function noise(t0, dur, o = {}) {
+    if (defer(t0, () => noise(t0, dur, o))) return;
     const c = A.ctx, s = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
     s.buffer = A.noise; s.loop = true; fl.type = o.type || 'lowpass';
     fl.frequency.setValueAtTime(o.f || 2000, t0); if (o.f2) fl.frequency.exponentialRampToValueAtTime(o.f2, t0 + dur);
