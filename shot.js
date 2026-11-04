@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /* Render key frames of a built video to PNG + a contact sheet, in the cloud sandbox (no GPU).
    usage: node shot.js <built.html> <outDir> <t1,t2,...> [--scale 0.25] [--cols 4]
-   Needs node_modules (one level up from this file's folder, or set NM): three@0.128.0 @fontsource/kanit playwright.
+   Needs node_modules (one level up from this file's folder, or set NM): three@0.128.0 @fontsource/kanit @fontsource/ibm-plex-sans-thai playwright.
+   Serves Kanit and IBM Plex Sans Thai locally (cinematic decks load Plex from Google Fonts).
    Uses a preinstalled Chrome via executablePath (the Playwright browser download is blocked in the sandbox). */
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const nm = process.env.NM || path.join(__dirname, 'node_modules');
@@ -9,6 +10,7 @@ const { chromium } = (() => { try { return require(path.join(nm, 'playwright'));
 const [html, outDir, ts] = process.argv.slice(2);
 const opt = (n, d) => { const i = process.argv.indexOf(n); return i > 0 ? process.argv[i + 1] : d; };
 const times = ts.split(',').map(Number), scale = +opt('--scale', 0.25), cols = +opt('--cols', 4);
+const plexDir = path.join(nm, '@fontsource/ibm-plex-sans-thai/files'); const plexCss = [300,400,500].map((w)=>"@font-face{font-family:'IBM Plex Sans Thai';font-weight:"+w+';src:url(https://fonts.gstatic.com/plex/ibm-plex-sans-thai-thai-'+w+'-normal.woff2);unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}'+"@font-face{font-family:'IBM Plex Sans Thai';font-weight:"+w+';src:url(https://fonts.gstatic.com/plex/ibm-plex-sans-thai-latin-'+w+'-normal.woff2);unicode-range:U+0000-00FF,U+2000-206F}').join('');
 const fontDir = path.join(nm, '@fontsource/kanit/files');
 const css = [400, 600, 800].map((w) =>
   "@font-face{font-family:'Kanit';font-weight:" + w + ';src:url(https://fonts.gstatic.com/local/kanit-thai-' + w + '-normal.woff2);unicode-range:U+0E01-0E5B,U+200C-200D,U+25CC}' +
@@ -20,8 +22,9 @@ const css = [400, 600, 800].map((w) =>
   const p = await b.newPage({ viewport: { width: 700, height: 1000 } });
   const errs = []; p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); }); p.on('pageerror', (e) => errs.push('PAGEERROR ' + e.message));
   await p.route('**/three.min.js', (r) => r.fulfill({ path: path.join(nm, 'three/build/three.min.js'), contentType: 'application/javascript' }));
-  await p.route('https://fonts.googleapis.com/**', (r) => r.fulfill({ body: css, contentType: 'text/css' }));
+  await p.route('https://fonts.googleapis.com/**', (r) => r.fulfill({ body: r.request().url().includes('Plex') ? plexCss : css, contentType: 'text/css' }));
   await p.route('https://fonts.gstatic.com/local/**', (r) => r.fulfill({ path: path.join(fontDir, r.request().url().split('/').pop()), contentType: 'font/woff2' }));
+  await p.route('https://fonts.gstatic.com/plex/**', (r) => r.fulfill({ path: path.join(plexDir, r.request().url().split('/').pop()), contentType: 'font/woff2' }));
   await p.goto('file://' + path.resolve(html));
   await p.waitForFunction('window.__veReady===true', null, { timeout: 30000 }).catch(() => errs.push('not ready'));
   const files = [];
