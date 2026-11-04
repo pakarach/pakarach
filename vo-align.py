@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """Split a TTS voice-over into one clip per script paragraph and pack it for build.js.
-usage: python3 vo-align.py voice.wav script.txt vo.json [silence_db=-40] [--cover cover.wav]
+usage: python3 vo-align.py voice.wav script.txt vo.json [silence_db=-40] [--cover cover.wav] [--first-is-cover]
  - script.txt: paragraphs separated by blank lines, one paragraph per beat (every beat except cover/end).
  - Cover voice (series name / title read on frame 0): either start script.txt with a paragraph "COVER: <text>"
    (same audio file, first clip goes to the cover beat) or pass --cover cover.wav (a separate short file,
-   prepended to the mp3). Either way vo.json gets "cover": [start, end] and the engine plays it at t=0.15.
+   prepended to the mp3), or write the cover paragraph WITHOUT the label and pass --first-is-cover
+   (TTS engines read the 'COVER:' label aloud, Nov 2026). Either way vo.json gets "cover": [start, end] and the engine plays it at t=0.15.
  - Finds silences (10 ms RMS frames below silence_db, >= 0.25 s), then picks N-1 of them as paragraph
    breaks with dynamic programming: segment length vs. expected length from the paragraph's character
    count (TTS also pauses inside sentences, so the longest gaps alone are not reliable).
@@ -15,6 +16,8 @@ import sys, json, math, wave, base64, subprocess, tempfile, os
 import numpy as np
 
 args = sys.argv[1:]; cover_wav = None
+first_cover = '--first-is-cover' in args
+if first_cover: args.remove('--first-is-cover')
 if '--cover' in args: i = args.index('--cover'); cover_wav = args[i + 1]; del args[i:i + 2]
 wav, txt, out = args[0], args[1], args[2]
 thr = float(args[3]) if len(args) > 3 else -40.0
@@ -33,8 +36,8 @@ while i < n:
     else: i += 1
 dur = len(x) / sr
 paras = [p.strip() for p in open(txt, encoding='utf8').read().split('\n\n') if p.strip()]
-cover_para = bool(paras) and paras[0].upper().startswith('COVER:')
-if cover_para: paras[0] = paras[0].split(':', 1)[1].strip()
+cover_para = bool(paras) and (first_cover or paras[0].upper().startswith('COVER:'))
+if cover_para and paras[0].upper().startswith('COVER:'): paras[0] = paras[0].split(':', 1)[1].strip()
 start = runs[0][1] if runs and runs[0][0] < 0.05 else 0.0
 endt = runs[-1][0] if runs and runs[-1][1] > dur - 0.05 else dur
 cand = [r for r in runs if r[0] > 0.05 and r[1] < dur - 0.05 and r[1] - r[0] >= 0.25]
