@@ -1,4 +1,4 @@
-/* VE core v1.10 (live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
+/* VE core v1.11 (Reels-safe captions when DATA.reel.on: 30 px lower, 6% smaller, wider side margins; live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -282,18 +282,21 @@
     }
     VE.draw = { text, icon: drawIcon, grad };
 
+    /* Facebook Reels-safe build (--data reel=reel.json with {"on":true}): captions 30 px lower, 6% smaller, 120 px side margins (FB overlays more UI than TikTok). */
+    const REELS = !!(window.DATA && window.DATA.reel && window.DATA.reel.on); VE.reels = REELS;
     function drawCaps(t) {
-      for (const c of cfg.caps || []) {
+      for (const c0 of cfg.caps || []) {
+        const c = REELS ? Object.assign({}, c0, { y: c0.y + 30 }) : c0;
         if (t < c.t0 || t >= c.t1) continue;
         const p = c.instant ? 1 : clamp((t - c.t0) / 0.35), sc = 0.72 + 0.28 * easeBack(p), a = (c.instant ? 1 : clamp((t - c.t0) / 0.12)) * clamp((c.t1 - t) / 0.2);
         g.save(); g.globalAlpha = a; g.translate(W / 2, c.y); g.scale(sc, sc); g.translate(-W / 2, -c.y);
         let y = c.y, prev = 0;
         for (const line of c.lines) {
-          const size0 = line[0], segs = line.slice(1).map((s) => ({ t: typeof s[0] === 'function' ? s[0](t) : s[0], c: s[1] || '#fff', w: s[2] || 800 }));
+          const size0 = REELS ? Math.round(line[0] * 0.94) : line[0], segs = line.slice(1).map((s) => ({ t: typeof s[0] === 'function' ? s[0](t) : s[0], c: s[1] || '#fff', w: s[2] || 800 }));
           if (prev) y += (prev + size0) / 2 * 1.34; // space by both line heights so a small line never sits inside a big one (Thai marks above/below)
           let size = size0, tw = 0;
           const meas = (sz) => segs.reduce((acc, s) => { g.font = s.w + ' ' + sz + 'px Kanit,sans-serif'; return acc + g.measureText(s.t).width; }, 0);
-          tw = meas(size); if (tw > W - 160) { size = size0 * (W - 160) / tw; tw = W - 160; }
+          const MW = W - (REELS ? 240 : 160); tw = meas(size); if (tw > MW) { size = size0 * MW / tw; tw = MW; }
           let x = W / 2 - tw / 2;
           for (const s of segs) {
             g.font = s.w + ' ' + size + 'px Kanit,sans-serif'; const w = g.measureText(s.t).width;

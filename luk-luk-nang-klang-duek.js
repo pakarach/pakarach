@@ -6,7 +6,6 @@
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
   const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1;
-  const reelCaps = (cs) => REEL ? cs.map((c) => Object.assign({}, c, { y: c.y + 30, lines: c.lines.map((l) => [Math.round(l[0] * 0.94)].concat(l.slice(1))) })) : cs;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -298,7 +297,7 @@
         L.forEach((s2, i) => { const a = U.clamp((t - TM('s11', i, 0.1 + i * 0.17)) / 0.3); if (a <= 0) return; const y = 380 + i * 84; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84 + LD, y - 36, 912 - 2 * LD, 72, 36, '#ffd6e4'); g.beginPath(); g.arc(130 + LD, y, 27, 0, 7); g.fillStyle = i === cur ? '#ff6f91' : '#ff9ec0'; g.fill(); plain(String(i + 1), 130 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 176 + LD, y + 2, Math.round(38 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
       }
     },
-    caps: reelCaps([
+    caps: [
       { t0: 0, t1: at('s1') + 0.05, y: 300, instant: true, lines: [[84, ['ตี 2 ลูกลุกขึ้นนั่ง', '#fff']], [76, ['ตื่น หรือยังหลับอยู่?', '#ffd35e']]] },
       { t0: at('s1') + 0.25, t1: end('s1') - 0.05, y: 290, lines: [[62, ['ไม่ใช่บ้านเราบ้านเดียว', '#fff']], [60, [(t) => { const k = U.clamp((t - at('s1') - 0.4) / 1.2); return Math.round(20 * k) + '–' + Math.round(30 * k) + '%'; }, '#ffd35e'], [' ของเด็กเล็ก', '#fff']], [46, ['นอนยาก หรือตื่นกลางดึกบ่อย', '#ffe3ea', 600]]], foot: 'ที่มา: AASM Practice Parameters, Sleep 2006' },
       { t0: at('s2') + 0.2, t1: SP('s2', 0.5), y: 300, lines: [[64, ['การหลับเป็น "คลื่น"', '#fff']], [48, ['หลับลึก สลับ หลับตื้น หลายรอบต่อคืน', '#ffe3ea', 600]]] },
@@ -319,7 +318,7 @@
       { t0: SP('s10', 0.52) + 0.02, t1: end('s10') - 0.05, y: 290, lines: [[56, ['ตื่นกลางดึก ก็หลับต่อเองได้', '#fff']], [44, ['ค่อยๆ ฝึก ปลอบได้เสมอ', '#ffe3ea', 600]]], foot: 'ที่มา: AASM Practice Parameters 2006' },
       { t0: at('s11') + 0.2, t1: end('s11') - 0.05, y: 250, lines: [[60, ['5 ทิป ลูกหลับยาว', '#ffd35e']]] },
       { t0: at('s12') + 0.2, t1: end('s12'), y: 290, lines: [[60, ['ลูกหลับดี พ่อแม่ก็ได้หลับ', '#fff']], [44, ['ลูกคุณตื่นกลางดึกตอนกี่โมง? คอมเมนต์เลย', '#ffe3ea', 600]]], foot: 'ข้อมูล: AASM 2016, CDC 2021, ม.อ. 2001, ม.ขอนแก่น' },
-    ]),
+    ],
     trans,
     audio: [
       [0.5, 'tick'], [1.0, 'tick'], [1.5, 'tick'],
