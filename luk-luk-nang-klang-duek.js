@@ -5,6 +5,8 @@
   const BEATS = [['cover', 2.2], ['s1', 5.5], ['s2', 7], ['s3', 8], ['s4', 7], ['s5', 7.5], ['s6', 7.5], ['s7', 6.5], ['s8', 5.5], ['s9', 6.5], ['s10', 6], ['s11', 8.5], ['s12', 4.8], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
+  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1;
+  const reelCaps = (cs) => REEL ? cs.map((c) => Object.assign({}, c, { y: c.y + 30, lines: c.lines.map((l) => [Math.round(l[0] * 0.94)].concat(l.slice(1))) })) : cs;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -42,13 +44,13 @@
   const SH = {
     cover: [FW(-0.9, -1.6, 7.6, 2.1, 0.55), FW(-0.95, -1.6, 7.2, 2.1, 0.55)],
     s1: [FW(-0.9, -1.6, 7.8, 4.0, 0.42), FW(-0.9, -1.6, 7.5, 4.0, 0.42)],
-    s2: [FW(60, 0, 11, 4.95, 0.06), FW(60, 0, 10.6, 4.9, 0.06)],
+    s2: REEL ? [FW(60, 0, 11, 3.55, 0.06), FW(60, 0, 10.6, 3.5, 0.06)] : [FW(60, 0, 11, 4.95, 0.06), FW(60, 0, 10.6, 4.9, 0.06)],
     s3: [FW(-2.55, -1.6, 5.0, 4.0, 0.42), FW(-2.55, -1.6, 4.8, 3.9, 0.48)],
     s4: [FW(1.2, -1.6, 6.6, 4.2, 0.42), FW(1.2, -1.6, 6.6, 4.2, 0.42)],
     s5: [FW(-59.3, -0.6, 7.6, 3.9, 0.22), FW(-59.3, -0.6, 7.3, 3.9, 0.22)],
     s6: [FW(-61.9, -0.6, 5.9, 4.1, 0.22), FW(-61.9, -0.6, 5.6, 4.1, 0.22)],
     s7: [FW(119.0, 0, 6.0, 3.1, 0.1), FW(119.0, 0, 5.8, 3.1, 0.1)],
-    s8: [FW(129.5, 0, 7.6, 3.6, 0.1), FW(129.5, 0, 7.3, 3.6, 0.1)],
+    s8: REEL ? [FW(129.5, 0, 7.6, 2.25, 0.1), FW(129.5, 0, 7.3, 2.25, 0.1)] : [FW(129.5, 0, 7.6, 3.6, 0.1), FW(129.5, 0, 7.3, 3.6, 0.1)],
     s9: [FW(0, -1.6, 10.4, 4.2, 0.4), FW(0, -1.6, 10.0, 4.2, 0.4)],
     s10: [FW(-2.55, -1.6, 5.0, 4.0, 0.42), FW(-2.55, -1.6, 4.8, 3.6, 0.5)],
     s11: [FW(0, -1.6, 10.6, 2.0, 0.6), FW(0, -1.6, 10.3, 2.0, 0.6)],
@@ -274,29 +276,29 @@
       if (b === 's3') { const q = SP('s3', 0.5); if (t < q) { const [x, y] = wp(S.bed.nana.userData.head, 0.95); bubble('อืม… งึมงำ…', x + 40, y - 40, U.clamp((t - at('s3') - 0.6) / 0.4) * U.clamp((q - t) / 0.3)); } }
       if (b === 's4') { const q = SP('s4', 0.5); if (t < q) { const [x, y] = wp(S.bed.mama.userData.head, 1.0); bubble('แม่จ๋า~ อุ้มหน่อย', x - 40, y - 40, U.clamp((t - at('s4') - 0.5) / 0.4) * U.clamp((q - t) / 0.3)); } }
       /* s5: airway labels */
-      if (b === 's5') { const p = ph('s5', t), a = U.clamp((p - 0.2) / 0.1); if (a > 0) { g.save(); g.globalAlpha = a; let [x, y] = proj(new T.Vector3(-57.3, 4.35, 0.2)); txt('ทางเดินหายใจ', x, y, 32, '#ffffff', 700); if (t > SP('s5', 0.5)) { [x, y] = proj(new T.Vector3(-57.3, 0.2, 0.2)); txt('ทอนซิล/อะดีนอยด์โต = แคบ', x, y + 10, 30, '#ffd35e', 700); } g.restore(); } }
+      if (b === 's5') { const p = ph('s5', t), a = U.clamp((p - 0.2) / 0.1); if (a > 0) { g.save(); g.globalAlpha = a; let [x, y] = proj(new T.Vector3(-57.3, 4.35, 0.2)); const sp5 = t > SP('s5', 0.5); if (REEL && sp5) txt('ทอนซิล/อะดีนอยด์โต = ทางหายใจแคบ', Math.min(x, 700), y, 32, '#ffd35e', 700); else txt('ทางเดินหายใจ', x, y, 32, '#ffffff', 700); if (!REEL && sp5) { [x, y] = proj(new T.Vector3(-57.3, 0.2, 0.2)); txt('ทอนซิล/อะดีนอยด์โต = แคบ', x, y + 10, 30, '#ffd35e', 700); } g.restore(); } }
       /* s6: doctor list */
       if (b === 's6') {
         const p = ph('s6', t), a0 = U.clamp((p - 0.05) / 0.08);
-        g.save(); g.globalAlpha = a0; rr(60, 330, 960, 470, 30, 'rgba(25,18,50,.62)', 'rgba(255,120,150,.9)'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(60 + LD, 330, 960 - 2 * LD, 470, 30, 'rgba(25,18,50,.62)', 'rgba(255,120,150,.9)'); g.restore();
         const L = ['กรนดัง > 3 คืน/สัปดาห์ หรือหยุดหายใจ หายใจเฮือก', 'ต้องนอนท่านั่ง หรือแหงนคอถึงหลับได้', 'ลุกนั่ง/ละเมอแทบทุกคืน หรือเดินออกนอกห้อง', 'กลับมาฉี่รดที่นอน หรือมีอาการชัก', 'กลางวันง่วงมาก หรือซนผิดปกติ'];
-        L.forEach((s2, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.1)) / 0.35); if (a <= 0) return; const y = 390 + i * 80; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(120, y, 26, 0, 7); g.fillStyle = '#ff5f6d'; g.fill(); plain(String(i + 1), 120, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 162, y + 2, 37, '#ffffff', 600); g.restore(); });
+        L.forEach((s2, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.1)) / 0.35); if (a <= 0) return; const y = 390 + i * 80; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(120 + LD, y, 26, 0, 7); g.fillStyle = '#ff5f6d'; g.fill(); plain(String(i + 1), 120 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 162 + LD, y + 2, Math.round(37 * LF), '#ffffff', 600); g.restore(); });
         g.save(); g.globalAlpha = a0; plain('ที่มา: ภาควิชาโสต ศอ นาสิก ม.ขอนแก่น, UVM Health', 540, 768, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
       }
       /* s7: battery label */
       if (b === 's7') { const p = ph('s7', t), lvl = U.lerp(100, 22, U.easeIO(U.clamp((p - 0.06) / 0.4))); const [x, y] = proj(new T.Vector3(120.8, 3.0, 0)); txt('แบตสมอง ' + Math.round(lvl) + '%', x, y - 20, 44, lvl > 60 ? '#5fd38d' : lvl > 35 ? '#ffc94d' : '#ff5f6d', 800); }
       /* s8: bar labels */
-      if (b === 's8') { const p = ph('s8', t), kb = U.easeOut(U.clamp((p - 0.08) / 0.4)); [[33.3, '1–2 ขวบ', 'ควร 11–14 ชม./วัน'], [34.8, '3–5 ขวบ', 'ควร 10–13 ชม./วัน']].forEach(([v, a1, a2], i) => { const bx = 129.0 + i * 2.9; let [x, y] = proj(new T.Vector3(bx, v * 0.088 * kb, 0)); if (kb > 0.05) txt((v * kb).toFixed(1) + '%', x, y - 46, 60, '#ffd35e', 800); [x, y] = proj(new T.Vector3(bx, 0, 0.6)); txt(a1, x, y + 40, 40, '#3a2f3f', 700); plain(a2, x, y + 86, 28, '#6a4a60', 600, 'center'); }); plain('(นับรวมงีบกลางวัน)', 540, 1680, 28, '#6a4a60', 600, 'center'); }
+      if (b === 's8') { const p = ph('s8', t), kb = U.easeOut(U.clamp((p - 0.08) / 0.4)); [[33.3, '1–2 ขวบ', 'ควร 11–14 ชม./วัน'], [34.8, '3–5 ขวบ', 'ควร 10–13 ชม./วัน']].forEach(([v, a1, a2], i) => { const bx = 129.0 + i * 2.9; let [x, y] = proj(new T.Vector3(bx, v * 0.088 * kb, 0)); if (kb > 0.05) txt((v * kb).toFixed(1) + '%', x, y - 46, 60, '#ffd35e', 800); [x, y] = proj(new T.Vector3(bx, 0, 0.6)); txt(a1, x, y + 40, 40, '#3a2f3f', 700); plain(a2, x, y + 86, 28, '#6a4a60', 600, 'center'); }); { const [, by] = proj(new T.Vector3(129.0, 0, 0.6)); plain('(นับรวมงีบกลางวัน)', 540, REEL ? by + 140 : 1680, 28, '#6a4a60', 600, 'center'); } }
       /* s11: tips */
       if (b === 's11') {
         const p = ph('s11', t), a0 = U.clamp((p - 0.04) / 0.06);
-        g.save(); g.globalAlpha = a0; rr(60, 320, 960, 455, 30, 'rgba(255,255,255,.86)', '#ff8fab'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(60 + LD, 320, 960 - 2 * LD, 455, 30, 'rgba(255,255,255,.86)', '#ff8fab'); g.restore();
         const L = ['ห้องมืด เย็น เงียบ (เปิดไฟหรี่ได้)', 'งดจอ 1 ชม. ก่อนนอน', 'ตุ๊กตา/ผ้าห่มคู่ใจ (1 ขวบขึ้นไป)', 'กลางวันวิ่งเล่น ไม่งีบเย็นเกินไป', 'ตื่นกลางดึก: พูดสั้น ไฟมืด ไม่ชวนเล่น'];
         let cur = -1; for (let i = 0; i < 5; i++) if (t >= TM('s11', i, 0.1 + i * 0.17)) cur = i;
-        L.forEach((s2, i) => { const a = U.clamp((t - TM('s11', i, 0.1 + i * 0.17)) / 0.3); if (a <= 0) return; const y = 380 + i * 84; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84, y - 36, 912, 72, 36, '#ffd6e4'); g.beginPath(); g.arc(130, y, 27, 0, 7); g.fillStyle = i === cur ? '#ff6f91' : '#ff9ec0'; g.fill(); plain(String(i + 1), 130, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 176, y + 2, 38, '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
+        L.forEach((s2, i) => { const a = U.clamp((t - TM('s11', i, 0.1 + i * 0.17)) / 0.3); if (a <= 0) return; const y = 380 + i * 84; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84 + LD, y - 36, 912 - 2 * LD, 72, 36, '#ffd6e4'); g.beginPath(); g.arc(130 + LD, y, 27, 0, 7); g.fillStyle = i === cur ? '#ff6f91' : '#ff9ec0'; g.fill(); plain(String(i + 1), 130 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 176 + LD, y + 2, Math.round(38 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
       }
     },
-    caps: [
+    caps: reelCaps([
       { t0: 0, t1: at('s1') + 0.05, y: 300, instant: true, lines: [[84, ['ตี 2 ลูกลุกขึ้นนั่ง', '#fff']], [76, ['ตื่น หรือยังหลับอยู่?', '#ffd35e']]] },
       { t0: at('s1') + 0.25, t1: end('s1') - 0.05, y: 290, lines: [[62, ['ไม่ใช่บ้านเราบ้านเดียว', '#fff']], [60, [(t) => { const k = U.clamp((t - at('s1') - 0.4) / 1.2); return Math.round(20 * k) + '–' + Math.round(30 * k) + '%'; }, '#ffd35e'], [' ของเด็กเล็ก', '#fff']], [46, ['นอนยาก หรือตื่นกลางดึกบ่อย', '#ffe3ea', 600]]], foot: 'ที่มา: AASM Practice Parameters, Sleep 2006' },
       { t0: at('s2') + 0.2, t1: SP('s2', 0.5), y: 300, lines: [[64, ['การหลับเป็น "คลื่น"', '#fff']], [48, ['หลับลึก สลับ หลับตื้น หลายรอบต่อคืน', '#ffe3ea', 600]]] },
@@ -317,7 +319,7 @@
       { t0: SP('s10', 0.52) + 0.02, t1: end('s10') - 0.05, y: 290, lines: [[56, ['ตื่นกลางดึก ก็หลับต่อเองได้', '#fff']], [44, ['ค่อยๆ ฝึก ปลอบได้เสมอ', '#ffe3ea', 600]]], foot: 'ที่มา: AASM Practice Parameters 2006' },
       { t0: at('s11') + 0.2, t1: end('s11') - 0.05, y: 250, lines: [[60, ['5 ทิป ลูกหลับยาว', '#ffd35e']]] },
       { t0: at('s12') + 0.2, t1: end('s12'), y: 290, lines: [[60, ['ลูกหลับดี พ่อแม่ก็ได้หลับ', '#fff']], [44, ['ลูกคุณตื่นกลางดึกตอนกี่โมง? คอมเมนต์เลย', '#ffe3ea', 600]]], foot: 'ข้อมูล: AASM 2016, CDC 2021, ม.อ. 2001, ม.ขอนแก่น' },
-    ],
+    ]),
     trans,
     audio: [
       [0.5, 'tick'], [1.0, 'tick'], [1.5, 'tick'],
