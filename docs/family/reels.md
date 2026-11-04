@@ -2,8 +2,10 @@
 Both are 9:16 1080x1920 from the same video.js. Only the layout differs, because Facebook overlays more UI.
 
 ## Builds
-- TikTok: `node build.js video.js <topic>.html --kit clay --title "<Thai title>" [--data vo=vo.json]`
-- Facebook Reels: same, plus `--data reel=reel.json` (reel.json = `{"on":true}`), output `<topic>-fb.html`.
+- Review (every draft/revision): one file only, TikTok layout, smallest size: `node build.js video.js review-<topic>.html --kit clay --title "<Thai title>"` (no voice until the audio is synced).
+- Finals, only when Dan types "cre": TikTok `tt-<topic>.html` and Facebook `fb-<topic>.html`:
+  `node build.js video.js tt-<topic>.html --kit clay --title "<Thai title>" [--data vo=vo.json]`
+  `node build.js video.js fb-<topic>.html --kit clay --title "<Thai title>" [--data vo=vo.json] --data reel=docs/family/reel.json`
 - Core v1.11 does the captions by itself when `DATA.reel.on`: 30 px lower, 6% smaller, max width W-240.
 
 ## Facebook Reels safe zone (1080x1920)
