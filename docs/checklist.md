@@ -4,6 +4,7 @@ Cover (frame 0 = thumbnail)
 - t=0 is a finished cover: the most telling picture of the story + title fully visible (caption `instant:true`, 2-3 lines 120-150px, keyword gold, <= 1 small sub-line), `coverAt0:true`. Own `cover` beat ~1.5-2 s, then a story move (iris/glide) into the hook. Title and labels inside the 3:4 crop (y ~300-1500). Hook continues the thought, never repeats the title.
 
 Story (one thread, complete in itself)
+- Default style (Nov 2026, Dan): fun, LONG storytelling built to go viral (~3-5 min; short only when Dan asks or the series fixes the length): spoken narrator captions, a mystery hook that is paid off at the end, a cliffhanger at the end of each chapter, one emotional twist, one relatable modern angle, a comment question anyone can answer from the clip.
 - Each beat answers the question the previous one raised (cause -> effect -> so what). Plan the why, not only what/when/where.
 - Answer the obvious viewer "แล้วทำไม...?" before it is asked (source: sutta first, then commentary).
 - Set up before payoff: a new element needs a beat that creates the need for it ("อยู่ๆ มายานบิน" = bad).
@@ -24,6 +25,7 @@ Smooth / pace
 Wording
 - Name the polity of the period (อยุธยา, สยาม, ล้านนา, ล้านช้าง), never "ไทยแท้" for pre-modern things; check which kingdom a place belonged to; culture zones labelled approximate.
 - Neighbours: neutral wording, no blame, never "พี่น้อง/บ้านพี่เมืองน้อง" (use เพื่อน/ญาติ).
+- Buddha figures (statue or the living Buddha): BALD head like a monk — never a hair cap, hair bun or dark ushnisha; gold skin + robe + halo only. Monks are bald too.
 - Religion: tag พระไตรปิฎก vs อรรถกถา/ไตรภูมิ on screen (+ "ภาพจำลองตามคติความเชื่อ"); a commentary segment carries a large "อรรถกถา" banner; name where folk images come from only when verified. Hell punishments symbolic, no gore.
 - Leave a current local disaster out of a light clip unless Dan asks.
 
