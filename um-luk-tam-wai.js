@@ -26,7 +26,7 @@
     s5: [[0, FW(HX + 0.45, 0, 8.2, 4.4, 0.1)], [1, FW(HX + 0.45, 0, 7.9, 4.4, 0.1)]],
     s6: [[0, FW(EX + 0.5, 0, 7.6, 3.85, 0.1)], [1, FW(EX + 0.5, 0, 7.3, 3.85, 0.1)]],
     s7: REEL ? [[0, FW(0.1, 0, 6.6, 4.6, 0.2)], [1, FW(0.1, 0, 6.3, 4.6, 0.2)]] : [[0, FW(0.1, 0, 6.6, 5.4, 0.2)], [1, FW(0.1, 0, 6.3, 5.4, 0.2)]],
-    s8: [[0, FW(0.2, 0, 5.6, 3.6, 0.18)], [0.3, FW(0.2, 0, 5.4, 3.6, 0.18)], [0.58, ZM(0.0, 1.0, 0.7, 3.3, 0.25)], [1, ZM(0.0, 1.0, 0.7, 3.1, 0.25)]],
+    s8: [[0, FW(0, 0.6, 5.6, 4.9, 0.15)], [1, FW(0, 0.6, 5.1, 4.9, 0.15)]],
     s9: [[0, FW(-0.2, 0, 7.0, 5.6, 0.12)], [1, FW(-0.2, 0, 6.7, 5.6, 0.12)]],
     s10: [[0, FW(BX, 0, 6.0, 5.4, 0.1)], [1, FW(BX, 0, 5.7, 5.4, 0.1)]],
     s11: [[0, FW(-0.3, 0, 7.4, 4.1, 0.15)], [1, FW(-0.3, 0, 7.1, 4.1, 0.15)]],
@@ -107,6 +107,10 @@
       for (let i = 0; i < 5; i++) { const d = new T.Mesh(new T.CylinderGeometry(0.11, 0.11, 0.07, 16), new T.MeshBasicMaterial({ color: '#fff3d6', depthTest: false, transparent: true })); d.renderOrder = 20; neck.add(d); nv.push(d); }
       const musc = [-1, 1].map(() => { const m = limb(0.035, new T.MeshBasicMaterial({ color: '#ff5f86', depthTest: false, transparent: true, opacity: 0.85 })); m.renderOrder = 19; neck.add(m); return m; });
       const handN = mkHand(1.5); scene.add(handN);
+      /* -- LIFT close-up (room, s8): big nana + dad's two hands under the armpits -- */
+      const bigN = CK.family(T, 'nana', { scale: 1.45 }); bigN.userData.base = 1.45; scene.add(bigN);
+      const sleeveM = M('#cfd3dd');
+      const liftH = [-1, 1].map((sd) => { const h = mkHand(1.15); const fa = limb(0.2, skin2); setLimb(fa, v(-0.35, 0, 0), v(-1.5, -0.45, 0)); h.add(fa); const sl = limb(0.3, sleeveM); setLimb(sl, v(-1.45, -0.43, 0), v(-3.8, -1.3, 0)); h.add(sl); scene.add(h); return h; });
       /* -- HIP (x=75): two lower-body skeletons, wrong (left) and M (right) -- */
       const hipModel = (x) => {
         const g = new T.Group(); g.position.set(x, 0, 0); scene.add(g);
@@ -156,7 +160,7 @@
       const hitL = new T.Mesh(new T.SphereGeometry(0.55, 18, 12), new T.MeshBasicMaterial({ color: '#ff3b5c', transparent: true, opacity: 0, depthWrite: false })); headB.add(hitL);
       const hitR = hitL.clone(); hitR.material = hitL.material.clone(); headB.add(hitR);
       const hearts = []; for (let i = 0; i < 8; i++) { const h = new T.Mesh(new T.SphereGeometry(0.13, 10, 8), M(i % 2 ? '#ff8fab' : '#ffc94d')); h.userData.s = [Math.sin(i * 7.1) * 2.2, (i * 0.37) % 1]; h.visible = false; scene.add(h); hearts.push(h); }
-      return { key, hemi, room, C, nb, wh, spine, vert, discs, spineGlow, lbars, Lk, bigW, nv, musc, handN, hipBad, hipOk, elb, fore, radG, lig, arrow, flash, headB, brain, bEyes, hitL, hitR, hearts };
+      return { key, hemi, room, C, nb, wh, bigN, liftH, spine, vert, discs, spineGlow, lbars, Lk, bigW, nv, musc, handN, hipBad, hipOk, elb, fore, radG, lig, arrow, flash, headB, brain, bEyes, hitL, hitR, hearts };
     },
     update(t, s, { camera }) {
       CAMR = camera; const bt = beatAt(t), C = s.C;
@@ -178,9 +182,6 @@
         def('dad', 0, 0, 'happy', { ry: 0.25, a1: [0.5, -0.9], a2: [0.55, -0.55] }); whOn = true;
       } else if (bt === 's7') {
         def('dad', 1.15, 0, 'worried', { y: -0.42, ry: -0.5, a1: [-1.0, -0.7] }); def('nana', -0.55, 0.35, 'cry', { ry: 0.25, a1: [0.75, -1.0], a2: [0.06, 0.05] });
-      } else if (bt === 's8') {
-        const p = ph('s8', t), up = U.easeIO(U.clamp((p - 0.2) / 0.5));
-        def('dad', 0.7, -0.1, 'happy', { y: -0.42, ry: -0.3, a1: [-0.42, -0.72], a2: [0.42, -0.72] }); def('nana', 0, 0.5, p > 0.5 ? 'giggle' : 'happy', { armpit: up, a1: [-0.9, 0], a2: [0.9, 0] });
       } else if (bt === 's9') {
         const p = ph('s9', t);
         def('lichi', 1.0, 0, 'giggle', { a1: [-2.5, 0.3], a2: [2.5, 0.3] }); def('mom', -1.9, 0.2, p > 0.35 ? 'worried' : 'happy', { ry: 0.45, a2: p > 0.35 ? [1.9, 0.6] : null });
@@ -188,9 +189,9 @@
       } else if (bt === 's11') {
         const p = ph('s11', t), q = SP('s11', 0.5), sq = U.easeIO(U.clamp((t - q) / 0.7));
         spineOn = U.clamp((p - 0.12) / 0.1);
-        def('dad', 1.35, -0.1, sq > 0.5 ? 'happy' : 'worried', { ry: -1.15, rx: U.lerp(0.55, 0.08, sq), y: -0.36 * sq, a1: [U.lerp(0.1, 0.25, sq), U.lerp(-0.6, -1.2, sq)], a2: [U.lerp(-0.1, -0.25, sq), U.lerp(-0.6, -1.2, sq)], bend: 1 - sq });
-        def('nana', U.lerp(0.05, 0.62, sq), U.lerp(0.25, 0.35, sq), 'happy', { ry: 0.6, y: U.lerp(0, 0.55, sq) });
-        if (t > q) def('chom', -2.55, 0.2, 'happy', { ry: 0.5, a1: [-0.9, -0.3], pop: U.clamp((t - q - 0.3) / 0.4) });
+        def('dad', 1.35, -0.1, sq > 0.5 ? 'happy' : 'worried', { ry: U.lerp(-1.15, -0.35, sq), rx: U.lerp(0.45, 0.04, sq), y: -0.36 * sq, a1: [U.lerp(0.1, -0.2, sq), U.lerp(-0.6, -0.2, sq)], a2: [U.lerp(-0.1, 0.4, sq), U.lerp(-0.6, -0.3, sq)], bend: 1 - sq, hug: sq });
+        def('nana', U.lerp(-1.25, -0.3, sq), U.lerp(0.35, 0.35, sq), sq > 0.5 ? 'giggle' : 'happy', { ry: U.lerp(0.6, 0.4, sq) });
+        if (t > q) def('chom', -2.75, -0.4, 'happy', { ry: 0.5, a1: [-0.9, -0.3], pop: U.clamp((t - q - 0.3) / 0.4) });
       } else if (bt === 's12' || bt === 's13') {
         def('mom', -1.9, -0.7, 'happy'); def('dad', 1.85, -0.7, 'happy', { ry: 0.2, a1: [0.5, -0.9], a2: [0.55, -0.55] }); whOn = true;
         def('nana', -1.4, 1.3, bt === 's13' ? 'giggle' : 'happy'); def('mama', 0.15, 1.35, 'giggle', { wave: bt === 's13' });
@@ -198,7 +199,7 @@
       for (const k of ROOM) {
         const g = C[k], q = st[k]; g.visible = !!q; if (!q) continue;
         g.position.set(q.x, q.y, q.z); g.rotation.set(q.rx, q.ry, q.rz);
-        g.userData.setExpr(q.ex); g.userData.tick(t, { wave: q.wave });
+        g.userData.setExpr(q.ex); g.userData.tick(t, { wave: q.wave }); g.userData.arm1.scale.y = 1; g.userData['arm-1'].scale.y = 1;
         if (q.a1) { g.userData['arm-1'].rotation.z = q.a1[0] + 0.04 * Math.sin(t * 3); g.userData['arm-1'].rotation.x = q.a1[1]; }
         if (q.a2) { g.userData.arm1.rotation.z = q.a2[0] + 0.04 * Math.sin(t * 3 + 1); g.userData.arm1.rotation.x = q.a2[1]; }
         if (q.hx) g.userData.head.rotation.x = q.hx;
@@ -212,18 +213,22 @@
         C.dad.updateMatrixWorld(true); n.updateMatrixWorld(true); const hd = new T.Vector3(), hn = new T.Vector3(); C.dad.userData['hand-1'].getWorldPosition(hd); n.userData.hand1.getWorldPosition(hn);
         n.position.add(hd.sub(hn)); n.position.z = 0.25;
       }
-      /* s8: dad's hands under nana's armpits */
-      if (st.nana && st.nana.armpit != null) {
-        const n = C.nana, k = st.nana.armpit; n.userData.arm1.rotation.z = 0.9; n.userData['arm-1'].rotation.z = -0.9;
-        C.dad.updateMatrixWorld(true); const a = new T.Vector3(), b = new T.Vector3(); C.dad.userData['hand-1'].getWorldPosition(a); C.dad.userData.hand1.getWorldPosition(b);
-        const mid = a.add(b).multiplyScalar(0.5); const chest = 0.62 * 0.8;
-        n.position.set(mid.x - 0.05, Math.max(0, U.lerp(0, mid.y - chest, k)), mid.z + 0.12);
-        if (k < 0.02) { n.position.y = 0; }
-      }
+      /* s8: big nana lifted by dad's hands under the armpits */
+      { const on = bt === 's8', g = s.bigN; g.visible = on; s.liftH.forEach((h) => (h.visible = on));
+        if (on) { const p = ph('s8', t), slide = U.easeOut(U.clamp((p - 0.05) / 0.15)), up = U.easeIO(U.clamp((p - 0.25) / 0.3)) * 0.85;
+          g.position.set(0, up + 0.04 * Math.sin(t * 3) * up, 0.6); g.rotation.set(0, 0, 0);
+          g.userData.setExpr(p > 0.4 ? 'giggle' : 'happy'); g.userData.tick(t, {}); g.userData.arm1.rotation.z = 1.35 + 0.1 * Math.sin(t * 4) * up; g.userData['arm-1'].rotation.z = -1.35 - 0.1 * Math.sin(t * 4 + 1) * up;
+          const ay = g.position.y + 0.8 * 1.45, half = 0.47 * 1.45;
+          s.liftH.forEach((h, i) => { const sd = i ? 1 : -1; h.position.set(sd * (half + 0.3 + 2.2 * (1 - slide)), ay + 0.05, 0.45); h.rotation.set(0.1, i ? PI : 0, 1.05); }); } }
       /* s9: wawa tossed */
       if (st.wawa && st.wawa.toss != null) { const p = st.wawa.toss, cyc = (p * 2.3) % 1, h = 4 * cyc * (1 - cyc); C.wawa.position.set(1.0, 3.55 + 1.2 * h, 0.35); C.wawa.rotation.z = 0.25 * Math.sin(p * 14); C.wawa.userData.arm1.rotation.z = 2.3; C.wawa.userData['arm-1'].rotation.z = -2.3; }
       /* s11: dad holding nana close after squat */
-      if (bt === 's11' && st.nana) { const p = ph('s11', t); C.nana.rotation.y = 0.6; if (st.nana.y > 0.2) { C.nana.userData.arm1.rotation.z = 0.9; C.nana.userData['arm-1'].rotation.z = -0.9; } void p; }
+      if (bt === 's11' && st.dad && st.dad.hug > 0.3) { /* dad's screen-left arm reaches around nana's near shoulder (simple aim IK, slight stretch) */
+        const d = C.dad, arm = d.userData['arm-1']; d.updateMatrixWorld(true); C.nana.updateMatrixWorld(true);
+        const sh = arm.getWorldPosition(new T.Vector3()), tg = C.nana.localToWorld(new T.Vector3(0.42, 0.85, -0.05));
+        const dir = tg.clone().sub(sh), dist = dir.length(); dir.applyQuaternion(d.quaternion.clone().invert()).normalize();
+        const k = U.clamp((st.dad.hug - 0.3) / 0.5); arm.rotation.set(U.lerp(arm.rotation.x, Math.atan2(-dir.z, -dir.y), k), 0, U.lerp(arm.rotation.z, Math.asin(U.clamp(dir.x, -1, 1)), k));
+        arm.scale.y = U.lerp(1, U.clamp(dist / (0.66 * d.scale.x), 1, 1.3), k); }
       /* newborn cradle */
       s.nb.visible = nbOn;
       if (nbOn) { s.nb.position.set(0.45, 0.78, 0.6); s.nb.rotation.set(-0.45, 0, PI / 2 - 0.32); s.nb.userData.setExpr(ph('s2', t) > 0.55 ? 'sleepy' : 'happy'); s.nb.userData.tick(t, { breath: 0.35 }); s.nb.userData.arm1.rotation.z = 0.9; s.nb.userData['arm-1'].rotation.z = -0.9; }
@@ -287,7 +292,7 @@
         s.hearts.forEach((h) => { const u = h.userData.s, a = (t - q - 0.4 - u[1] * 1.5) / 3.0; h.visible = inB('s10', t) && a > 0 && a < 1; if (!h.visible) return; h.position.set(BX + u[0], 3.2 + a * 2.6, 1.2); h.scale.setScalar(1 + Math.sin(t * 6 + u[0]) * 0.15); }); }
 
       VE.camAt(CAM, t, camera, 0.05);
-      window.__dbg = { s: { C, nb: s.nb, wh: s.wh, Lk: s.Lk, bigW: s.bigW }, camera };
+      window.__dbg = { s: { C, nb: s.nb, wh: s.wh, Lk: s.Lk, bigW: s.bigW, bigN: s.bigN, liftH: s.liftH }, camera };
     },
     bgAt: (t) => { const b = beatAt(t); if (['s3', 's5', 's6', 's10'].includes(b)) return ['#a8d8ff', '#e3f3ff']; if (b === 's7') return ['#3a3570', '#6a4a80']; return ['#ffd1e3', '#fff4e6']; },
     danger,
@@ -341,8 +346,8 @@
         L.forEach((s2, i) => { const a = U.clamp((t - TM('s7', i, 0.12 + i * 0.13)) / 0.35); if (a <= 0) return; const y = 400 + i * 86; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(122 + LD, y, 27, 0, 7); g.fillStyle = i === 3 ? '#ffd35e' : '#ff5f6d'; g.fill(); plain(String(i + 1), 122 + LD, y + 2, 32, i === 3 ? '#3a2f3f' : '#ffffff', 800, 'center'); plain(s2, 166 + LD, y + 2, Math.round(39 * LF), i === 3 ? '#ffd35e' : '#ffffff', i === 3 ? 700 : 600); g.restore(); });
         g.save(); g.globalAlpha = a0; plain('ที่มา: KidsHealth (Nemours), Kaiser Permanente', 540, 738, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
       }
-      /* s8: zoom on hands under armpits */
-      if (b === 's8') { const p = ph('s8', t), a = U.clamp((p - 0.5) / 0.1); if (a > 0) { const [x, y] = wp(C.nana, 0, 0.52, 0.3); ring(x, y, 190, a, '#5fd38d'); tag('มือสอดใต้รักแร้', x, y + 240, 44, a, '#c9f5d9'); } }
+      /* s8: rings on the two hands */
+      if (b === 's8') { const p = ph('s8', t), a = U.clamp((p - 0.3) / 0.1); if (a > 0) { S.liftH.forEach((h) => { const [x, y] = wp(h, 0, 0.1, 0); ring(x, y, 115, a, '#5fd38d'); }); tag('มือสอดใต้รักแร้ ทั้ง 2 ข้าง', 540, 1580, 44, a, '#c9f5d9'); } }
       /* s9: bubble */
       if (b === 's9') { const p = ph('s9', t); const [x, y] = wp(C.mom.userData.head, 0, 0.9); bubble('อย่าโยน!', x + 30, y - 60, U.clamp((p - 0.38) / 0.1)); }
       /* s10: brain labels */
