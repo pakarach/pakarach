@@ -12,7 +12,7 @@
   const ORDER = BEATS.map((b) => b[0]).filter((k) => k !== 'end');
   const beatAt = (t) => { for (const k of ORDER) if (t < end(k)) return k; return 's12'; };
   const FW = (cx, cz, width, top, tilt) => { tilt = tilt || 0.12; const k = 1080 / width, d = 960 / k / Math.tan(14.5 * PI / 180), yc = top - 130 / k; return { pos: [cx, yc + d * Math.sin(tilt), cz + d * Math.cos(tilt)], look: [cx, yc, cz], fov: 29 }; };
-  const CLOSE = { pos: [0, 6.6, 26], look: [0, 3.0, 0], fov: 29 };
+  const CLOSE = REEL ? { pos: [0, 6.1, 30.6], look: [0, 2.5, 0], fov: 29 } : { pos: [0, 6.6, 26], look: [0, 3.0, 0], fov: 29 };
 
   /* layout */
   const SEAT = [0.4, 0.6], SEAT_Y = 0.22;          // living-room foam seat
@@ -24,17 +24,17 @@
   const SH = {
     cover: [FW(0.4, 0.6, 3.5, 1.95, 0.35), FW(0.4, 0.6, 3.3, 1.95, 0.35)],
     s1: [FW(1.9, -0.6, 7.6, 3.95, 0.32), FW(1.9, -0.6, 7.3, 3.95, 0.32)],
-    s2: REEL ? [FW(60, 0, 7.8, 3.0, 0.1), FW(60, 0, 7.6, 3.0, 0.1)] : [FW(60, 0, 7.8, 4.05, 0.1), FW(60, 0, 7.6, 4.05, 0.1)],
-    s3: [FW(120.05, 0, 9.0, 2.8, 0.26), FW(120.05, 0, 8.8, 2.8, 0.26)],
+    s2: REEL ? [FW(60.3, 0, 9.4, 2.3, 0.1), FW(60.3, 0, 9.2, 2.3, 0.1)] : [FW(60, 0, 7.8, 4.05, 0.1), FW(60, 0, 7.6, 4.05, 0.1)],
+    s3: REEL ? [FW(120.2, 0, 10.4, 2.8, 0.26), FW(120.2, 0, 10.2, 2.8, 0.26)] : [FW(120.05, 0, 9.0, 2.8, 0.26), FW(120.05, 0, 8.8, 2.8, 0.26)],
     s4: [FW(-61.0, -0.2, 6.6, 3.95, 0.3), FW(-61.0, -0.2, 6.3, 3.95, 0.3)],
     s5: [FW(-61.0, 0, 6.6, 3.5, 0.35), FW(-61.0, 0, 6.4, 3.5, 0.35)],
-    s6: REEL ? [FW(-119.7, 0, 11.4, 3.5, 0.25), FW(-119.7, 0, 11.2, 3.5, 0.25)] : [FW(-120, 0, 10.6, 3.5, 0.25), FW(-120, 0, 10.3, 3.5, 0.25)],
-    s7: [FW(-120, 0, 10.6, 3.2, 0.25), FW(-120, 0, 10.4, 3.2, 0.25)],
+    s6: REEL ? [FW(-119.55, 0, 12.2, 2.5, 0.25), FW(-119.55, 0, 12.0, 2.5, 0.25)] : [FW(-120, 0, 10.6, 3.5, 0.25), FW(-120, 0, 10.3, 3.5, 0.25)],
+    s7: REEL ? [FW(-119.55, 0, 12.0, 2.5, 0.25), FW(-119.55, 0, 11.8, 2.5, 0.25)] : [FW(-120, 0, 10.6, 3.2, 0.25), FW(-120, 0, 10.4, 3.2, 0.25)],
     s8: [FW(179.8, -0.2, 5.8, 4.1, 0.3), FW(179.8, -0.2, 5.6, 4.1, 0.3)],
     s9: [FW(-0.4, 0.4, 5.8, 3.45, 0.35), FW(-0.4, 0.4, 5.6, 3.45, 0.35)],
-    s10: [FW(1.0, 0.4, 5.8, 3.6, 0.35), FW(1.0, 0.4, 5.6, 3.6, 0.35)],
+    s10: REEL ? [FW(1.0, 0.4, 6.0, 2.4, 0.35), FW(1.0, 0.4, 5.8, 2.4, 0.35)] : [FW(1.0, 0.4, 5.8, 3.6, 0.35), FW(1.0, 0.4, 5.6, 3.6, 0.35)],
     s11: [CLOSE, CLOSE],
-    s12: [CLOSE, { pos: [0, 6.3, 24], look: [0, 3.0, 0], fov: 29 }],
+    s12: [CLOSE, REEL ? { pos: [0, 5.9, 28.6], look: [0, 2.5, 0], fov: 29 } : { pos: [0, 6.3, 24], look: [0, 3.0, 0], fov: 29 }],
   };
   const CUT = new Set(['s2', 's3', 's4', 's6', 's8', 's9']);
   const CAM = [];
@@ -285,7 +285,7 @@
       /* s6: lineup labels */
       if (b === 's6') {
         const p = ph('s6', t);
-        ['โฟม', 'เป่าลม', 'มีถาดของเล่น', 'เก้าอี้กินข้าว'].forEach((l, i) => { const a = U.clamp((p - 0.08 - i * 0.06) / 0.06); if (a <= 0) return; const [x, y] = proj(new T.Vector3(SHOWX[i], 0, 1.15)); g.save(); g.globalAlpha = a; g.beginPath(); g.arc(x, y + 34, 24, 0, TAU); g.fillStyle = i < 3 ? '#ff6f91' : '#2fbf8f'; g.fill(); plain(String(i + 1), x, y + 36, 30, '#ffffff', 800, 'center'); plain(l, x, y + 88, 32, '#3a2f3f', 800, 'center'); g.restore(); });
+        ['โฟม', 'เป่าลม', 'มีถาดของเล่น', 'เก้าอี้กินข้าว'].forEach((l, i) => { const a = U.clamp((t - TM('s6', i, 0.08 + i * 0.06)) / 0.3); if (a <= 0) return; const [x, y] = proj(new T.Vector3(SHOWX[i], 0, 1.15)); g.save(); g.globalAlpha = a; g.beginPath(); g.arc(x, y + 34, 24, 0, TAU); g.fillStyle = i < 3 ? '#ff6f91' : '#2fbf8f'; g.fill(); plain(String(i + 1), x, y + 36, 30, '#ffffff', 800, 'center'); plain(l, x, y + 88, 32, '#3a2f3f', 800, 'center'); g.restore(); });
       }
       /* s7: checklist */
       if (b === 's7') {
@@ -341,7 +341,7 @@
       [at('s3') + 0.5, 'pop'], [P('s3', 0.13), 'pop'], [P('s3', 0.2), 'pop'], [P('s3', 0.27), 'pop'], [P('s3', 0.34), 'ding'], [SP('s3', 0.52) + 0.3, 'whoosh'], [SP('s3', 0.52) + 0.7, 'warn'],
       [at('s4') + 0.3, 'heartbeat'], [P('s4', 0.35), 'warn'], [P('s4', 0.5), 'heartbeat'], [P('s4', 0.66), 'whoosh'], [P('s4', 0.8), 'thud'],
       [at('s5') + 0.3, 'heartbeat'], [TM('s5', 0, 0.1), 'tick'], [TM('s5', 1, 0.2), 'tick'], [TM('s5', 2, 0.3), 'tick'], [TM('s5', 3, 0.4), 'tick'], [TM('s5', 4, 0.5), 'tick'],
-      [at('s6') + 0.3, 'twinkle'], [P('s6', 0.1), 'pop'], [P('s6', 0.16), 'pop'], [P('s6', 0.22), 'pop'], [P('s6', 0.28), 'pop'], [SP('s6', 0.48), 'ding'],
+      [at('s6') + 0.3, 'twinkle'], [TM('s6', 0, 0.1), 'pop'], [TM('s6', 1, 0.16), 'pop'], [TM('s6', 2, 0.22), 'pop'], [TM('s6', 3, 0.28), 'pop'], [SP('s6', 0.48), 'ding'],
       [TM('s7', 0, 0.1), 'ding'], [TM('s7', 1, 0.23), 'tick'], [TM('s7', 2, 0.36), 'tick'], [TM('s7', 3, 0.49), 'tick'], [TM('s7', 4, 0.62), 'tick'],
       [at('s8') + 0.3, 'giggle'], [at('s8') + 0.6, 'riser'], [SP('s8', 0.5), 'pop'], [SP('s8', 0.5) + 0.3, 'ding'],
       [at('s9') + 0.3, 'twinkle'], [SP('s9', 0.5), 'pop'],
