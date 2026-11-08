@@ -30,7 +30,7 @@
   };
   const CUT = new Set(['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8', 's9', 's10']);
   const CAM = [];
-  for (const id of ORDER) { const [f, to] = SH[id], t0 = at(id), t1 = end(id); CAM.push(Object.assign({ t: t0 }, f)); CAM.push(Object.assign({ t: t1 }, to)); }
+  for (const id of ORDER) { const [f, to] = SH[id], t0 = at(id), t1 = end(id); CAM.push(Object.assign({ t: t0 }, f)); if (id === 's4') { CAM.push(Object.assign({ t: SP('s4', 0.5) - 0.3 }, f)); CAM.push(Object.assign({ t: Math.min(t1, SP('s4', 0.5) + 1.5) }, to)); } CAM.push(Object.assign({ t: t1 }, to)); }
   const trans = [...CUT].map((id) => ({ t: at(id) - 0.3, dur: 0.6, type: 'iris', color: '#ffe8f0' }));
   const danger = (t) => U.clamp((t - at('s5') - 0.2) / 0.6) * U.clamp((end('s5') - t) / 0.35);
 
