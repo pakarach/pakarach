@@ -41,9 +41,9 @@
   const dots = (base, dot, rep) => { const t = ctex(256, 256, (x) => { x.fillStyle = base; x.fillRect(0, 0, 256, 256); x.fillStyle = dot; for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { x.beginPath(); x.arc(32 + i * 64 + (j % 2) * 32, 32 + j * 64, 12, 0, 7); x.fill(); } }); if (rep) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(rep[0], rep[1]); } return t; };
   const nightTex = () => ctex(256, 256, (x) => { const g = x.createLinearGradient(0, 0, 0, 256); g.addColorStop(0, '#3d4bb0'); g.addColorStop(1, '#8e86e6'); x.fillStyle = g; x.fillRect(0, 0, 256, 256); x.fillStyle = '#fff3b0'; x.beginPath(); x.arc(170, 80, 40, 0, 7); x.fill(); x.fillStyle = '#4a55b8'; x.beginPath(); x.arc(188, 68, 36, 0, 7); x.fill(); x.fillStyle = '#ffffff'; for (const [a, b, r] of [[40, 50, 4], [90, 30, 3], [60, 120, 3], [120, 90, 4], [220, 160, 3], [30, 190, 3]]) { x.beginPath(); x.arc(a, b, r, 0, 7); x.fill(); } });
 
-  /* supporting cast (fruit names): น้องมังคุด 5 ขวบ, ยายลองกอง */
+  /* supporting cast (fruit names): น้องมะปราง 5 ขวบ, ยายลองกอง */
   const CAST = {
-    mangkut: () => CK.chibi(T, { bangs: 'short', backLen: 1.75, sideOpen: 1.15, ears: true, hair: '#2e2420', top: '#ff9a62', bottom: '#2fae8f', skin: CK.pal.skin[2], scale: 1.0 }),
+    maprang: () => CK.chibi(T, { bangs: 'short', backLen: 1.75, sideOpen: 1.15, ears: true, hair: '#2e2420', top: '#ff9a62', bottom: '#2fae8f', skin: CK.pal.skin[2], scale: 1.0 }),
     yai: () => CK.chibi(T, { hairStyle: 'bob', hair: '#d9d6e0', top: '#b07ad8', bottom: '#c0587a', skin: CK.pal.skin[1], longSleeve: true, brow: '#9a93a8', scale: 1.3 }),
     newborn: () => CK.chibi(T, { bangs: 'baby', hair: '#c79a70', capLen: 0.9, backLen: 1.4, round: true, eyeScale: 1.05, top: '#fff3c4', bottom: '#fff3c4', shoes: '#fff3c4', longSleeve: true, scale: 0.5 }),
   };
@@ -109,11 +109,11 @@
       for (let i = 0; i < 14; i++) { const p = new T.Mesh(new T.SphereGeometry(0.07, 6, 5), M('#b07a45')); const a = i * 2.4, r = 0.3 + (i % 4) * 0.12; p.position.set(YX + 3.0 + Math.cos(a) * r, 0.3 + (i % 3) * 0.06, -1.3 + Math.sin(a) * r * 0.8); scene.add(p); }
       const ants = []; for (let i = 0; i < 9; i++) ants.push(ant());
       const Y = {
-        mama: prep(bare(CK.family(T, 'mama'), SK)), hat: prep(CK.family(T, 'mama', { hat: '#ffd23f' })), mangkut: prep(bare(CAST.mangkut(), CK.pal.skin[2])),
+        mama: prep(bare(CK.family(T, 'mama'), SK)), hat: prep(CK.family(T, 'mama', { hat: '#ffd23f' })), maprang: prep(bare(CAST.maprang(), CK.pal.skin[2])),
         yai: prep(CAST.yai()), mom: prep(CK.family(T, 'mom')), dad: prep(CK.family(T, 'dad')), nana: prep(CK.family(T, 'nana')),
       };
       const bumpY = new T.Mesh(new T.SphereGeometry(0.05, 10, 8), M('#ff4d6d')); bumpY.position.set(0.02, 0.04, 0.12); Y.mama.userData.legs[0].add(bumpY);
-      const pusY = new T.Mesh(new T.SphereGeometry(0.045, 10, 8), M('#fffbe6')); pusY.position.set(-0.02, 0.03, 0.12); Y.mangkut.userData.legs[1].add(pusY);
+      const pusY = new T.Mesh(new T.SphereGeometry(0.045, 10, 8), M('#fffbe6')); pusY.position.set(-0.02, 0.03, 0.12); Y.maprang.userData.legs[1].add(pusY);
       Y.lime = hold(Y.yai, 'hand1', lime()); Y.lime.scale.setScalar(1.5);
       Y.paste = hold(Y.yai, 'hand-1', tube('#4fb3ff')); Y.paste.scale.setScalar(1.2);
       Y.lotion = hold(Y.mom, 'hand-1', bottle('#ffffff', '#ff8fab', 0.12, 0.42), 0, -0.2);
@@ -190,15 +190,15 @@
 
       /* ---------- yard ---------- */
       const YX = -60, MX = YX + 3.0, MZ = -1.3;
-      s.yMos.visible = false; s.Y.mama.userData.legs[0].children.forEach((c) => (c.visible = false)); s.Y.mangkut.userData.legs[1].children.forEach((c) => (c.visible = false));
+      s.yMos.visible = false; s.Y.mama.userData.legs[0].children.forEach((c) => (c.visible = false)); s.Y.maprang.userData.legs[1].children.forEach((c) => (c.visible = false));
       let antOut = 0;
       if (bt === 's1') {
         const p = ph('s1', t), q = SP('s1', 0.5), land = U.clamp((p - 0.1) / 0.12), leave = U.clamp((p - 0.3) / 0.1);
         const bitten = p > 0.24, a2 = U.clamp((t - q) / 1.2);
         pose(Y.mama, YX - 1.6, 0.6, { ex: bitten ? 'worried' : 'happy', ry: 0.3, y: bitten ? 0 : bob(5, 0.06) }); if (bitten && t < q) scratch(Y.mama);
         s.Y.mama.userData.legs[0].children.forEach((c) => (c.visible = bitten));
-        pose(Y.mangkut, YX + 1.4, 0.6, { ex: a2 > 0.6 ? 'cry' : 'happy', ry: -0.3, y: t < q ? bob(5, 0.08) : 0 });
-        s.Y.mangkut.userData.legs[1].children.forEach((c) => (c.visible = a2 > 0.85));
+        pose(Y.maprang, YX + 1.4, 0.6, { ex: a2 > 0.6 ? 'cry' : 'happy', ry: -0.3, y: t < q ? bob(5, 0.08) : 0 });
+        s.Y.maprang.userData.legs[1].children.forEach((c) => (c.visible = a2 > 0.85));
         const m = s.yMos; m.visible = leave < 1; s.flap(m, t);
         const lp = new T.Vector3(YX - 1.55, 0.25, 1.05), st = new T.Vector3(YX - 4.5, 2.6, 1.5), en = new T.Vector3(YX + 1.0, 3.2, 1.0);
         if (leave <= 0) m.position.lerpVectors(st, lp, U.easeIO(land)); else m.position.lerpVectors(lp, en, U.easeIO(leave));
@@ -210,9 +210,9 @@
         Y.lime.visible = !b2; Y.paste.visible = !b2;
         pose(Y.mama, YX - 0.2, 0.6, { y: 0.38, ex: b2 ? 'happy' : 'worried', ry: b2 ? 0.2 : -0.35 });
         const pick = U.clamp((t - q) / 0.6), stop = U.clamp((t - q - 1.0) / 0.5);
-        pose(Y.mangkut, YX + 1.6, 0.6, { ex: stop > 0.5 ? 'worried' : 'happy', ry: -0.2, lean: 0.25 * pick * (1 - stop) });
-        Y.mangkut.userData.legs[1].children.forEach((c) => (c.visible = true));
-        if (b2) reach(Y.mangkut, 'arm1', 0.2 * (1 - stop) + 0.4 * stop, -0.6 * pick * (1 - stop));
+        pose(Y.maprang, YX + 1.6, 0.6, { ex: stop > 0.5 ? 'worried' : 'happy', ry: -0.2, lean: 0.25 * pick * (1 - stop) });
+        Y.maprang.userData.legs[1].children.forEach((c) => (c.visible = true));
+        if (b2) reach(Y.maprang, 'arm1', 0.2 * (1 - stop) + 0.4 * stop, -0.6 * pick * (1 - stop));
         pose(Y.mom, YX + 3.6, 0.1, { ex: stop > 0.2 ? 'worried' : 'happy', ry: -0.5 }); if (b2) reach(Y.mom, 'arm-1', -1.2 * stop, -0.9 * stop);
       } else if (bt === 's7') {
         pose(Y.hat, YX - 0.95, 0.6, { ex: 'giggle', ry: 0.35, y: bob(4, 0.05) });
@@ -306,7 +306,7 @@
       if (b === 's1') {
         const p = ph('s1', t), q = SP('s1', 0.5);
         if (t < q) { const a = U.clamp((p - 0.28) / 0.06) * U.clamp((q - t) / 0.25); mag(540, 1060, 120, 'bump', a, legPt(S.Y.mama, 0), '#3d86e8'); }
-        else { const a = U.clamp((t - q - 1.0) / 0.3) * U.clamp((end('s1') - t) / 0.2); mag(540, 1060, 120, 'pus', a, legPt(S.Y.mangkut, 1), '#2fae8f'); }
+        else { const a = U.clamp((t - q - 1.0) / 0.3) * U.clamp((end('s1') - t) / 0.2); mag(540, 1060, 120, 'pus', a, legPt(S.Y.maprang, 1), '#2fae8f'); }
       }
       /* s2 labels */
       if (b === 's2') {
