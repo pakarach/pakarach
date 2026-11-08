@@ -5,7 +5,7 @@
   const BEATS = [['cover', 2.2], ['s1', 6.5], ['s2', 6], ['s3', 7], ['s4', 7.5], ['s5', 8], ['s6', 7], ['s7', 7.5], ['s8', 7.5], ['s9', 7], ['s10', 7.5], ['s11', 7], ['s12', 5], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
-  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1;
+  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1, PY = REEL ? 30 : 0, CX9 = (x) => REEL ? Math.min(x, 850) : x;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -21,15 +21,15 @@
     s1: [FW(1.5, -1.0, 6.6, 3.0, 0.14), FW(1.5, -1.0, 6.3, 3.0, 0.14)],
     s2: [FW(60, -0.4, 10.5, 3.5, 0.3), FW(60, -0.4, 10.1, 3.5, 0.3)],
     s3: REEL ? [FW(72, 0, 6.6, 2.4, 0.1), FW(72, 0, 6.4, 2.4, 0.1)] : [FW(72, 0, 6.6, 3.4, 0.1), FW(72, 0, 6.4, 3.4, 0.1)],
-    s4: [FW(0.1, 0, 7.4, 3.9, 0.14), FW(0.1, 0, 7.1, 3.9, 0.14)],
+    s4: [FW(0.1, 0, 7.4, REEL ? 3.4 : 3.9, 0.14), FW(0.1, 0, 7.1, REEL ? 3.4 : 3.9, 0.14)],
     s5: [FW(-62.3, -1.5, 4.6, 2.5, 0.55), FW(-62.3, -1.5, 4.4, 2.5, 0.55)],
     s6: [FW(-58.9, -0.1, 5.4, 3.9, 0.16), FW(-58.9, -0.1, 5.2, 3.9, 0.16)],
     s7: [FW(-57.5, -0.2, 5.2, 3.0, 0.2), FW(-57.5, -0.2, 5.0, 3.0, 0.2)],
     s8: [FW(0.6, -0.3, 8.2, 3.9, 0.14), FW(0.6, -0.3, 7.9, 3.9, 0.14)],
-    s9: [FW(119.6, 0, 5.4, 3.9, 0.18), FW(119.6, 0, 5.1, 3.9, 0.18)],
+    s9: [FW(119.6, 0, 5.4, REEL ? 3.1 : 3.9, 0.18), FW(119.6, 0, 5.1, REEL ? 3.1 : 3.9, 0.18)],
     s10: [FW(119.6, 0, 5.6, 2.3, 0.45), FW(119.6, 0, 5.4, 2.3, 0.45)],
     s11: [FW(-0.4, 0, 7.4, 2.0, 0.55), FW(-0.4, 0, 7.1, 2.0, 0.55)],
-    s12: [CLOSE, { pos: [0, 6.3, 24.5], look: [0, 3.0, 0], fov: 29 }],
+    s12: REEL ? [{ pos: [0, 5.9, 26], look: [0, 2.3, 0], fov: 29 }, { pos: [0, 5.6, 24.5], look: [0, 2.3, 0], fov: 29 }] : [CLOSE, { pos: [0, 6.3, 24.5], look: [0, 3.0, 0], fov: 29 }],
   };
   const CUT = new Set(['s1', 's2', 's4', 's5', 's6', 's8', 's9', 's11']);
   const CAM = [];
@@ -264,43 +264,43 @@
       /* cover: question marks */
       if (b === 'cover') { const [x, y] = wp(S.L.mom.userData.head, 1.15); for (let i = 0; i < 3; i++) { const a = ((t * 0.7 + i / 3) % 1); g.save(); g.globalAlpha = Math.sin(a * PI); txt('?', x - 70 + i * 70, y - a * 70, 56 + i * 6, '#ffd35e', 800); g.restore(); } }
       /* s1: three weather badges + sweat / shiver */
-      if (b === 's1') { const p = ph('s1', t), cur = p < 0.36 ? 0 : p < 0.68 ? 1 : 2; [['06:00 เย็น', '#8fc9ff'], ['14:00 ร้อน', '#ff9a62'], ['17:00 ฝน', '#9fa8c8']].forEach(([s2, c], i) => { const a = U.clamp((p - [0.04, 0.36, 0.68][i]) / 0.06); if (a <= 0) return; const x = 210 + i * 330; g.save(); g.globalAlpha = a; rr(x - 150, 520, 300, 84, 42, i === cur ? c : 'rgba(255,255,255,.85)', i === cur ? '#ffffff' : c); plain(s2, x, 564, 40, i === cur ? '#ffffff' : '#3a2f3f', 800, 'center'); g.restore(); });
+      if (b === 's1') { const p = ph('s1', t), cur = p < 0.36 ? 0 : p < 0.68 ? 1 : 2; [['06:00 เย็น', '#8fc9ff'], ['14:00 ร้อน', '#ff9a62'], ['17:00 ฝน', '#9fa8c8']].forEach(([s2, c], i) => { const a = U.clamp((p - [0.04, 0.36, 0.68][i]) / 0.06); if (a <= 0) return; const x = REEL ? 250 + i * 290 : 210 + i * 330, bw = REEL ? 270 : 300; g.save(); g.globalAlpha = a; rr(x - bw / 2, 520, bw, 84, 42, i === cur ? c : 'rgba(255,255,255,.85)', i === cur ? '#ffffff' : c); plain(s2, x, 564, REEL ? 36 : 40, i === cur ? '#ffffff' : '#3a2f3f', 800, 'center'); g.restore(); });
         const [hx, hy] = wp(S.L.mamaP.userData.head, 0.2); if (cur === 1) for (let i = 0; i < 3; i++) { const a = ((t * 0.9 + i / 3) % 1); g.save(); g.globalAlpha = Math.sin(a * PI); g.fillStyle = '#5ab8ff'; g.beginPath(); const x = hx + (i - 1) * 70, y = hy - 40 + a * 60; g.moveTo(x, y - 18); g.quadraticCurveTo(x + 13, y + 4, x, y + 10); g.quadraticCurveTo(x - 13, y + 4, x, y - 18); g.fill(); g.restore(); }
         if (cur === 0) { g.save(); g.globalAlpha = 0.9; txt('บรื๋อ~', hx + 120, hy - 70, 40, '#ffffff', 800); g.restore(); } }
       /* s2: labels */
       if (b === 's2') { const p = ph('s2', t), u = U.clamp((p - 0.08) / 0.85), w = 0.5 - 0.5 * Math.cos(u * TAU * 2); const [x, y] = proj(new T.Vector3(60 - 3.7 + 2.0 * w, 4.3 - 0.6 * w, -0.6)); txt('ลมเย็นจากจีน', Math.max(190, x), y, 40, '#ffffff', 800); const wave = u < 0.5 ? 1 : 2; if (w > 0.6) { const [hx, hy] = proj(new T.Vector3(62.2, 2.6, -0.8)); tag('ระลอก ' + wave, hx, hy, U.clamp((w - 0.6) / 0.2), '#5ab8ff', '#ffffff', 38); } }
       /* s3: thermometer labels */
-      if (b === 's3') { const p = ph('s3', t), kb = U.easeOut(U.clamp((p - 0.1) / 0.35)); [[70.6, 'กทม.', [19, 21]], [73.4, 'เหนือ/อีสานบน', [10, 12]]].forEach(([x0, nm, [lo, hi]], i) => { const th = (i ? 11 : 20); let [x, y] = proj(new T.Vector3(x0, 0.6 + (th / 32) * 2.55 * kb, 0)); if (kb > 0.05) txt(Math.round(lo * kb) + '–' + Math.round(hi * kb) + '°C', x + (i ? 0 : 0), y - 50, 54, i ? '#5ab8ff' : '#ff8f5a', 800); [x, y] = proj(new T.Vector3(x0, 0.55, 0.6)); txt(nm, x, y + 150, 42, '#ffffff', 800); }); }
+      if (b === 's3') { const p = ph('s3', t), kb = U.easeOut(U.clamp((p - 0.1) / 0.35)); [[70.6, 'กทม.', [19, 21]], [73.4, 'เหนือ/อีสานบน', [10, 12]]].forEach(([x0, nm, [lo, hi]], i) => { const th = (i ? 11 : 20); let [x, y] = proj(new T.Vector3(x0, 0.6 + (th / 32) * 2.55 * kb, 0)); if (kb > 0.05) txt(Math.round(lo * kb) + '–' + Math.round(hi * kb) + '°C', x + (i ? 0 : 0), y - 50, 54, i ? '#5ab8ff' : '#ff8f5a', 800); [x, y] = proj(new T.Vector3(x0, 0.55, 0.6)); if (REEL) { const [, ny] = proj(new T.Vector3(x0, 0.6 + (th / 32) * 2.55 * kb, 0)); txt(nm, x, ny - 120, 38, '#ffffff', 800); } else txt(nm, x, y + 150, 42, '#ffffff', 800); }); }
       /* s4: layer badges */
       if (b === 's4' && t > SP('s4', 0.5)) { const a = U.clamp((t - SP('s4', 0.5) - 0.3) / 0.4); let [x, y] = wp(S.L.dadJ.userData.head, 1.1); tag('ผู้ใหญ่ 2 ชั้น', x - 20, y - 20, a, '#ffffff', null, 34); [x, y] = wp(S.L.nana.userData.head, 1.0); tag('เด็กเล็ก 3 ชั้น', x + 30, y - 20, a, '#ffd35e', '#3a2f3f', 34); }
       /* s5: room temp + TOG table */
       if (b === 's5') { const q = SP('s5', 0.5); if (t > q) { const a = U.clamp((t - q - 0.1) / 0.3); g.save(); g.globalAlpha = a; rr(80 + LD, 390, 920 - 2 * LD, 300, 30, 'rgba(255,255,255,.9)', '#b39dff'); [['ห้อง 24°C ขึ้นไป', '0.5 TOG (บาง)'], ['ห้อง 20–24°C', '1.0 TOG (กลาง)']].forEach(([l, r], i) => { const yy = 455 + i * 84, ai = U.clamp((t - (MK.s5 ? TM('s5', i, 0) : q + 0.3 + i * 0.6)) / 0.3); g.globalAlpha = a * ai; plain(l, 130 + LD, yy, Math.round(42 * LF), '#3a2f3f', 700); plain('→ ' + r, 950 - LD, yy, Math.round(42 * LF), '#7b5cff', 800, 'right'); }); g.globalAlpha = a; plain('แนวทางทั่วไปของผู้ผลิต · จับต้นคอ อุ่นแต่ไม่มีเหงื่อ', 540, 640, Math.round(30 * LF), '#6a4a60', 600, 'center'); g.restore(); }
-        else { const [x, y] = proj(new T.Vector3(-60.9, 2.35, -4.2)); tag('23°C', x + 110, y, U.clamp((ph('s5', t) - 0.15) / 0.1), '#ffffff', null, 36); } }
+        else { const [x, y] = proj(new T.Vector3(-60.9, 2.35, -4.2)); tag('23°C', CX9(x + 110), y, U.clamp((ph('s5', t) - 0.15) / 0.1), '#ffffff', null, 36); } }
       /* s6: dry flakes */
       if (b === 's6' && t < at('s6') + 2.2) { const [x, y] = wp(S.R2.nana.userData.arm1, 0); for (let i = 0; i < 5; i++) { const a = ((t * 1.3 + i / 5) % 1); g.save(); g.globalAlpha = Math.sin(a * PI); g.fillStyle = '#ffffff'; g.fillRect(x + 20 + Math.sin(i * 2.7) * 30, y + 10 + a * 50, 8, 8); g.restore(); } }
-      if (b === 's6' && t > SP('s6', 0.5)) { const a = U.clamp((t - SP('s6', 0.5)) / 0.3); const [x, y] = proj(new T.Vector3(-56.9, 1.4, 0)); tag('5–10 นาที', x, y, a, '#5ab8ff', '#ffffff', 38); }
+      if (b === 's6' && t > SP('s6', 0.5)) { const a = U.clamp((t - SP('s6', 0.5)) / 0.3); const [x, y] = proj(new T.Vector3(-56.9, 1.4, 0)); tag('5–10 นาที', CX9(x), y, a, '#5ab8ff', '#ffffff', 38); }
       /* s7: prop labels */
-      if (b === 's7') { const p = ph('s7', t), q = SP('s7', 0.5); const lab = [['น้ำเกลือ', -57.0, 1.9, 0.45], ['ลูกยาง', -56.5, 1.75, 0.6], ['ปรอท', -56.1, 1.75, 0.75]]; if (t < q) lab.forEach(([s2, x0, y0, k0], i) => { const a = U.clamp((t - TM('s7', i, 0.15 + i * 0.08)) / 0.3); if (a <= 0) return; const [x, y] = proj(new T.Vector3(x0, y0, -0.1 + (i - 1) * 0.15)); tag(s2, x, y - 40 - (i % 2) * 70, a, '#ffffff', null, 30); }); else { const a = U.clamp((t - q) / 0.3); const [x, y] = proj(new T.Vector3(-55.95, 2.45, -0.65)); tag('ไอเย็น', x + 40, y - 70, a, '#3fc77a', '#ffffff', 36); mark(true, x - 100, y - 70, 30 * a + 0.1); } }
+      if (b === 's7') { const p = ph('s7', t), q = SP('s7', 0.5); const lab = [['น้ำเกลือ', -57.0, 1.9, 0.45], ['ลูกยาง', -56.5, 1.75, 0.6], ['ปรอท', -56.1, 1.75, 0.75]]; if (t < q) lab.forEach(([s2, x0, y0, k0], i) => { const a = U.clamp((t - TM('s7', i, 0.15 + i * 0.08)) / 0.3); if (a <= 0) return; const [x, y] = proj(new T.Vector3(x0, y0, -0.1 + (i - 1) * 0.15)); tag(s2, x, y - 40 - (i % 2) * 70, a, '#ffffff', null, 30); }); else { const a = U.clamp((t - q) / 0.3); const [x, y] = proj(new T.Vector3(-55.95, 2.45, -0.65)); tag('ไอเย็น', CX9(x + 40), y - 70, a, '#3fc77a', '#ffffff', 36); mark(true, CX9(x + 40) - 140, y - 70, 30 * a + 0.1); } }
       /* s8: PM label + no-mask */
       if (b === 's8') { const q = SP('s8', 0.5); const [x, y] = proj(new T.Vector3(3.4, 3.1, -4.2)); tag('PM2.5', x, y, U.clamp((ph('s8', t) - 0.1) / 0.1), '#b0895f', '#ffffff', 36); if (t > q) { const a = U.clamp((t - q - 0.2) / 0.3); const [wx, wy] = wp(S.L.wawa.userData.head, 0.75); tag('< 2 ขวบ ไม่ใส่หน้ากาก', wx + 40, wy - 30, a, '#ffffff', null, 30); const [px, py] = proj(new T.Vector3(-3.0, 1.9, -2.2)); tag('ฟอกอากาศ', px + 30, py - 20, a, '#3fc77a', '#ffffff', 30); } }
       /* s9: car seat marks */
-      if (b === 's9') { const q = SP('s9', 0.5), [x, y] = proj(new T.Vector3(121.6, 1.4, 0.3)); if (t < q + 0.4) { const a = U.clamp((t - at('s9') - 1.6) / 0.3); if (a > 0) { mark(false, x + 60, y - 30, 38 * U.easeBack(a)); const sq = U.clamp((t - at('s9') - 1.8) / 0.5); if (sq > 0.3) { g.save(); g.globalAlpha = sq; txt('สายหลวม!', Math.min(x + 60, 950), y - 110, 40, '#ff4d5e', 800); g.restore(); } } } else { const a = U.clamp((t - q - 0.9) / 0.3); mark(true, x + 60, y - 30, 38 * U.easeBack(a) + 0.1); } }
+      if (b === 's9') { const q = SP('s9', 0.5), [x, y] = proj(new T.Vector3(121.6, 1.4, 0.3)); if (t < q + 0.4) { const a = U.clamp((t - at('s9') - 1.6) / 0.3); if (a > 0) { mark(false, CX9(x + 60), y - (REEL ? 190 : 30), 38 * U.easeBack(a)); const sq = U.clamp((t - at('s9') - 1.8) / 0.5); if (sq > 0.3) { g.save(); g.globalAlpha = sq; txt('สายหลวม!', Math.min(x + 60, REEL ? 840 : 950), y - (REEL ? 265 : 110), 40, '#ff4d5e', 800); g.restore(); } } } else { const a = U.clamp((t - q - 0.9) / 0.3); mark(true, CX9(x + 60), y - (REEL ? 190 : 30), 38 * U.easeBack(a) + 0.1); } }
       /* s10: list */
       if (b === 's10') {
         const p = ph('s10', t), a0 = U.clamp((p - 0.04) / 0.08);
-        g.save(); g.globalAlpha = a0; rr(60 + LD, 330, 960 - 2 * LD, 500, 30, 'rgba(25,18,50,.66)', 'rgba(255,120,150,.9)'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(60 + LD, 330 + PY, 960 - 2 * LD, 500, 30, 'rgba(25,18,50,.66)', 'rgba(255,120,150,.9)'); g.restore();
         const LI = ['เสื้อพองหนา ใต้สายคาร์ซีท', 'ผ้าห่มหนา หมอน ตุ๊กตา ในเปลทารก', 'ฮีตเตอร์ / เครื่องทำไอร้อน ใกล้เตียง'];
-        LI.forEach((s2, i) => { const a = U.clamp((t - TM('s10', i, 0.1 + i * 0.11)) / 0.35); if (a <= 0) return; const y = 395 + i * 80; g.save(); g.globalAlpha = a; mark(false, 122 + LD, y, 24); plain(s2, 162 + LD, y + 2, Math.round(38 * LF), '#ffffff', 600); g.restore(); });
-        const a3 = U.clamp((t - TM('s10', 3, 0.48)) / 0.35); if (a3 > 0) { g.save(); g.globalAlpha = a3; rr(90 + LD, 620, 900 - 2 * LD, 150, 24, '#ff4d5e'); plain('ทารกผิวแดงและเย็น ซึม ไม่มีแรง', 540, 664, Math.round(38 * LF), '#ffffff', 700, 'center'); plain('รีบพาไป รพ. หรือโทร 1669', 540, 728, Math.round(44 * LF), '#ffd35e', 800, 'center'); g.restore(); }
-        g.save(); g.globalAlpha = a0; plain('ที่มา: AAP, CDC', 540, 800, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
+        LI.forEach((s2, i) => { const a = U.clamp((t - TM('s10', i, 0.1 + i * 0.11)) / 0.35); if (a <= 0) return; const y = 395 + PY + i * 80; g.save(); g.globalAlpha = a; mark(false, 122 + LD, y, 24); plain(s2, 162 + LD, y + 2, Math.round(38 * LF), '#ffffff', 600); g.restore(); });
+        const a3 = U.clamp((t - TM('s10', 3, 0.48)) / 0.35); if (a3 > 0) { g.save(); g.globalAlpha = a3; rr(90 + LD, 620 + PY, 900 - 2 * LD, 150, 24, '#ff4d5e'); plain('ทารกผิวแดงและเย็น ซึม ไม่มีแรง', 540, 664 + PY, Math.round(38 * LF), '#ffffff', 700, 'center'); plain('รีบพาไป รพ. หรือโทร 1669', 540, 728 + PY, Math.round(44 * LF), '#ffd35e', 800, 'center'); g.restore(); }
+        g.save(); g.globalAlpha = a0; plain('ที่มา: AAP, CDC', 540, 800 + PY, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
       }
       /* s11: checklist */
       if (b === 's11') {
         const p = ph('s11', t), a0 = U.clamp((p - 0.04) / 0.06);
-        g.save(); g.globalAlpha = a0; rr(60 + LD, 320, 960 - 2 * LD, 455, 30, 'rgba(255,255,255,.88)', '#ff8fab'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(60 + LD, 320 + PY, 960 - 2 * LD, 455, 30, 'rgba(255,255,255,.88)', '#ff8fab'); g.restore();
         const LI = ['เสื้อคลุมบาง (ลูกถอดเองได้)', 'กระติกน้ำ', 'ลิปบาล์ม', 'หน้ากากกันฝุ่น (2 ขวบขึ้นไป)', 'เสื้อกันฝน หรือร่มพับ'];
         let cur = -1; for (let i = 0; i < 5; i++) if (t >= TM('s11', i, 0.1 + i * 0.16)) cur = i;
-        LI.forEach((s2, i) => { const a = U.clamp((t - TM('s11', i, 0.1 + i * 0.16)) / 0.3); if (a <= 0) return; const y = 380 + i * 84; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84 + LD, y - 36, 912 - 2 * LD, 72, 36, '#ffd6e4'); mark(true, 130 + LD, y, 26); plain(s2, 176 + LD, y + 2, Math.round(38 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
+        LI.forEach((s2, i) => { const a = U.clamp((t - TM('s11', i, 0.1 + i * 0.16)) / 0.3); if (a <= 0) return; const y = 380 + PY + i * 84; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84 + LD, y - 36, 912 - 2 * LD, 72, 36, '#ffd6e4'); mark(true, 130 + LD, y, 26); plain(s2, 176 + LD, y + 2, Math.round(38 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
       }
     },
     caps: [
@@ -321,8 +321,8 @@
       { t0: SP('s8', 0.5) + 0.02, t1: end('s8') - 0.05, y: 290, lines: [[54, ['ต่ำกว่า 2 ขวบ ไม่ควรใส่หน้ากาก', '#fff']], [44, ['อยู่ห้องปิด เปิดเครื่องฟอกอากาศแทน', '#ffe3ea', 600]]], foot: 'ที่มา: AAP, กระทรวงสาธารณสุข' },
       { t0: at('s9') + 0.2, t1: SP('s9', 0.5), y: 290, lines: [[56, ['เสื้อพองหนา ใต้สายคาร์ซีท', '#fff']], [46, ['ชนแล้วเสื้อยุบ สายหลวม หลุดได้', '#ffe3ea', 600]]] },
       { t0: SP('s9', 0.5) + 0.02, t1: end('s9') - 0.05, y: 290, lines: [[56, ['ถอดเสื้อพอง รัดสายให้แน่น', '#ffd35e']], [46, ['แล้วค่อยห่มเสื้อหรือผ้าทับ', '#fff', 600]]], foot: 'ที่มา: AAP "Buckle, don\'t bundle"' },
-      { t0: at('s10') + 0.2, t1: end('s10') - 0.05, y: 250, lines: [[60, ['ระวัง! ของที่ไม่ควรใช้', '#ffd35e']]] },
-      { t0: at('s11') + 0.2, t1: end('s11') - 0.05, y: 250, lines: [[60, ['เช็กลิสต์ กระเป๋าไปโรงเรียน', '#ffd35e']]] },
+      { t0: at('s10') + 0.2, t1: end('s10') - 0.05, y: REEL ? 295 : 250, lines: [[60, ['ระวัง! ของที่ไม่ควรใช้', '#ffd35e']]] },
+      { t0: at('s11') + 0.2, t1: end('s11') - 0.05, y: REEL ? 295 : 250, lines: [[60, ['เช็กลิสต์ กระเป๋าไปโรงเรียน', '#ffd35e']]] },
       { t0: at('s12') + 0.2, t1: end('s12'), y: 290, lines: [[60, ['หนาวมาวันไหน ก็ไม่หวั่น', '#fff']], [42, ['ของใช้หน้าหนาวชิ้นไหน ที่ลูกคุณขาดไม่ได้?', '#ffe3ea', 600]]], foot: 'ข้อมูล: กรมอุตุฯ 2569, AAP, AAD, CDC' },
     ],
     trans,
