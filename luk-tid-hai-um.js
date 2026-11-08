@@ -16,18 +16,18 @@
   const LX = -60, NX = 60, RX = 120;
   const R1 = REEL ? 1 : 0;
   const SH = {
-    cover: [[0, FW(-0.3, 0, 6.2, 4.1, 0.18)], [1, FW(-0.3, 0, 5.9, 4.1, 0.18)]],
+    cover: [[0, FW(-0.3, 0, 6.2, 4.1 - 0.6 * R1, 0.18)], [1, FW(-0.3, 0, 5.9, 4.1 - 0.6 * R1, 0.18)]],
     s1: [[0, FW(-0.2, 0, 6.8, 4.25, 0.14)], [1, FW(-0.2, 0, 6.5, 4.25, 0.14)]],
-    s2: [[0, FW(LX, 0, 7.4, 5.1 - 0.8 * R1, 0.12)], [1, FW(LX, 0, 7.1, 5.1 - 0.8 * R1, 0.12)]],
-    s3: [[0, FW(NX, 0, 6.6, 5.3, 0.12)], [1, FW(NX, 0, 6.3, 5.3, 0.12)]],
-    s4: [[0, FW(RX, 0, 8.5, 3.9 - 0.9 * R1, 0.12)], [1, FW(RX, 0, 8.2, 3.9 - 0.9 * R1, 0.12)]],
-    s5: [[0, FW(-0.1, 0, 6.8, 4.3 - 1.2 * R1, 0.14)], [1, FW(-0.1, 0, 6.4, 4.3 - 1.2 * R1, 0.14)]],
+    s2: [[0, FW(LX, 0, 7.4, 5.1 - 1.6 * R1, 0.12)], [1, FW(LX, 0, 7.1, 5.1 - 1.6 * R1, 0.12)]],
+    s3: [[0, FW(NX, 0, 6.6, 5.3 - 1.2 * R1, 0.12)], [1, FW(NX, 0, 6.3, 5.3 - 1.2 * R1, 0.12)]],
+    s4: [[0, FW(RX, 0, 8.5, 3.9 - 1.5 * R1, 0.12)], [1, FW(RX, 0, 8.2, 3.9 - 1.5 * R1, 0.12)]],
+    s5: [[0, FW(-0.1, 0, 6.8, 4.3 - 2.0 * R1, 0.14)], [1, FW(-0.1, 0, 6.4, 4.3 - 2.0 * R1, 0.14)]],
     s6: [[0, FW(-0.1, 0, 6.8, 5.6, 0.14)], [1, FW(-0.1, 0, 6.6, 5.6, 0.14)]],
     s7: [[0, FW(-0.2, 0, 8.2, 5.3, 0.12)], [1, FW(-0.2, 0, 7.9, 5.3, 0.12)]],
-    s8: [[0, FW(-0.45, 0, 7.0, 4.9, 0.12)], [1, FW(-0.45, 0, 6.8, 4.9, 0.12)]],
-    s9: [[0, FW(-0.1, 0, 6.6, 4.7, 0.12)], [1, FW(-0.1, 0, 6.3, 4.7, 0.12)]],
-    s10: [[0, FW(0.3, 0, 9.6, 6.6, 0.3)], [1, FW(0.3, 0, 9.3, 6.6, 0.3)]],
-    s11: [[0, FW(0.2, 0, 9.0, 4.4, 0.2)], [1, FW(0.2, 0, 8.4, 4.4, 0.2)]],
+    s8: [[0, FW(-0.45, 0, 7.0, 4.9 - 1.1 * R1, 0.12)], [1, FW(-0.45, 0, 6.8, 4.9 - 1.1 * R1, 0.12)]],
+    s9: [[0, FW(-0.1, 0, 6.6, 4.7 - 1.0 * R1, 0.12)], [1, FW(-0.1, 0, 6.3, 4.7 - 1.0 * R1, 0.12)]],
+    s10: [[0, FW(0.3 + 0.4 * R1, 0, 9.6, 6.6, 0.3)], [1, FW(0.3 + 0.4 * R1, 0, 9.3, 6.6, 0.3)]],
+    s11: [[0, FW(0.2 + 0.4 * R1, 0, 9.0, 4.4 - 0.7 * R1, 0.2)], [1, FW(0.2 + 0.4 * R1, 0, 8.4, 4.4 - 0.7 * R1, 0.2)]],
   };
   const CUT = new Set(['s1', 's2', 's3', 's4', 's5', 's7', 's8', 's9', 's10', 's11']);
   const CAM = [];
@@ -245,19 +245,19 @@
       /* s2: bar labels + -43% */
       if (b === 's2') { const p = ph('s2', t), NM = ['อุ้มตามปกติ', 'อุ้มเพิ่มทุกวัน'], HRS = [2.16, 1.23];
         S.bw.forEach((w, i) => { const a = U.clamp((p - 0.1 - i * 0.14) / 0.15); if (a <= 0) return; const bx = [-61.55, -58.45][i];
-          let [x, y] = proj(new T.Vector3(bx, 0, 0.75)); tag(NM[i], x, y + 46, 40, a, i ? '#c9f5d9' : '#ffd6e4');
+          let [x, y] = REEL ? proj(new T.Vector3(bx, [2.16, 1.23][i] * 1.45 * 0.72, 0.75)) : proj(new T.Vector3(bx, 0, 0.75)); tag(NM[i], x, REEL ? y : y + 46, 40, a, i ? '#c9f5d9' : '#ffd6e4');
           [x, y] = wp(w.userData.head, 0, 0.95); const kk = U.clamp((p - 0.12 - i * 0.14) / 0.3); g.save(); g.globalAlpha = a; txt((HRS[i] * kk).toFixed(2) + ' ชม./วัน', x, y - 30, 46, i ? '#ffffff' : '#ffd35e', 800); g.restore(); });
         const a3 = U.clamp((t - SP('s2', 0.62) - 0.6) / 0.35); if (a3 > 0) { const [x, y] = proj(new T.Vector3(LX, 2.6, 0.5)); g.save(); g.globalAlpha = a3; g.translate(x, y); g.scale(0.8 + 0.2 * U.easeBack(a3), 0.8 + 0.2 * U.easeBack(a3)); rr(-120, -62, 240, 124, 62, '#ff5f86', '#ffffff'); plain('−43%', 0, 4, 70, '#ffffff', 800, 'center'); g.restore(); } }
       /* s3: heart-rate panel */
       if (b === 's3') { const p = ph('s3', t), q = SP('s3', 0.5), wk = U.clamp((t - q) / 0.8), a0 = U.clamp((p - 0.05) / 0.1);
-        const x0 = 110 + LD, w = 860 - 2 * LD, y0 = 790, h = 150; g.save(); g.globalAlpha = a0; rr(x0, y0, w, h, 30, 'rgba(255,255,255,.9)', wk > 0.5 ? '#5fd38d' : '#ff5f6d');
+        const x0 = 110 + LD, w = 860 - 2 * LD, y0 = REEL ? 600 : 790, h = 150; g.save(); g.globalAlpha = a0; rr(x0, y0, w, h, 30, 'rgba(255,255,255,.9)', wk > 0.5 ? '#5fd38d' : '#ff5f6d');
         const rate = U.lerp(2.6, 1.3, wk), col = wk > 0.5 ? '#3fbf73' : '#ff4d5e', bx = x0 + 300;
         g.lineWidth = 6; g.strokeStyle = col; g.lineJoin = 'round'; g.beginPath();
         for (let i = 0; i <= 200; i++) { const xx = bx + i * (w - 330) / 200, u = ((t * rate - i / 200 * 3 * rate / 2) % 1 + 1) % 1; let yy = y0 + h / 2 + 10; if (u > 0.1 && u < 0.14) yy -= 55 * Math.sin((u - 0.1) / 0.04 * PI); else if (u > 0.14 && u < 0.17) yy += 22 * Math.sin((u - 0.14) / 0.03 * PI); i ? g.lineTo(xx, yy) : g.moveTo(xx, yy); }
         g.stroke(); const hb = 1 + 0.18 * Math.max(0, Math.sin(t * rate * 2 * PI));
         g.save(); g.translate(x0 + 70, y0 + h / 2); g.scale(hb, hb); g.fillStyle = col; g.beginPath(); g.moveTo(0, 26); g.bezierCurveTo(-48, -6, -28, -44, 0, -18); g.bezierCurveTo(28, -44, 48, -6, 0, 26); g.fill(); g.restore();
         plain('ชีพจรลูก', x0 + 125, y0 + 48, 34, '#3a2f3f', 700); plain(wk > 0.5 ? 'ช้าลง' : 'เต้นเร็ว', x0 + 125, y0 + 100, 40, col, 800); g.restore();
-        const [sx, sy] = wp(C.mom.userData.head, 0, 1.35); tag(wk > 0.5 ? 'อุ้มแล้วเดิน' : 'อุ้มนั่งนิ่งๆ', sx, Math.max(sy, 1000), 40, a0, wk > 0.5 ? '#c9f5d9' : '#ffd6e4'); }
+        const [sx, sy] = wp(C.mom.userData.head, 0, 1.35); tag(wk > 0.5 ? 'อุ้มแล้วเดิน' : 'อุ้มนั่งนิ่งๆ', sx, Math.max(sy, REEL ? 800 : 1000), 40, a0, wk > 0.5 ? '#c9f5d9' : '#ffd6e4'); }
       /* s4: numbers + reason tags */
       if (b === 's4') { const L = ['กลัวแม่หายไป', 'มีน้องใหม่', 'เหนื่อย ง่วง ป่วย'], X = [RX - 2.75, RX, RX + 2.75];
         L.forEach((s2, i) => { const a = U.clamp((t - TM('s4', i, 0.12 + i * 0.22) - 0.15) / 0.3); if (a <= 0) return;
