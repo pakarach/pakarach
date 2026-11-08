@@ -11,6 +11,8 @@
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
   const ORDER = BEATS.map((b) => b[0]).filter((k) => k !== 'end');
   const beatAt = (t) => { for (const k of ORDER) if (t < end(k)) return k; return 's10'; };
+  /* with a voice-over the music sits lower (Dan, Nov 2026: music covered the voice) */
+  const MQ = DATA.vo ? 0.45 : 1, MU = (o) => Object.assign({}, o, { mv: o.mv * MQ, bv: (o.bv || 0) * MQ, shk: (o.shk || 0) * MQ });
   const ROOM = new Set(['cover', 's1', 's6', 's7', 's8', 'sm', 's9', 's10']);
 
   const FW = (cx, cz, width, top, tilt) => { tilt = tilt || 0.12; const k = 1080 / width, d = 960 / k / Math.tan(14.5 * PI / 180), yc = top - 130 / k; return { pos: [cx, yc + d * Math.sin(tilt), cz + d * Math.cos(tilt)], look: [cx, yc, cz], fov: 29 }; };
@@ -385,7 +387,7 @@
     ],
     trans,
     audio: [
-      [0.4, 'growl'], [1.3, 'boing'],
+      ...(DATA.vo ? [[end('cover') - 0.5, 'growl']] : [[0.4, 'growl'], [1.3, 'boing']]),
       [at('s1') + 0.3, 'whoosh'], [P('s1', 0.1), 'pop'], [at('s1') + 0.6, 'growl'], [SP('s1', 0.5), 'pop'], [P('s1', 0.55), 'boing'], [P('s1', 0.65), 'growl'],
       [at('s2') + 0.3, 'shimmer'], [P('s2', 0.06), 'pop'], [P('s2', 0.1), 'pop'], [P('s2', 0.14), 'pop'], [P('s2', 0.18), 'pop'], [P('s2', 0.3), 'ding'], [SP('s2', 0.55) + 0.1, 'warn'], [P('s2', 0.7), 'growl'],
       [at('s3') + 0.4, 'bubble'], [P('s3', 0.25), 'bubble'], [P('s3', 0.4), 'bubble'], [SP('s3', 0.5), 'warn'], [P('s3', 0.62), 'growl'], [P('s3', 0.8), 'thud'],
@@ -398,7 +400,7 @@
       [TM('s9', 0, 0.1), 'ding'], [TM('s9', 1, 0.27), 'tick'], [TM('s9', 2, 0.44), 'tick'], [TM('s9', 3, 0.61), 'tick'], [TM('s9', 4, 0.78), 'tick'],
       [at('s10') + 0.3, 'twinkle'], [at('s10') + 1.2, 'heart'], [at('s10') + 2.2, 'giggle'],
     ],
-    bed: [VE.voiceBed(VE.voice(DATA.vo, B)), CK.musicBed(0.8, at('s2'), CK.MUSIC.CUTE), CK.musicBed(at('s2'), at('s6'), CK.MUSIC.OOPS), CK.musicBed(at('s6'), at('s7'), CK.MUSIC.NIGHT), CK.musicBed(at('s7'), at('s10'), CK.MUSIC.CUTE), CK.musicBed(at('s10'), DUR - 1.5, CK.MUSIC.WARM)],
+    bed: [VE.voiceBed(VE.voice(DATA.vo, B)), CK.musicBed(DATA.vo ? at('s1') + 0.2 : 0.8, at('s2'), MU(CK.MUSIC.CUTE)), CK.musicBed(at('s2'), at('s6'), MU(CK.MUSIC.OOPS)), CK.musicBed(at('s6'), at('s7'), MU(CK.MUSIC.NIGHT)), CK.musicBed(at('s7'), at('s10'), MU(CK.MUSIC.CUTE)), CK.musicBed(at('s10'), DUR - 1.5, MU(CK.MUSIC.WARM))],
   });
   /* sugar level for ลิ้นจี่ in s5 (0..1): sip -> spike -> crash */
   function sugar(t) { const p = (t - at('s5')) / dur('s5'); if (p < 0.14) return 0.35; if (p < 0.22) return U.lerp(0.35, 1, U.easeOut((p - 0.14) / 0.08)); if (p < 0.27) return 1; return Math.max(0.12, U.lerp(1, 0.12, U.easeIO(U.clamp((p - 0.27) / 0.12)))); }
