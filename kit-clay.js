@@ -276,6 +276,7 @@
   VE.registerSfx('cough', (t) => { for (let i = 0; i < 2; i++) { au().noise(t + i * 0.18, 0.12, { type: 'bandpass', f: 900, vol: 0.2 }); au().tone(t + i * 0.18, 220, 0.1, { f2: 140, type: 'sawtooth', vol: 0.08 }); } });
   VE.registerSfx('breath', (t) => au().noise(t, 0.9, { type: 'bandpass', f: 500, f2: 900, vol: 0.07, att: 0.4 }));
   VE.registerSfx('wheeze', (t) => { au().tone(t, 700, 0.8, { f2: 900, vol: 0.05, type: 'sawtooth' }); au().noise(t, 0.8, { type: 'highpass', f: 3000, vol: 0.05 }); });
+  VE.registerSfx('buzz', (t) => au().tone(t, 540, 0.9, { f2: 600, type: 'sawtooth', vol: 0.03, att: 0.15 }));
   VE.registerSfx('rain', (t, o) => au().noise(t, (o && o.dur) || 2, { type: 'highpass', f: 4000, vol: 0.06, att: 0.3 }));
   VE.registerSfx('bubble', (t) => au().tone(t, 500, 0.12, { f2: 1100, vol: 0.12 }));
   VE.registerSfx('heart', (t) => { VE.sfx.twinkle(t); });
