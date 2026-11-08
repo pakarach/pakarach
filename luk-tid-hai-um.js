@@ -247,7 +247,7 @@
         S.bw.forEach((w, i) => { const a = U.clamp((p - 0.1 - i * 0.14) / 0.15); if (a <= 0) return; const bx = [-61.55, -58.45][i];
           let [x, y] = proj(new T.Vector3(bx, 0, 0.75)); tag(NM[i], x, y + 46, 40, a, i ? '#c9f5d9' : '#ffd6e4');
           [x, y] = wp(w.userData.head, 0, 0.95); const kk = U.clamp((p - 0.12 - i * 0.14) / 0.3); g.save(); g.globalAlpha = a; txt((HRS[i] * kk).toFixed(2) + ' ชม./วัน', x, y - 30, 46, i ? '#ffffff' : '#ffd35e', 800); g.restore(); });
-        const a3 = U.clamp((p - 0.55) / 0.12); if (a3 > 0) { const [x, y] = proj(new T.Vector3(LX, 2.6, 0.5)); g.save(); g.globalAlpha = a3; g.translate(x, y); g.scale(0.8 + 0.2 * U.easeBack(a3), 0.8 + 0.2 * U.easeBack(a3)); rr(-120, -62, 240, 124, 62, '#ff5f86', '#ffffff'); plain('−43%', 0, 4, 70, '#ffffff', 800, 'center'); g.restore(); } }
+        const a3 = U.clamp((t - SP('s2', 0.62) - 0.6) / 0.35); if (a3 > 0) { const [x, y] = proj(new T.Vector3(LX, 2.6, 0.5)); g.save(); g.globalAlpha = a3; g.translate(x, y); g.scale(0.8 + 0.2 * U.easeBack(a3), 0.8 + 0.2 * U.easeBack(a3)); rr(-120, -62, 240, 124, 62, '#ff5f86', '#ffffff'); plain('−43%', 0, 4, 70, '#ffffff', 800, 'center'); g.restore(); } }
       /* s3: heart-rate panel */
       if (b === 's3') { const p = ph('s3', t), q = SP('s3', 0.5), wk = U.clamp((t - q) / 0.8), a0 = U.clamp((p - 0.05) / 0.1);
         const x0 = 110 + LD, w = 860 - 2 * LD, y0 = 790, h = 150; g.save(); g.globalAlpha = a0; rr(x0, y0, w, h, 30, 'rgba(255,255,255,.9)', wk > 0.5 ? '#5fd38d' : '#ff5f6d');
@@ -318,7 +318,7 @@
     audio: [
       [0.3, 'boing'], [0.7, 'giggle'],
       [at('s1') + 0.4, 'pop'], [at('s1') + 0.9, 'warn'], [SP('s1', 0.5) + 0.1, 'boing'],
-      [at('s2') + 0.4, 'riser'], [P('s2', 0.2), 'pop'], [P('s2', 0.34), 'pop'], [P('s2', 0.57), 'ding'], [P('s2', 0.62), 'shimmer'],
+      [at('s2') + 0.4, 'riser'], [P('s2', 0.2), 'pop'], [P('s2', 0.34), 'pop'], [SP('s2', 0.62) + 0.6, 'ding'], [SP('s2', 0.62) + 0.65, 'shimmer'],
       [at('s3') + 0.5, 'heartbeat'], [at('s3') + 1.6, 'heartbeat'], [SP('s3', 0.5), 'whoosh'], [SP('s3', 0.5) + 0.9, 'twinkle'],
       [TM('s4', 0, 0.12), 'pop'], [TM('s4', 1, 0.34), 'pop'], [TM('s4', 2, 0.56), 'pop'], [TM('s4', 2, 0.56) + 0.5, 'giggle'],
       [at('s5') + 0.3, 'thud'], [SP('s5', 0.5), 'warn'], [SP('s5', 0.5) + 0.2, 'heartbeat'],
