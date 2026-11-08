@@ -14,21 +14,22 @@
 
   const FW = (cx, cz, width, top, tilt) => { tilt = tilt || 0.12; const k = 1080 / width, d = 960 / k / Math.tan(14.5 * PI / 180), yc = top - 130 / k; return { pos: [cx, yc + d * Math.sin(tilt), cz + d * Math.cos(tilt)], look: [cx, yc, cz], fov: 29 }; };
   /* zoom: put world point (px,py,pz) at screen y ~1060 with a frame `w` wide */
-  const ZM = (px, py, pz, w, tilt) => FW(px, pz, w, py + 230 * w / 1080, tilt || 0.15);
+  const ZM = (px, py, pz, w, tilt) => FW(px, pz, w, py + (REEL ? 80 : 230) * w / 1080, tilt || 0.15);
+  const RT = (top, d) => top - (REEL ? d : 0); /* FB build: lower `top` = content moves up */
 
   const NX = 60, HX = 75, EX = 90, BX = 105, LX = -60;
   const SH = {
     cover: [[0, FW(0.15, 0, 6.4, 4.1, 0.18)], [1, FW(0.2, 0, 6.0, 4.1, 0.18)]],
     s1: [[0, FW(LX, 0, 7.6, 3.3, 0.12)], [1, FW(LX, 0, 7.3, 3.3, 0.12)]],
     s2: [[0, FW(0, 0.2, 5.4, 3.95, 0.2)], [0.3, FW(0, 0.2, 5.2, 3.95, 0.2)], [0.58, ZM(-0.15, 1.05, 0.9, 3.1, 0.42)], [1, ZM(-0.15, 1.05, 0.9, 2.9, 0.42)]],
-    s3: [[0, FW(NX, 0, 6.0, 4.6, 0.1)], [1, FW(NX, 0, 5.6, 4.6, 0.1)]],
+    s3: [[0, FW(NX, 0, 6.0, RT(4.6, 0.6), 0.1)], [1, FW(NX, 0, 5.6, RT(4.6, 0.6), 0.1)]],
     s4: [[0, FW(0.55, 0, 5.8, 4.1, 0.18)], [0.3, FW(0.55, 0, 5.6, 4.1, 0.18)], [0.58, ZM(1.4, 0.9, 0.4, 3.0, 0.3)], [1, ZM(1.4, 0.9, 0.4, 2.8, 0.3)]],
-    s5: [[0, FW(HX + 0.45, 0, 8.2, 4.4, 0.1)], [1, FW(HX + 0.45, 0, 7.9, 4.4, 0.1)]],
+    s5: [[0, FW(HX + 0.45, 0, 8.2, RT(4.4, 1.1), 0.1)], [1, FW(HX + 0.45, 0, 7.9, RT(4.4, 1.1), 0.1)]],
     s6: [[0, FW(EX + 0.5, 0, 7.6, 3.85, 0.1)], [1, FW(EX + 0.5, 0, 7.3, 3.85, 0.1)]],
     s7: REEL ? [[0, FW(0.1, 0, 6.6, 4.6, 0.2)], [1, FW(0.1, 0, 6.3, 4.6, 0.2)]] : [[0, FW(0.1, 0, 6.6, 5.4, 0.2)], [1, FW(0.1, 0, 6.3, 5.4, 0.2)]],
-    s8: [[0, FW(0, 0.6, 5.6, 4.9, 0.15)], [1, FW(0, 0.6, 5.1, 4.9, 0.15)]],
+    s8: [[0, FW(0, 0.6, 5.6, RT(4.9, 0.8), 0.15)], [1, FW(0, 0.6, 5.1, RT(4.9, 0.8), 0.15)]],
     s9: [[0, FW(-0.2, 0, 7.0, 5.6, 0.12)], [1, FW(-0.2, 0, 6.7, 5.6, 0.12)]],
-    s10: [[0, FW(BX, 0, 6.0, 5.4, 0.1)], [1, FW(BX, 0, 5.7, 5.4, 0.1)]],
+    s10: [[0, FW(BX, 0, 6.0, RT(5.4, 1.3), 0.1)], [1, FW(BX, 0, 5.7, RT(5.4, 1.3), 0.1)]],
     s11: [[0, FW(-0.3, 0, 7.4, 4.1, 0.15)], [1, FW(-0.3, 0, 7.1, 4.1, 0.15)]],
     s12: [[0, FW(0.4, 0, 9.6, 6.6, 0.3)], [1, FW(0.4, 0, 9.3, 6.6, 0.3)]],
     s13: [[0, FW(0.4, 0, 9.0, 4.4, 0.2)], [1, FW(0.4, 0, 8.4, 4.4, 0.2)]],
@@ -324,14 +325,14 @@
       if (b === 's2') { const p = ph('s2', t), a = U.clamp((p - 0.5) / 0.1); if (a > 0) { const [x, y] = wp(S.nb.userData.head, 0, 0, 0.2); ring(x + 40, y + 30, 165, a); tag('หัว + คอ', x + 40, y - 175, 46, a, '#ffd35e'); } }
       /* s3: neck labels */
       if (b === 's3') { const p = ph('s3', t), q = SP('s3', 0.5); S.bigW.updateMatrixWorld(true); const nk = S.bigW.localToWorld(new T.Vector3(0, 1.0, 0.5)); const [x, y] = proj(nk); const a = U.clamp((p - 0.14) / 0.1); ring(x, y, 110, a, t < q ? '#ff5f6d' : '#5fd38d');
-        if (t < q) { tag('กล้ามเนื้อคอยังอ่อน', 540, 1560, 42, a); mark(900, 760, 50, false, a); }
-        else { const a2 = U.clamp((t - q - 0.4) / 0.3); tag('มือประคองหัว + คอ', 540, 1560, 42, a2, '#c9f5d9'); mark(900, 760, 50, true, a2); } }
+        if (t < q) { tag('กล้ามเนื้อคอยังอ่อน', 540, REEL ? 1200 : 1560, 42, a); mark(900, 760, 50, false, a); }
+        else { const a2 = U.clamp((t - q - 0.4) / 0.3); tag('มือประคองหัว + คอ', 540, REEL ? 1200 : 1560, 42, a2, '#c9f5d9'); mark(900, 760, 50, true, a2); } }
       /* s4: zoom on wawa's legs */
       if (b === 's4') { const p = ph('s4', t), a = U.clamp((p - 0.5) / 0.1); if (a > 0) { const [x, y] = wp(S.wh, 0, 0.18, 0.2); ring(x + 10, y, 150, a); tag('ขาคร่อม เข่าสูงกว่าก้น', x, y + 200, 44, a, '#ffd35e'); } }
       /* s5: hip labels */
       if (b === 's5') { const p = ph('s5', t), q = SP('s5', 0.5);
-        let [x, y] = proj(new T.Vector3(HX - 2.0, 0, 0.8)); const a = U.clamp((p - 0.12) / 0.1); tag('ขาห้อยตรง / ถูกรัดขาชิด', Math.max(x, 250), y + 40, 36, a); mark(x, y - 760, 48, false, a);
-        [x, y] = proj(new T.Vector3(HX + 2.0, 0, 0.8)); const a2 = U.clamp((t - q) / 0.3); tag('ขาเป็นตัว M', x, y + 40, 40, a2, '#c9f5d9'); mark(x, y - 760, 48, true, a2);
+        let [x, y] = proj(new T.Vector3(HX - 2.0, 0, 0.8)); const a = U.clamp((p - 0.12) / 0.1); tag('ขาห้อยตรง / ถูกรัดขาชิด', Math.max(x, REEL ? 320 : 250), y + (REEL ? -80 : 40), 36, a); mark(x, y - (REEL ? 640 : 760), 48, false, a);
+        [x, y] = proj(new T.Vector3(HX + 2.0, 0, 0.8)); const a2 = U.clamp((t - q) / 0.3); tag('ขาเป็นตัว M', x, y + (REEL ? -80 : 40), 40, a2, '#c9f5d9'); mark(x, y - (REEL ? 640 : 760), 48, true, a2);
         if (a2 > 0.1) { let [kx, ky] = proj(new T.Vector3(HX + 2.0 - 1.45, 3.15, 0.55)); tag('เข่า', kx, ky - 70, 34, a2, '#ffd35e'); [kx, ky] = proj(new T.Vector3(HX + 2.0, 2.2, 0.5)); tag('ก้น', kx, ky + 20, 34, a2, '#ffd35e'); } }
       /* s6: elbow labels */
       if (b === 's6') { const p = ph('s6', t), q = SP('s6', 0.5);
@@ -347,13 +348,13 @@
         g.save(); g.globalAlpha = a0; plain('ที่มา: KidsHealth (Nemours), Kaiser Permanente', 540, 738, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
       }
       /* s8: rings on the two hands */
-      if (b === 's8') { const p = ph('s8', t), a = U.clamp((p - 0.3) / 0.1); if (a > 0) { S.liftH.forEach((h) => { const [x, y] = wp(h, 0, 0.1, 0); ring(x, y, 115, a, '#5fd38d'); }); tag('มือสอดใต้รักแร้ ทั้ง 2 ข้าง', 540, 1580, 44, a, '#c9f5d9'); } }
+      if (b === 's8') { const p = ph('s8', t), a = U.clamp((p - 0.3) / 0.1); if (a > 0) { S.liftH.forEach((h) => { const [x, y] = wp(h, 0, 0.1, 0); ring(x, y, 115, a, '#5fd38d'); }); tag('มือสอดใต้รักแร้ ทั้ง 2 ข้าง', 540, REEL ? 1200 : 1580, 44, a, '#c9f5d9'); } }
       /* s9: bubble */
       if (b === 's9') { const p = ph('s9', t); const [x, y] = wp(C.mom.userData.head, 0, 0.9); bubble('อย่าโยน!', x + 30, y - 60, U.clamp((p - 0.38) / 0.1)); }
       /* s10: brain labels */
       if (b === 's10') { const p = ph('s10', t), q = SP('s10', 0.5), a = U.clamp((p - 0.1) / 0.1); let [x, y] = proj(new T.Vector3(BX, 1.2, 0.5));
-        if (t < q) { tag('สมองเหวี่ยงกระแทกกะโหลก', x, y + 250, 40, a, '#ffd6dc'); mark(x + 330, y - 640, 50, false, a); }
-        else { const a2 = U.clamp((t - q - 0.2) / 0.3); tag('อุ้มนิ่งๆ กอดเบาๆ', x, y + 250, 42, a2, '#c9f5d9'); mark(x + 330, y - 640, 50, true, a2); } }
+        if (t < q) { tag('สมองเหวี่ยงกระแทกกะโหลก', x, REEL ? Math.min(y + 250, 1210) : y + 250, 40, a, '#ffd6dc'); mark(x + 330, y - 640, 50, false, a); }
+        else { const a2 = U.clamp((t - q - 0.2) / 0.3); tag('อุ้มนิ่งๆ กอดเบาๆ', x, REEL ? Math.min(y + 250, 1210) : y + 250, 42, a2, '#c9f5d9'); mark(x + 330, y - 640, 50, true, a2); } }
       /* s11: spine labels */
       if (b === 's11') { const p = ph('s11', t), q = SP('s11', 0.5), a = U.clamp((p - 0.14) / 0.1); const [x, y] = wp(C.dad, -2.6, 2.9, 0);
         if (t < q) { tag('ก้มหลังยก', x + 120, y - 60, 40, a, '#ffd6dc'); mark(x + 120, y - 160, 44, false, a); }
