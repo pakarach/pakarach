@@ -5,7 +5,7 @@
   const BEATS = [['cover', 2.2], ['s1', 7.5], ['s2', 6.5], ['s3', 7.5], ['s4', 6], ['s5', 7.5], ['s6', 8], ['s7', 7], ['s8', 7.5], ['s9', 7.5], ['s10', 8.5], ['s11', 8], ['s12', 5.5], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
-  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1, RT = REEL ? 1.0 : 0;
+  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1, RT = REEL ? 1.0 : 0, RW = (a, b) => REEL ? b : a;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -18,17 +18,17 @@
   const TOPH = 1.15, KZH = -1.45;
   const AX = 60, BX = 120, CX = 180, EX = 240, HX = 300, DX = -60, FX = -120, GX = -180;
   const SH = {
-    cover: [[0, FW(0.15, 0, 5.6, 3.9, 0.18)], [1, FW(0.15, 0, 5.3, 3.9, 0.18)]],
-    s1: [[0, FW(AX, 0.4, 9.0, 3.5 - RT, 0.14)], [1, FW(AX, 0.4, 8.7, 3.5 - RT, 0.14)]],
-    s2: [[0, FW(BX, 0.3, 8.6, 3.3 - RT, 0.12)], [1, FW(BX, 0.3, 8.3, 3.3 - RT, 0.12)]],
-    s3: [[0, FW(CX - 0.6, 0, 10.6, 3.5 - RT * 0.6, 0.1)], [1, FW(CX - 0.6, 0, 10.3, 3.5 - RT * 0.6, 0.1)]],
+    cover: [[0, FW(0.15, 0, 5.6, 3.9 - RT * 0.9, 0.18)], [1, FW(0.15, 0, 5.3, 3.9 - RT * 0.9, 0.18)]],
+    s1: [[0, FW(AX, 0.4, RW(9.0, 10.6), 3.5 - RT, 0.14)], [1, FW(AX, 0.4, RW(8.7, 10.3), 3.5 - RT, 0.14)]],
+    s2: [[0, FW(BX, 0.3, RW(8.6, 9.9), 3.3 - RT, 0.12)], [1, FW(BX, 0.3, RW(8.3, 9.6), 3.3 - RT, 0.12)]],
+    s3: [[0, FW(CX - 0.6, 0, RW(10.6, 12.2), 3.5 - RT * 0.6, 0.1)], [1, FW(CX - 0.6, 0, RW(10.3, 11.9), 3.5 - RT * 0.6, 0.1)]],
     s4: [[0, FW(0, 0.3, 5.4, 3.95, 0.2)], [1, FW(0, 0.3, 5.1, 3.95, 0.2)]],
-    s5: [[0, FW(DX, 0.2, 6.9, 3.95, 0.16)], [1, FW(DX - 0.1, 0.2, 6.7, 3.95, 0.16)]],
+    s5: [[0, FW(DX + RT * 0.2, 0.2, RW(6.9, 8.0), 3.95, 0.16)], [1, FW(DX - 0.1 + RT * 0.2, 0.2, RW(6.7, 7.8), 3.95, 0.16)]],
     s6: [[0, FW(EX + 0.3, 0, 7.4, 3.7 - RT * 0.6, 0.12)], [1, FW(EX + 0.3, 0, 7.1, 3.7 - RT * 0.6, 0.12)]],
-    s7: [[0, FW(0, 0.6, 6.6, 3.9 - RT, 0.24)], [1, FW(0, 0.6, 6.3, 3.9 - RT, 0.24)]],
+    s7: [[0, FW(0, 0.6, RW(6.6, 7.6), 3.9 - RT, 0.24)], [1, FW(0, 0.6, RW(6.3, 7.3), 3.9 - RT, 0.24)]],
     s8: REEL ? [[0, FW(FX + 0.4, 0.4, 7.6, 4.0, 0.16)], [1, FW(FX + 0.4, 0.4, 7.3, 4.0, 0.16)]] : [[0, FW(FX + 0.4, 0.4, 6.2, 5.4, 0.16)], [1, FW(FX + 0.4, 0.4, 6.0, 5.4, 0.16)]],
     s9: [[0, FW(GX + 0.3, 0.2, 6.4, 3.95, 0.16)], [1, FW(GX + 0.3, 0.2, 6.1, 3.95, 0.16)]],
-    s10: [[0, FW(HX - 0.9, 0.3, 5.0, 3.95, 0.2)], ['sp-', FW(HX - 0.9, 0.3, 4.8, 3.95, 0.2)], ['sp+', FW(HX + 1.75, -1.6, 4.6, 2.6, 0.2)], [1, FW(HX + 1.75, -1.6, 4.4, 2.6, 0.2)]],
+    s10: [[0, FW(HX - 0.9, 0.3, 5.0, 3.95, 0.2)], ['sp-', FW(HX - 0.9, 0.3, 4.8, 3.95, 0.2)], ['sp+', FW(HX + 1.75, -1.6, RW(4.6, 5.3), 2.6, 0.2)], [1, FW(HX + 1.75, -1.6, RW(4.4, 5.1), 2.6, 0.2)]],
     s11: REEL ? [[0, FW(0.3, 0.2, 7.4, 4.0, 0.2)], [1, FW(0.3, 0.2, 7.1, 4.0, 0.2)]] : [[0, FW(0.3, 0.2, 6.2, 5.3, 0.2)], [1, FW(0.3, 0.2, 6.0, 5.3, 0.2)]],
     s12: REEL ? [[0, { pos: [0, 5.8, 29], look: [0, 2.3, 0], fov: 29 }], [1, { pos: [0, 5.6, 28], look: [0, 2.3, 0], fov: 29 }]] : [[0, { pos: [0, 6.6, 26], look: [0, 3.0, 0], fov: 29 }], [1, { pos: [0, 6.3, 24.5], look: [0, 3.0, 0], fov: 29 }]],
   };
@@ -333,10 +333,10 @@
       const b = beatAt(t), S = window.__dbg && window.__dbg.s; if (!S) return;
       const plain = (str, x, y, size, col, w, al) => { g.font = (w || 600) + ' ' + size + 'px Kanit,sans-serif'; g.textAlign = al || 'left'; g.textBaseline = 'middle'; g.fillStyle = col; g.fillText(str, x, y); };
       const rr = (x, y, w, h, r, fill, stroke) => { g.beginPath(); g.roundRect(x, y, w, h, r); if (fill) { g.fillStyle = fill; g.fill(); } if (stroke) { g.lineWidth = 4; g.strokeStyle = stroke; g.stroke(); } };
-      const tag = (str, x, y, a, bg, fg, size) => { size = size || 40; g.save(); g.globalAlpha = a; g.font = '800 ' + size + 'px Kanit,sans-serif'; const w = g.measureText(str).width + 44; x = U.clamp(x, w / 2 + 30 + LD, 1050 - LD - w / 2); rr(x - w / 2, y - size * 0.85, w, size * 1.7, size * 0.85, bg || '#ffffff', '#3a2f3f'); plain(str, x, y + 2, size, fg || '#3a2f3f', 800, 'center'); g.restore(); };
+      const tag = (str, x, y, a, bg, fg, size) => { size = size || 40; g.save(); g.globalAlpha = a; g.font = '800 ' + size + 'px Kanit,sans-serif'; const w = g.measureText(str).width + 44; x = U.clamp(x, w / 2 + (REEL ? 100 : 30), (REEL ? 950 : 1050) - w / 2); rr(x - w / 2, y - size * 0.85, w, size * 1.7, size * 0.85, bg || '#ffffff', '#3a2f3f'); plain(str, x, y + 2, size, fg || '#3a2f3f', 800, 'center'); g.restore(); };
       const at3 = (x, y, z) => proj(new T.Vector3(x, y, z));
       /* cover: little bottle note */
-      if (b === 'cover') { const bp = window.__dbg.pb; if (bp) { const [x, y] = proj(bp); tag('ปั๊มได้แค่นี้…', x + 30, y + 52, 1, '#ffffff', '#ff4d6d', 36); } }
+      if (b === 'cover') { const bp = window.__dbg.pb; if (bp) { const [x, y] = proj(bp); tag('ปั๊มได้แค่นี้…', x + (REEL ? 200 : 30), y + (REEL ? -110 : 52), 1, '#ffffff', '#ff4d6d', 36); } }
       /* s1: age tags */
       if (b === 's1') {
         const q = SP('s1', 0.5), L = [['0–6 เดือน', '#ffd23f', at('s1') + 0.5, S.A.nb], ['6 เดือน+', '#79dcb4', q + 0.2, S.A.wawa], ['2 ปี+', '#5ab8ff', q + 0.9, S.A.nana]];
@@ -354,16 +354,16 @@
       /* s4: mom's benefits */
       if (b === 's4') {
         const p = ph('s4', t), L = [['มะเร็งเต้านม', -1.85, 2.9], ['มะเร็งรังไข่', 1.85, 2.9], ['เบาหวานชนิด 2', 0, 0.35]];
-        L.forEach(([lab, x3, y3], i) => { const a = U.clamp((p - 0.25 - i * 0.12) / 0.1); if (a <= 0) return; const [x, y] = at3(x3, y3, 0.6); tag(lab, x, y, a, '#d6ffe8', '#1f7a4a', 36);
+        L.forEach(([lab, x3, y3], i) => { const a = U.clamp((t - TM('s4', i, 0.25 + i * 0.12)) / 0.3); if (a <= 0) return; const [x, y] = at3(x3, y3, 0.6); tag(lab, x, y, a, '#d6ffe8', '#1f7a4a', 36);
           g.save(); g.globalAlpha = a; g.font = '800 36px Kanit,sans-serif'; const w = g.measureText(lab).width + 44, cx = U.clamp(x, w / 2 + 30 + LD, 1050 - LD - w / 2) + w / 2 - 6; g.beginPath(); g.arc(cx, y - 26, 22, 0, 7); g.fillStyle = '#3fbf6f'; g.fill(); g.beginPath(); g.moveTo(cx - 10, y - 32); g.lineTo(cx + 10, y - 32); g.lineTo(cx, y - 16); g.closePath(); g.fillStyle = '#ffffff'; g.fill(); g.restore(); });
       }
       /* s5: 100-baby grid */
       if (b === 's5') {
         const q = SP('s5', 0.5), a0 = U.clamp((t - at('s5') - 0.3) / 0.3) * U.clamp((q - t) / 0.3);
         if (a0 > 0) {
-          g.save(); g.globalAlpha = a0; const x0 = 270, y0 = 800, sp = 54; rr(x0 - 60, y0 - 50, 10 * sp + 92, 10 * sp + 70, 32, 'rgba(255,255,255,.94)', '#ff8fab');
+          g.save(); g.globalAlpha = a0; const sp = REEL ? 44 : 54, x0 = 540 - 4.5 * sp, y0 = REEL ? 790 : 800, rd = REEL ? 17 : 20; rr(x0 - 46, y0 - 42, 9 * sp + 92, 9 * sp + 84, 32, 'rgba(255,255,255,.94)', '#ff8fab');
           const lit = 28.6 * U.clamp((t - at('s5') - 0.6) / 1.6);
-          for (let i = 0; i < 100; i++) { const cx = x0 + (i % 10) * sp, cy = y0 + Math.floor(i / 10) * sp, f = U.clamp(lit - i); g.beginPath(); g.arc(cx, cy, 20, 0, 7); g.fillStyle = '#e8e2ee'; g.fill(); if (f > 0) { g.save(); g.beginPath(); g.arc(cx, cy, 20, 0, 7); g.clip(); g.fillStyle = '#ff6f91'; g.fillRect(cx - 20, cy + 20 - 40 * f, 40, 40 * f); g.restore(); } }
+          for (let i = 0; i < 100; i++) { const cx = x0 + (i % 10) * sp, cy = y0 + Math.floor(i / 10) * sp, f = U.clamp(lit - i); g.beginPath(); g.arc(cx, cy, rd, 0, 7); g.fillStyle = '#e8e2ee'; g.fill(); if (f > 0) { g.save(); g.beginPath(); g.arc(cx, cy, rd, 0, 7); g.clip(); g.fillStyle = '#ff6f91'; g.fillRect(cx - rd, cy + rd - 2 * rd * f, 2 * rd, 2 * rd * f); g.restore(); } }
           g.restore();
         }
       }
@@ -426,7 +426,7 @@
       [at('s1') + 0.4, 'pop'], [at('s1') + 0.8, 'twinkle'], [SP('s1', 0.5), 'pop'], [SP('s1', 0.5) + 0.7, 'pop'], [SP('s1', 0.5) + 1.2, 'giggle'],
       [P('s2', 0.1), 'bubble'], [P('s2', 0.28), 'bubble'], [P('s2', 0.55), 'ding'], [P('s2', 0.7), 'giggle'],
       [at('s3') + 0.3, 'shimmer'], [P('s3', 0.16), 'riser'], [P('s3', 0.3), 'pop'], [P('s3', 0.36), 'pop'], [P('s3', 0.42), 'pop'], [SP('s3', 0.5), 'ding'], [SP('s3', 0.5) + 1.2, 'pop'],
-      [at('s4') + 0.4, 'heart'], [P('s4', 0.25), 'ding'], [P('s4', 0.37), 'ding'], [P('s4', 0.49), 'ding'],
+      [at('s4') + 0.4, 'heart'], [TM('s4', 0, 0.25), 'ding'], [TM('s4', 1, 0.37), 'ding'], [TM('s4', 2, 0.49), 'ding'],
       [at('s5') + 0.6, 'tick'], [at('s5') + 1.4, 'tick'], [at('s5') + 2.2, 'ding'], [SP('s5', 0.5) + 0.3, 'whoosh'], [SP('s5', 0.5) + 1.0, 'thud'],
       [at('s6') + 0.5, 'boing'], [P('s6', 0.25), 'bubble'], [SP('s6', 0.5), 'riser'], [SP('s6', 0.5) + 0.8, 'bubble'], [SP('s6', 0.5) + 1.6, 'bubble'], [SP('s6', 0.5) + 2.4, 'ding'],
       [TM('s7', 0, 0.1), 'pop'], [TM('s7', 1, 0.17), 'pop'], [TM('s7', 2, 0.24), 'pop'], [TM('s7', 3, 0.31), 'pop'], [TM('s7', 4, 0.38), 'pop'], [TM('s7', 5, 0.45), 'ding'], [P('s7', 0.6), 'giggle'],
