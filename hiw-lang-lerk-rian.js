@@ -227,7 +227,7 @@
         def('mama', 1.9, -2.1, 'giggle'); def('nana', 3.5, -2.1, 'happy');
       } else if (bt === 's10') {
         const p = ph('s10', t);
-        def('mom', -3.9, -0.7, 'happy', 0.1); def('dad', -0.05, -0.7, 'happy', -0.1);
+        def('mom', -4.05, -0.7, 'happy', 0.1); def('dad', -0.05, -0.7, 'happy', -0.1);
         def('nana', -3.6, 1.4, p > 0.3 ? 'giggle' : 'happy'); def('mama', -2.0, 1.4, 'giggle'); def('wawa', -0.55, 1.4, 'happy');
         st.mama.y = Math.abs(Math.sin(t * 6)) * 0.12 * (p > 0.25 && p < 0.7 ? 1 : 0); st.mom.wave = p > 0.35 && p < 0.75;
       }
@@ -341,7 +341,7 @@
       /* s7: food labels */
       if (b === 's7') {
         const p = ph('s7', t), q = SP('s7', 0.5);
-        if (t < q) [[S.c.mama, 'กล้วย', '+ นมจืด'], [S.c.nana, 'ไข่ต้ม', '+ ข้าวโพด']].forEach(([o, l1, l2], i) => { const a = U.clamp((p - 0.15 - i * 0.1) / 0.1) * U.clamp((q - t) / 0.25); if (a <= 0) return; const [x, y] = wp(o.userData.head, 0.95 * o.scale.x + 0.1); g.save(); g.globalAlpha = a; rr(x - 95, y - 92, 190, 100, 24, 'rgba(255,255,255,.92)', '#ff8fab'); plain(l1, x, y - 62, 34, '#3a2f3f', 800, 'center'); plain(l2, x, y - 22, 30, '#ff4f7a', 700, 'center'); g.restore(); });
+        if (t < q) [[S.c.mama, 'กล้วย', '+ นมจืด'], [S.c.nana, 'ไข่ต้ม', '+ ข้าวโพด']].forEach(([o, l1, l2], i) => { const a = U.clamp((t - TM('s7', i, 0.15 + i * 0.1)) / (0.1 * dur('s7'))) * U.clamp((q - t) / 0.25); if (a <= 0) return; const [x, y] = wp(o.userData.head, 0.95 * o.scale.x + 0.1); g.save(); g.globalAlpha = a; rr(x - 95, y - 92, 190, 100, 24, 'rgba(255,255,255,.92)', '#ff8fab'); plain(l1, x, y - 62, 34, '#3a2f3f', 800, 'center'); plain(l2, x, y - 22, 30, '#ff4f7a', 700, 'center'); g.restore(); });
       }
       /* s8: crunch text */
       if (b === 's8' && ph('s8', t) > 0.4) { const [x, y] = wp(S.c.mama.userData.head, 1.0); const k = (t * 1.6) % 1; g.save(); g.globalAlpha = Math.sin(k * PI); txt('กร๊วบ!', x + 10, y - 20 - k * 40, 34, '#2fa86a', 800); g.restore(); }
