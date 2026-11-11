@@ -52,16 +52,16 @@
   const SH = {
     cover: [FW(-1.0, -1.6, 8.0, 4.0, 0.42), FW(-1.0, -1.6, 7.7, 4.0, 0.42)],
     s1: [FW(-1.0, -1.6, 7.9, 4.0, 0.42), FW(-1.0, -1.6, 7.6, 4.0, 0.42)],
-    s2: [FW(0, -1.6, 10.6, 4.2, 0.4), FW(0, -1.6, 10.2, 4.2, 0.4)],
-    s3: REEL ? [FW(60, 0, 8.4, 5.6, 0.08), FW(60, 0, 8.1, 5.6, 0.08)] : [FW(60, 0, 8.4, 6.6, 0.08), FW(60, 0, 8.1, 6.6, 0.08)],
-    s4: [FW(-2.55, -1.6, 5.2, 4.0, 0.42), FW(-2.55, -1.6, 4.9, 3.9, 0.46)],
-    s5: [FW(1.2, -1.6, 6.8, 4.3, 0.42), FW(1.2, -1.6, 6.6, 4.3, 0.42)],
-    s6: [FW(-61.9, -0.6, 5.9, 4.1, 0.22), FW(-61.9, -0.6, 5.6, 4.1, 0.22)],
-    s7: REEL ? [FW(127.9, 0, 9.6, 3.6, 0.1), FW(127.9, 0, 9.3, 3.6, 0.1)] : [FW(127.9, 0, 9.6, 4.6, 0.1), FW(127.9, 0, 9.3, 4.6, 0.1)],
-    s8: [FW(0, -1.6, 10.4, 4.2, 0.4), FW(0, -1.6, 10.0, 4.2, 0.4)],
-    s9: [FW(1.2, -1.6, 6.8, 4.3, 0.42), FW(1.2, -1.6, 6.5, 4.3, 0.42)],
-    s10: [FW(0, -1.6, 10.6, 2.0, 0.6), FW(0, -1.6, 10.3, 2.0, 0.6)],
-    s11: [FW(0, -1.6, 10.6, 2.0, 0.6), FW(0, -1.6, 9.4, 2.0, 0.6)],
+    s2: REEL ? [FW(0.2, -1.6, 11.3, 4.2, 0.4), FW(0.2, -1.6, 11.0, 4.2, 0.4)] : [FW(0, -1.6, 10.6, 4.2, 0.4), FW(0, -1.6, 10.2, 4.2, 0.4)],
+    s3: REEL ? [FW(60, 0, 8.6, 4.8, 0.08), FW(60, 0, 8.4, 4.8, 0.08)] : [FW(60, 0, 8.4, 6.6, 0.08), FW(60, 0, 8.1, 6.6, 0.08)],
+    s4: REEL ? [FW(-2.55, -1.6, 5.4, 3.3, 0.42), FW(-2.55, -1.6, 5.2, 3.3, 0.44)] : [FW(-2.55, -1.6, 5.2, 4.0, 0.42), FW(-2.55, -1.6, 4.9, 3.9, 0.46)],
+    s5: REEL ? [FW(1.8, -1.6, 7.0, 3.7, 0.42), FW(1.8, -1.6, 6.8, 3.7, 0.42)] : [FW(1.2, -1.6, 6.8, 4.3, 0.42), FW(1.2, -1.6, 6.6, 4.3, 0.42)],
+    s6: REEL ? [FW(-61.9, -0.6, 6.1, 4.0, 0.22), FW(-61.9, -0.6, 5.9, 4.0, 0.22)] : [FW(-61.9, -0.6, 5.9, 4.1, 0.22), FW(-61.9, -0.6, 5.6, 4.1, 0.22)],
+    s7: REEL ? [FW(128.6, 0, 9.8, 2.9, 0.1), FW(128.6, 0, 9.6, 2.9, 0.1)] : [FW(127.9, 0, 9.6, 4.6, 0.1), FW(127.9, 0, 9.3, 4.6, 0.1)],
+    s8: REEL ? [FW(0.2, -1.6, 11.3, 4.2, 0.4), FW(0.2, -1.6, 11.0, 4.2, 0.4)] : [FW(0, -1.6, 10.4, 4.2, 0.4), FW(0, -1.6, 10.0, 4.2, 0.4)],
+    s9: REEL ? [FW(1.8, -1.6, 7.0, 3.7, 0.42), FW(1.8, -1.6, 6.8, 3.7, 0.42)] : [FW(1.2, -1.6, 6.8, 4.3, 0.42), FW(1.2, -1.6, 6.5, 4.3, 0.42)],
+    s10: REEL ? [FW(0.2, -1.6, 11.3, 2.0, 0.6), FW(0.2, -1.6, 11.1, 2.0, 0.6)] : [FW(0, -1.6, 10.6, 2.0, 0.6), FW(0, -1.6, 10.3, 2.0, 0.6)],
+    s11: REEL ? [FW(0.2, -1.6, 11.3, 2.0, 0.6), FW(0.2, -1.6, 11.0, 2.0, 0.6)] : [FW(0, -1.6, 10.6, 2.0, 0.6), FW(0, -1.6, 9.4, 2.0, 0.6)],
   };
   const CUT = new Set(['s3', 's4', 's6', 's7', 's8', 's10']);
   const CAM = [];
@@ -191,7 +191,7 @@
         def('mama', Sx.mama, t < q ? 'cry' : 'happy'); if (t < q) st.mama.armsUp = true;
         def('dad', mix(L.dad, Sx.dad, U.easeIO(U.clamp((p - 0.1) / 0.14))), p < 0.25 ? 'sleepy' : t < q ? 'worried' : 'happy');
         if (t > q) st.dad.armm1 = [-1.25, -0.4];
-        def('mom', L.mom, 'sleepy', false);
+        def('mom', L.mom, 'sleepy', false); if (REEL) def('nana', L.nana, 'sleepy', false);
       } else if (bt === 's8') {
         const p = ph('s8', t);
         def('mom', Sx.mom, 'happy'); st.mom.arm1 = [0.95, -1.0]; st.mom.book = true;
@@ -202,7 +202,7 @@
         def('mama', mix(Sx.mama, L.mama, kd), t < q ? 'worried' : kd < 0.5 ? 'happy' : 'sleepy');
         cardOn = t < q + 0.9; if (cardOn) st.mama.hold = true;
         def('dad', Sx.dad, 'happy'); if (t > q + 0.3 && t < q + 1.6) st.dad.armm1 = [-1.25, -0.4];
-        def('mom', L.mom, 'sleepy', false);
+        def('mom', L.mom, 'sleepy', false); if (REEL) def('nana', L.nana, 'sleepy', false);
       } else if (bt === 's11') {
         if (ph('s11', t) > 0.35) { st.mom.ex = 'happy'; st.dad.ex = 'happy'; }
       }
@@ -288,20 +288,20 @@
         const L = ['กรนดัง หยุดหายใจ หรือหายใจเฮือก', 'นอนลงเกิน 1 ชม. ยังไม่หลับ แทบทุกคืน', 'กลางวันง่วงมาก หงุดหงิด หรือซนผิดปกติ', 'กลัว กังวลรุนแรง จนกระทบตอนกลางวัน', 'บ่นขาอยู่ไม่สุข หรือคันจนมีผื่น'];
         L.forEach((s2, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.1)) / 0.35); if (a <= 0) return; const y = 390 + i * 80; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(120 + LD, y, 26, 0, 7); g.fillStyle = '#ff5f6d'; g.fill(); plain(String(i + 1), 120 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 162 + LD, y + 2, Math.round(40 * LF), '#ffffff', 600); g.restore(); });
         g.save(); g.globalAlpha = a0; plain('ที่มา: AASM, University of Missouri Extension', 540, 768, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
-        if (S.st2.kid.visible) { const [x, y] = wp(S.st2.kid.userData.head, 0.95); g.save(); g.globalAlpha = a0; txt('น้องลิ้นจี่ 5 ขวบ', x + 150, y + 20, 36, '#ffffff', 700); g.restore(); }
+        if (S.st2.kid.visible) { const [x, y] = wp(S.st2.kid.userData.head, 0.95); g.save(); g.globalAlpha = a0; txt('น้องลิ้นจี่ 5 ขวบ', REEL ? Math.min(x + 150, 800) : x + 150, y + 20, 36, '#ffffff', 700); g.restore(); }
       }
       /* s7: stair labels */
       if (b === 's7') {
         const q = SP('s7', 0.42), LB = ['0', '1–2', '3–4', '5–6', '7'];
         LB.forEach((l, i) => { const a = U.clamp((t - q - i * 0.28 - 0.3) / 0.3); if (a <= 0) return; const [x, y] = proj(new T.Vector3(STX(i), STH(i) * 0.5, 0.86)); g.save(); g.globalAlpha = a; txt(l, x, y, 46, '#ffffff', 800); g.restore(); });
-        const a = U.clamp((t - q - 0.2) / 0.4); if (a > 0) { const [, y] = proj(new T.Vector3(127.9, 0, 0.9)); g.save(); g.globalAlpha = a; plain('จำนวนคืนต่อสัปดาห์ ที่ทำกิจวัตรก่อนนอน', 540, y + 52, 34, '#5a3550', 700, 'center'); const [x2, y2] = proj(new T.Vector3(125.6, 2.9, 0)); txt('ยิ่งบ่อย', x2, y2 - 30, 50, '#ff6f91', 800); txt('ยิ่งหลับดี', x2, y2 + 34, 50, '#ff6f91', 800); g.restore(); }
+        const a = U.clamp((t - q - 0.2) / 0.4); if (a > 0) { const [, y] = proj(new T.Vector3(REEL ? 128.6 : 127.9, 0, 0.9)); g.save(); g.globalAlpha = a; plain('จำนวนคืนต่อสัปดาห์ ที่ทำกิจวัตรก่อนนอน', 540, y + 52, 34, '#5a3550', 700, 'center'); const [x2, y2] = proj(new T.Vector3(125.6, 2.9, 0)); txt('ยิ่งบ่อย', x2, y2 - 30, 50, '#ff6f91', 800); txt('ยิ่งหลับดี', x2, y2 + 34, 50, '#ff6f91', 800); g.restore(); }
       }
       /* s8: pre-answered checklist */
       if (b === 's8') {
         const q = SP('s8', 0.5), a0 = U.clamp((t - q) / 0.3); if (a0 > 0) {
           const IT = ['น้ำ', 'ฉี่', 'กอด', 'เกาหลัง 2 นาที', 'นิทาน'];
-          g.save(); g.globalAlpha = a0; rr(70 + LD, 470, 940 - 2 * LD, 96, 48, 'rgba(255,255,255,.9)', '#ff8fab'); g.font = '700 ' + Math.round(36 * LF) + 'px Kanit,sans-serif'; const ws = IT.map((s2) => g.measureText(s2).width + 54), tot = ws.reduce((a, c) => a + c, 0), gap = (940 - 2 * LD - 50 - tot) / 4; let x = 95 + LD;
-          IT.forEach((s2, i) => { const a = U.clamp((t - C8(i)) / 0.25); g.globalAlpha = a0 * (0.35 + 0.65 * a); g.beginPath(); g.arc(x + 18, 518, 18, 0, 7); g.fillStyle = a > 0 ? '#2fbf71' : '#d9c7d0'; g.fill(); if (a > 0) { g.lineWidth = 5; g.lineCap = 'round'; g.strokeStyle = '#ffffff'; g.beginPath(); g.moveTo(x + 9, 518); g.lineTo(x + 16, 526); g.lineTo(x + 28, 510); g.stroke(); } plain(s2, x + 44, 520, Math.round(36 * LF), '#3a2f3f', 700); x += ws[i] + gap; });
+          g.save(); g.globalAlpha = a0; const L8 = REEL ? 60 : 0, F8 = REEL ? 33 : 36; rr(70 + L8, 470, 940 - 2 * L8, 96, 48, 'rgba(255,255,255,.9)', '#ff8fab'); g.font = '700 ' + F8 + 'px Kanit,sans-serif'; const ws = IT.map((s2) => g.measureText(s2).width + 54), tot = ws.reduce((a, c) => a + c, 0), gap = (940 - 2 * L8 - 50 - tot) / 4; let x = 95 + L8;
+          IT.forEach((s2, i) => { const a = U.clamp((t - C8(i)) / 0.25); g.globalAlpha = a0 * (0.35 + 0.65 * a); g.beginPath(); g.arc(x + 18, 518, 18, 0, 7); g.fillStyle = a > 0 ? '#2fbf71' : '#d9c7d0'; g.fill(); if (a > 0) { g.lineWidth = 5; g.lineCap = 'round'; g.strokeStyle = '#ffffff'; g.beginPath(); g.moveTo(x + 9, 518); g.lineTo(x + 16, 526); g.lineTo(x + 28, 510); g.stroke(); } plain(s2, x + 44, 520, F8, '#3a2f3f', 700); x += ws[i] + gap; });
           g.restore();
         }
       }
