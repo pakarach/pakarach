@@ -45,6 +45,7 @@
   /* s3 reasons */
   const R3 = (i) => i === 0 ? at('s3') : TM('s3', i, i === 1 ? 0.37 : 0.69);
   const r3Idx = (t) => t >= R3(2) ? 2 : t >= R3(1) ? 1 : 0;
+  const C8 = (i) => MK.s8 ? TM('s8', i, 0) : SP('s8', 0.5) + 0.25 + i * 0.42;
   /* stairs (s7) */
   const STX = (i) => 125.4 + i * 1.45, STH = (i) => 0.6 + i * 0.6;
 
@@ -298,7 +299,7 @@
         const q = SP('s8', 0.5), a0 = U.clamp((t - q) / 0.3); if (a0 > 0) {
           const IT = ['น้ำ', 'ฉี่', 'กอด', 'เกาหลัง 2 นาที', 'นิทาน'];
           g.save(); g.globalAlpha = a0; rr(70 + LD, 470, 940 - 2 * LD, 96, 48, 'rgba(255,255,255,.9)', '#ff8fab'); g.font = '700 ' + Math.round(36 * LF) + 'px Kanit,sans-serif'; const ws = IT.map((s2) => g.measureText(s2).width + 54), tot = ws.reduce((a, c) => a + c, 0), gap = (940 - 2 * LD - 50 - tot) / 4; let x = 95 + LD;
-          IT.forEach((s2, i) => { const a = U.clamp((t - q - 0.25 - i * 0.42) / 0.25); g.globalAlpha = a0 * (0.35 + 0.65 * a); g.beginPath(); g.arc(x + 18, 518, 18, 0, 7); g.fillStyle = a > 0 ? '#2fbf71' : '#d9c7d0'; g.fill(); if (a > 0) { g.lineWidth = 5; g.lineCap = 'round'; g.strokeStyle = '#ffffff'; g.beginPath(); g.moveTo(x + 9, 518); g.lineTo(x + 16, 526); g.lineTo(x + 28, 510); g.stroke(); } plain(s2, x + 44, 520, Math.round(36 * LF), '#3a2f3f', 700); x += ws[i] + gap; });
+          IT.forEach((s2, i) => { const a = U.clamp((t - C8(i)) / 0.25); g.globalAlpha = a0 * (0.35 + 0.65 * a); g.beginPath(); g.arc(x + 18, 518, 18, 0, 7); g.fillStyle = a > 0 ? '#2fbf71' : '#d9c7d0'; g.fill(); if (a > 0) { g.lineWidth = 5; g.lineCap = 'round'; g.strokeStyle = '#ffffff'; g.beginPath(); g.moveTo(x + 9, 518); g.lineTo(x + 16, 526); g.lineTo(x + 28, 510); g.stroke(); } plain(s2, x + 44, 520, Math.round(36 * LF), '#3a2f3f', 700); x += ws[i] + gap; });
           g.restore();
         }
       }
@@ -345,7 +346,7 @@
       [at('s5') + 0.5, 'boing'], [P('s5', 0.2), 'bubble'], [SP('s5', 0.5) + 0.2, 'warn'], [SP('s5', 0.5) + 0.6, 'ding'],
       [at('s6') + 0.3, 'heartbeat'], [TM('s6', 0, 0.1), 'tick'], [TM('s6', 1, 0.2), 'tick'], [TM('s6', 2, 0.3), 'tick'], [TM('s6', 3, 0.4), 'tick'], [TM('s6', 4, 0.5), 'tick'], [P('s6', 0.7), 'heartbeat'],
       [at('s7') + 0.4, 'riser'], [SP('s7', 0.42), 'pop'], [SP('s7', 0.42) + 0.3, 'tick'], [SP('s7', 0.42) + 0.6, 'tick'], [SP('s7', 0.42) + 0.9, 'tick'], [SP('s7', 0.42) + 1.2, 'tick'], [P('s7', 0.9), 'twinkle'],
-      [at('s8') + 0.3, 'twinkle'], [SP('s8', 0.5), 'pop'], ...[0, 1, 2, 3, 4].map((i) => [SP('s8', 0.5) + 0.25 + i * 0.42, 'ding']), [P('s8', 0.6), 'giggle'],
+      [at('s8') + 0.3, 'twinkle'], [SP('s8', 0.5), 'pop'], ...[0, 1, 2, 3, 4].map((i) => [C8(i), 'ding']), [P('s8', 0.6), 'giggle'],
       [at('s9') + 0.4, 'shimmer'], [at('s9') + 0.9, 'pop'], [SP('s9', 0.52), 'ding'], [SP('s9', 0.52) + 0.5, 'pop'],
       [TM('s10', 0, 0.1), 'ding'], [TM('s10', 1, 0.27), 'tick'], [TM('s10', 2, 0.44), 'tick'], [TM('s10', 3, 0.61), 'tick'], [TM('s10', 4, 0.78), 'tick'],
       [at('s11') + 0.3, 'twinkle'], [at('s11') + 1.2, 'heart'],
