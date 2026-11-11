@@ -243,10 +243,10 @@
       }
       if (b === 's5') {
         const q = SP('s5', 0.5), p = ph('s5', t);
-        if (t < q) { const [x, y] = wp(S.chom.userData.head, 1.0); bubble('หนูกินผลไม้แล้วนะ!', x + 60, y - 150, U.clamp((t - at('s5') - 0.4) / 0.3) * U.clamp((q - t) / 0.3), -40); }
+        if (t < q) { const [x, y] = wp(S.chom.userData.head, 1.0); bubble('หนูกินผลไม้แล้วนะ!', x + 60, y - 150, U.clamp((t - at('s5') - 0.4) / 0.3) * U.clamp(((MK.s5 ? TM('s5', 0, 0) : q) - t) / 0.3), -40); }
         [['น้ำผลไม้', 'ใยอาหารหาย', '#ff8fab'], ['ผลไม้ทั้งลูก', 'ใยอาหารครบ', '#2fbf71']].forEach(([l1, l2, col], i) => { const a = U.clamp((t - TM('s5', i, 0.14 + i * 0.12)) / 0.3); const [x, y] = pv(PED[i], i ? 2.45 : 2.2, 0); card(Math.min(x, 900 - LD - (REEL ? 70 : 0)), y, 250, l1, l2, a, col); });
         if (t >= q) { const a0 = U.clamp((t - q) / 0.3); g.save(); g.globalAlpha = a0; rr(100 + LD, 440 + PY, 880 - 2 * LD, 296, 30, 'rgba(255,255,255,.94)', '#ff8fab'); g.restore();
-          [['ก่อน 1 ขวบ', 'งดน้ำผลไม้'], ['1–3 ขวบ', 'ไม่เกิน 120 มล./วัน'], ['4–6 ขวบ', 'ไม่เกิน 120–180 มล./วัน']].forEach(([a1, v2], i) => { const a = U.clamp((t - q - 0.3 - i * 0.8) / 0.3); if (a <= 0) return; const y = 492 + PY + i * 92; g.save(); g.globalAlpha = a; rr(130 + LD, y - 34, 250, 68, 34, i ? '#ff9ec0' : '#ff6f91'); plain(a1, 255 + LD, y + 2, 36, '#ffffff', 800, 'center'); plain(v2, 410 + LD, y + 2, Math.round(40 * LF), '#3a2f3f', 700); g.restore(); }); }
+          [['ก่อน 1 ขวบ', 'งดน้ำผลไม้'], ['1–3 ขวบ', 'ไม่เกิน 120 มล./วัน'], ['4–6 ขวบ', 'ไม่เกิน 120–180 มล./วัน']].forEach(([a1, v2], i) => { const a = U.clamp((t - (MK.s5 && MK.s5.length > 4 ? TM('s5', 2 + i, 0) : q + 0.3 + i * 0.8)) / 0.3); if (a <= 0) return; const y = 492 + PY + i * 92; g.save(); g.globalAlpha = a; rr(130 + LD, y - 34, 250, 68, 34, i ? '#ff9ec0' : '#ff6f91'); plain(a1, 255 + LD, y + 2, 36, '#ffffff', 800, 'center'); plain(v2, 410 + LD, y + 2, Math.round(40 * LF), '#3a2f3f', 700); g.restore(); }); }
       }
       if (b === 's6') {
         const q = SP('s6', 0.5), p = ph('s6', t);
