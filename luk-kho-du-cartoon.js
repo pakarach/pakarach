@@ -16,15 +16,15 @@
   const LX = -60, NX = 60, RX = 120;
   const SH = {
     cover: [[0, FW(-0.1, 0, 6.2, 4.2 - 0.6 * R1, 0.16)], [1, FW(-0.1, 0, 5.9, 4.2 - 0.6 * R1, 0.16)]],
-    s1: [[0, FW(LX, 0, 6.4, 3.95 - 1.5 * R1, 0.12)], [1, FW(LX, 0, 6.2, 3.95 - 1.5 * R1, 0.12)]],
-    s2: [[0, FW(NX - 0.3, 0, 6.8, 2.7 - 0.8 * R1, 0.12)], [1, FW(NX - 0.3, 0, 6.5, 2.7 - 0.8 * R1, 0.12)]],
-    s3: [[0, FW(RX, 0, 8.6, 4.7 - 1.6 * R1, 0.12)], [1, FW(RX, 0, 8.3, 4.7 - 1.6 * R1, 0.12)]],
-    s4: [[0, FW(-0.6, 0, 7.4, 3.6 - 0.7 * R1, 0.14)], [1, FW(-0.6, 0, 7.1, 3.6 - 0.7 * R1, 0.14)]],
-    s5: [[0, FW(-0.3, 0, 7.6, 3.6 - 0.7 * R1, 0.14)], [1, FW(-0.3, 0, 7.3, 3.6 - 0.7 * R1, 0.14)]],
+    s1: [[0, FW(LX, 0, 6.4 + 0.8 * R1, 3.95 - 1.28 * R1, 0.12)], [1, FW(LX, 0, 6.2 + 0.8 * R1, 3.95 - 1.28 * R1, 0.12)]],
+    s2: [[0, FW(NX - 0.3 + 0.7 * R1, 0, 6.8, 2.7 - 0.8 * R1, 0.12)], [1, FW(NX - 0.3 + 0.7 * R1, 0, 6.5, 2.7 - 0.8 * R1, 0.12)]],
+    s3: [[0, FW(RX + 0.35 * R1, 0, 8.6 + 0.7 * R1, 4.7 - 1.6 * R1, 0.12)], [1, FW(RX + 0.35 * R1, 0, 8.3 + 0.7 * R1, 4.7 - 1.6 * R1, 0.12)]],
+    s4: [[0, FW(-0.6 + 0.4 * R1, 0, 7.4 + 0.9 * R1, 3.6 - 0.7 * R1, 0.14)], [1, FW(-0.6 + 0.4 * R1, 0, 7.1 + 0.9 * R1, 3.6 - 0.7 * R1, 0.14)]],
+    s5: [[0, FW(-0.3 + 0.5 * R1, 0, 7.6 + 0.9 * R1, 3.6 - 0.7 * R1, 0.14)], [1, FW(-0.3 + 0.5 * R1, 0, 7.3 + 0.9 * R1, 3.6 - 0.7 * R1, 0.14)]],
     s6: [[0, FW(0.1, 0, 6.6, 4.2 - 0.9 * R1, 0.14)], [1, FW(0.1, 0, 6.3, 4.2 - 0.9 * R1, 0.14)]],
     s7: [[0, FW(0.1, 0, 7.0, 4.6, 0.14)], [1, FW(0.1, 0, 6.8, 4.6, 0.14)]],
     s8: [[0, FW(0.3 + 0.4 * R1, 0, 9.6, 6.6, 0.3)], [1, FW(0.3 + 0.4 * R1, 0, 9.3, 6.6, 0.3)]],
-    s9: [[0, FW(0.2 + 0.4 * R1, 0, 9.0, 4.4 - 0.7 * R1, 0.2)], [1, FW(0.2 + 0.4 * R1, 0, 8.4, 4.4 - 0.7 * R1, 0.2)]],
+    s9: [[0, FW(0.2 + 0.4 * R1, 0, 9.0, 4.4 - 1.65 * R1, 0.2)], [1, FW(0.2 + 0.4 * R1, 0, 8.4, 4.4 - 1.65 * R1, 0.2)]],
   };
   const CUT = new Set(['s1', 's2', 's3', 's4', 's5', 's6', 's8', 's9']);
   const CAM = [];
@@ -115,7 +115,7 @@
         let cur = 0; for (let i = 0; i < 4; i++) if (t >= TM('s1', i, 0.06 + i * 0.235)) cur = i;
         const k = U.easeBack(U.clamp((t - TM('s1', cur, 0.06 + cur * 0.235)) / 0.35)), y0 = 0.2;
         if (cur === 0) def('wawa', LX, 0.3, 'happy', { y: y0, sc: k, wave: true });
-        if (cur === 1) { def('kt', LX - 0.75, 0.5, 'giggle', { y: y0, ry: 0.3, sc: k }); def('mom', LX + 0.85, 0.1, 'happy', { y: y0, ry: -0.35, sc: k, a1: [-0.5, -0.8] }); }
+        if (cur === 1) { def('kt', LX - 0.75, 0.5, 'giggle', { y: y0, ry: 0.3, sc: k }); def('mom', LX + 0.85, 0.1, 'happy', { y: y0, ry: -0.35, sc: k * (REEL ? 0.88 : 1), a1: [-0.5, -0.8] }); }
         if (cur === 2) { def('mama', LX + 0.75, 0.35, 'giggle', { y: y0 + hop(6, 0.12), sc: k }); def('nana', LX - 0.85, 0.45, 'happy', { y: y0, sc: k, wave: true }); }
         if (cur === 3) def('big', LX, 0.3, 'happy', { y: y0, sc: k, wave: true });
       } else if (bt === 's4') {
@@ -183,12 +183,12 @@
         [x, y] = wp(C.nana.userData.head, 0, 0.8); bubble('ตูนๆ!', x - 20, y - 50, U.clamp((t - 0.9) / 0.3), 36); }
       /* s1: age ladder */
       if (b === 's1') { const p = ph('s1', t), a0 = U.clamp((p - 0.02) / 0.05);
-        g.save(); g.globalAlpha = a0; rr(50 + LD, 320, 980 - 2 * LD, 430, 30, 'rgba(255,255,255,.9)', '#ff8fab'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(50 + LD, 320, 980 - 2 * LD, REEL ? 364 : 430, 30, 'rgba(255,255,255,.9)', '#ff8fab'); g.restore();
         const L = [['ต่ำกว่า 18 เดือน', 'งดจอ ยกเว้นวิดีโอคอล'], ['18–24 เดือน', 'ดูได้นิดหน่อย พ่อแม่ดูด้วย'], ['2–5 ขวบ', 'ไม่เกินวันละ 1 ชั่วโมง'], ['6 ขวบขึ้นไป', 'ตั้งกติกา ไม่กินเวลานอน-เล่น']];
         let cur = 0; for (let i = 0; i < 4; i++) if (t >= TM('s1', i, 0.06 + i * 0.235)) cur = i;
-        L.forEach((s2, i) => { const a = U.clamp((t - TM('s1', i, 0.06 + i * 0.235)) / 0.3); if (a <= 0) return; const y = 380 + i * 86; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(74 + LD, y - 37, 932 - 2 * LD, 74, 37, '#ffd6e4');
+        L.forEach((s2, i) => { const a = U.clamp((t - TM('s1', i, 0.06 + i * 0.235)) / 0.3); if (a <= 0) return; const y = REEL ? 368 + i * 74 : 380 + i * 86; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(74 + LD, y - (REEL ? 33 : 37), 932 - 2 * LD, REEL ? 66 : 74, 37, '#ffd6e4');
           plain(s2[0], 104 + LD, y + 2, Math.round(34 * LF), i === cur ? '#ff4f7b' : '#b0879a', 800); plain(s2[1], 400 + LD * 0.6, y + 2, Math.round(36 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
-        g.save(); g.globalAlpha = a0; plain('ที่มา: AAP 2016 · ราชวิทยาลัยกุมารแพทย์ฯ', 540, 722, 26, '#8a6a7a', 400, 'center'); g.restore();
+        g.save(); g.globalAlpha = a0; plain('ที่มา: AAP 2016 · ราชวิทยาลัยกุมารแพทย์ฯ', 540, REEL ? 658 : 722, 26, '#8a6a7a', 400, 'center'); g.restore();
         const who = [C.wawa, C.kt, C.mama, C.big][cur], TG = ['งดจอไปก่อนนะ', 'มีพ่อแม่นั่งดูด้วย', 'วันละไม่เกิน 1 ชม.', 'กติกาเดิมทุกวัน'];
         const [x, y] = proj(new T.Vector3(LX, 0.1, 2.3)); tag(TG[cur], x, REEL ? y - 30 : y + 10, 42, U.clamp((t - TM('s1', cur, 0.06 + cur * 0.235) - 0.2) / 0.3), ['#ffd6dc', '#e6dcff', '#fff1c9', '#c9f5d9'][cur]); void who; }
       /* s2: endless episode strip + small brake */
@@ -236,7 +236,7 @@
         let cur = -1; for (let i = 0; i < 5; i++) if (t >= TM('s8', i, 0.1 + i * 0.17)) cur = i;
         L.forEach((s2, i) => { const a = U.clamp((t - TM('s8', i, 0.1 + i * 0.17)) / 0.3); if (a <= 0) return; const y = 382 + i * 86; g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(74 + LD, y - 37, 932 - 2 * LD, 74, 37, '#ffd6e4'); g.beginPath(); g.arc(122 + LD, y, 27, 0, 7); g.fillStyle = i === cur ? '#ff6f91' : '#ff9ec0'; g.fill(); plain(String(i + 1), 122 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 166 + LD, y + 2, Math.round(36 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); }); }
       /* s9: mama switches it off */
-      if (b === 's9') { const p = ph('s9', t); if (p > 0.3) { const [x, y] = proj(new T.Vector3(0, 0, 2.7)); tag('มามะ: จบแล้ว ปิดเอง!', x, y + 20, 42, U.clamp((p - 0.3) / 0.06), '#fff1c9'); } }
+      if (b === 's9') { const p = ph('s9', t); if (p > 0.3) { const [x, y] = proj(new T.Vector3(0, 0, 2.7)); tag('มามะ: จบแล้ว ปิดเอง!', x, REEL ? Math.min(y + 20, 1222) : y + 20, 42, U.clamp((p - 0.3) / 0.06), '#fff1c9'); } }
     },
     caps: [
       { t0: 0, t1: at('s1') + 0.05, y: 300, instant: true, lines: [[70, ['บอก "อีก 2 นาทีนะลูก"', '#fff']], [80, ['ยิ่งร้องหนักกว่าเดิม?', '#ffd35e']]] },
