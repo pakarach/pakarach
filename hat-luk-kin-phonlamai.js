@@ -21,16 +21,17 @@
   const FLAV = [['หวาน', '#ffd23f', true], ['เปรี้ยว', '#8fdc4a', false], ['ขม', '#3f9a62', false]];
   const STEP = [[117.6, 0.35, '#ffb347'], [120.0, 0.85, '#63c79b'], [122.4, 1.35, '#6fa8ff']];
   const TUBE = [-61.35, -58.65], PED = [180.0, 182.4];
+  const RA = REEL ? 0.6 : 0, RB = REEL ? 0.5 : 0;
   const CLOSE = (dx, dz) => ({ pos: [dx, 6.6, 26 - (dz || 0)], look: [dx, 3.0, 0], fov: 29 });
   const SH = {
-    cover: [FW(0.0, -1.0, 6.6, 3.8, 0.18), FW(0.05, -1.0, 6.4, 3.8, 0.18)],
-    s1: [FW(0.1, -1.0, 7.2, 3.8, 0.2), FW(0.1, -1.0, 6.9, 3.8, 0.2)],
+    cover: [FW(0.0, -1.0, 6.6, 3.8 - RA, 0.18), FW(0.05, -1.0, 6.4, 3.8 - RA, 0.18)],
+    s1: [FW(0.1, -1.0, 7.2, 3.8 - RA, 0.2), FW(0.1, -1.0, 6.9, 3.8 - RA, 0.2)],
     s2: [FW(59.9, 0, 7.6, 3.7, 0.1), FW(59.95, 0, 7.4, 3.7, 0.1)],
-    s3: [FW(120, 0, 7.8, 3.6, 0.1), FW(120, 0, 7.6, 3.6, 0.1)],
+    s3: [FW(120, 0, 7.8, 3.6 - RB, 0.1), FW(120, 0, 7.6, 3.6 - RB, 0.1)],
     s4: [FW(-60, 0, 6.6, REEL ? 4.3 : 4.7, 0.08), FW(-60, 0, 6.4, REEL ? 4.3 : 4.7, 0.08)],
     s5: [FW(180.2, 0, 7.8, 3.5, 0.1), FW(180.25, 0, 7.6, 3.5, 0.1)],
-    s6: [FW(0.0, -0.9, 6.6, 3.8, 0.2), FW(0.0, -0.9, 6.4, 3.8, 0.2)],
-    s7: [FW(0.1, -1.0, 7.6, 3.9, 0.2), FW(0.1, -1.0, 7.4, 3.9, 0.2)],
+    s6: [FW(0.0, -0.9, 6.6, 3.8 - RA, 0.2), FW(0.0, -0.9, 6.4, 3.8 - RA, 0.2)],
+    s7: [FW(0.1, -1.0, 7.6, 3.9 - RB, 0.2), FW(0.1, -1.0, 7.4, 3.9 - RB, 0.2)],
     s8: [FW(0, 0.2, 7.8, 4.0, 0.22), FW(0, 0.2, 7.6, 4.0, 0.22)],
     s9: [CLOSE(0.2), CLOSE(0, 1.2)],
   };
@@ -249,10 +250,10 @@
           [['ก่อน 1 ขวบ', 'งดน้ำผลไม้'], ['1–3 ขวบ', 'ไม่เกิน 120 มล./วัน'], ['4–6 ขวบ', 'ไม่เกิน 120–180 มล./วัน']].forEach(([a1, v2], i) => { const a = U.clamp((t - (MK.s5 && MK.s5.length > 4 ? TM('s5', 2 + i, 0) : q + 0.3 + i * 0.8)) / 0.3); if (a <= 0) return; const y = 492 + PY + i * 92; g.save(); g.globalAlpha = a; rr(130 + LD, y - 34, 250, 68, 34, i ? '#ff9ec0' : '#ff6f91'); plain(a1, 255 + LD, y + 2, 36, '#ffffff', 800, 'center'); plain(v2, 410 + LD, y + 2, Math.round(40 * LF), '#3a2f3f', 700); g.restore(); }); }
       }
       if (b === 's6') {
-        const q = SP('s6', 0.5), p = ph('s6', t);
-        if (t < q) ['จับ', 'ดม', 'เลีย', 'ชิมคำจิ๋ว'].forEach((n, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.09)) / 0.3) * U.clamp((q - t) / 0.3); if (a <= 0) return; const W = [150, 150, 150, 250][i], X = [165, 345, 525, 755][i] + (REEL ? [30, 15, 0, -40][i] : 0); g.save(); g.globalAlpha = a; rr(X - W / 2, 470 + PY, W, 84, 42, 'rgba(255,255,255,.94)', '#ff8fab'); plain(n, X, 514 + PY, 40, '#ff4f7a', 800, 'center'); g.restore(); if (i < 3) { g.save(); g.globalAlpha = a; txt('›', X + W / 2 + 16, 510 + PY, 50, '#ffffff', 800); g.restore(); } });
-        else { const a0 = U.clamp((t - q) / 0.3), n = Math.floor(U.lerp(0, 10.99, U.clamp((t - q - 0.3) / (dur('s6') * 0.32)))); g.save(); g.globalAlpha = a0; rr(90 + LD, 450 + PY, 900 - 2 * LD, 250, 30, 'rgba(255,255,255,.94)', '#ff8fab'); plain('ตารางชิมของนานะ', 150 + LD, 498 + PY, 34, '#3a2f3f', 700); plain('ครั้งที่ ' + Math.max(1, Math.min(10, n)), 930 - LD, 498 + PY, 38, '#ff4f7a', 800, 'right');
-          for (let i = 0; i < 10; i++) { const cx = 150 + LD + i * ((780 - 2 * LD) / 9), cy = 604 + PY, on = i < n; g.beginPath(); g.arc(cx, cy, 33, 0, 7); g.fillStyle = on ? (i >= 7 ? '#2fbf71' : '#ffc94d') : '#f1e4ea'; g.fill(); if (on) { g.fillStyle = '#ffffff'; g.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 9 : 20, an = -PI / 2 + j * PI / 5; g.lineTo(cx + Math.cos(an) * r, cy + Math.sin(an) * r); } g.fill(); } else plain(String(i + 1), cx, cy + 2, 26, '#b79aa8', 600, 'center'); }
+        const P6 = REEL ? 10 : 0; const q = SP('s6', 0.5), p = ph('s6', t);
+        if (t < q) ['จับ', 'ดม', 'เลีย', 'ชิมคำจิ๋ว'].forEach((n, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.09)) / 0.3) * U.clamp((q - t) / 0.3); if (a <= 0) return; const W = [150, 150, 150, 250][i], X = [165, 345, 525, 755][i] + (REEL ? [30, 15, 0, -40][i] : 0); g.save(); g.globalAlpha = a; rr(X - W / 2, 470 + P6, W, 84, 42, 'rgba(255,255,255,.94)', '#ff8fab'); plain(n, X, 514 + P6, 40, '#ff4f7a', 800, 'center'); g.restore(); if (i < 3) { g.save(); g.globalAlpha = a; txt('›', X + W / 2 + 16, 510 + P6, 50, '#ffffff', 800); g.restore(); } });
+        else { const a0 = U.clamp((t - q) / 0.3), n = Math.floor(U.lerp(0, 10.99, U.clamp((t - q - 0.3) / (dur('s6') * 0.32)))); g.save(); g.globalAlpha = a0; rr(90 + LD, 450 + P6, 900 - 2 * LD, 250, 30, 'rgba(255,255,255,.94)', '#ff8fab'); plain('ตารางชิมของนานะ', 150 + LD, 498 + P6, 34, '#3a2f3f', 700); plain('ครั้งที่ ' + Math.max(1, Math.min(10, n)), 930 - LD, 498 + P6, 38, '#ff4f7a', 800, 'right');
+          for (let i = 0; i < 10; i++) { const cx = 150 + LD + i * ((780 - 2 * LD) / 9), cy = 604 + P6, on = i < n; g.beginPath(); g.arc(cx, cy, 33, 0, 7); g.fillStyle = on ? (i >= 7 ? '#2fbf71' : '#ffc94d') : '#f1e4ea'; g.fill(); if (on) { g.fillStyle = '#ffffff'; g.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 9 : 20, an = -PI / 2 + j * PI / 5; g.lineTo(cx + Math.cos(an) * r, cy + Math.sin(an) * r); } g.fill(); } else plain(String(i + 1), cx, cy + 2, 26, '#b79aa8', 600, 'center'); }
           g.restore(); if (n >= 10) { const [x, y] = wp(S.c.nana.userData.head, 0.95); bubble('อร่อยดีนี่!', x + 10, y - 30, U.clamp((end('s6') - 0.15 - t) / 0.3), -20); } }
       }
       if (b === 's7') {
