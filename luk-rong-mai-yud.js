@@ -5,7 +5,7 @@
   const BEATS = [['cover', 2.2], ['s1', 6.5], ['s2', 8], ['s3', 8], ['s4', 7], ['s5', 8], ['s6', 8.5], ['s7', 8.5], ['s8', 9], ['s9', 8], ['s10', 10], ['s11', 7], ['s12', 6], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
-  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1, R1 = REEL ? 1 : 0;
+  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 60 : 0, LF = REEL ? 0.95 : 1, R1 = REEL ? 1 : 0;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -20,17 +20,17 @@
   const AX = 60, BX = 120, CX = -60;
   const HT = REEL ? 3.2 : 3.9;
   const SH = {
-    cover: [FW(0.3, 0.5, 7.5, 3.9 - 0.6 * R1), FW(0.3, 0.5, 7.2, 3.9 - 0.6 * R1)],
+    cover: REEL ? [FW(0.15, 0.5, 8.7, 3.3), FW(0.15, 0.5, 8.5, 3.3)] : [FW(0.3, 0.5, 7.5, 3.9), FW(0.3, 0.5, 7.2, 3.9)],
     s1: [FW(-0.3, 0.3, 6.6, HT), FW(-0.3, 0.3, 6.3, HT)],
     s2: [FW(0.5, 0.2, 5.6, HT), FW(0.5, 0.2, 5.3, HT)],
     s3: [FW(AX, 0, 10.2, 4.9 - 1.3 * R1, 0.1), FW(AX, 0, 9.9, 4.9 - 1.3 * R1, 0.1)],
     s4: [FW(0.0, 0.3, 6.6, HT), FW(0.0, 0.3, 6.3, HT)],
     s5: [FW(BX, 0, 7.4, 5.6 - 1.2 * R1, 0.1), FW(BX, 0, 7.1, 5.6 - 1.2 * R1, 0.1)],
-    s6: [FW(CX, 0, 9.4, 6.4 - 1.4 * R1, 0.1), FW(CX, 0, 9.1, 6.4 - 1.4 * R1, 0.1)],
+    s6: [FW(CX, 0, 9.4, 6.4 - 2.1 * R1, 0.1), FW(CX, 0, 9.1, 6.4 - 2.1 * R1, 0.1)],
     s7: [FW(0.0, 0.3, 6.8, 4.3 - 0.9 * R1, 0.2), FW(0.0, 0.3, 6.5, 4.3 - 0.9 * R1, 0.2)],
     s8: [FW(0.6, 0.2, 5.6, HT), FW(0.6, 0.2, 5.3, HT)],
     s9: [FW(-0.2, 0.3, 6.6, HT), FW(-0.2, 0.3, 6.3, HT)],
-    s10: [FW(-0.3, 0.0, 7.6, HT), FW(-0.3, 0.0, 7.3, HT)],
+    s10: REEL ? [FW(-0.55, 0.0, 8.9, HT), FW(-0.55, 0.0, 8.7, HT)] : [FW(-0.3, 0.0, 7.6, HT), FW(-0.3, 0.0, 7.3, HT)],
     s11: [FW(0, 0.3, 7.6, REEL ? 3.1 : 4.0, 0.14), FW(0, 0.3, 7.3, REEL ? 3.1 : 4.0, 0.14)],
     s12: [FW(0, 0.3, 7.6, REEL ? 3.4 : 4.1, 0.14), FW(0, 0.3, 7.1, REEL ? 3.4 : 4.1, 0.14)],
   };
@@ -275,7 +275,7 @@
           if (checks === true) { const c = U.clamp((t - starts[i] - 0.35) / 0.25); if (c > 0) { g.globalAlpha = a * c; g.beginPath(); g.arc(x + cw - 22, y0 + 20, 20, 0, 7); g.fillStyle = '#2fbf71'; g.fill(); g.strokeStyle = '#ffffff'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(x + cw - 31, y0 + 20); g.lineTo(x + cw - 24, y0 + 28); g.lineTo(x + cw - 12, y0 + 12); g.stroke(); } } g.restore(); }); };
       const C = S.C;
 
-      if (b === 'cover') { const [x, y] = wp(S.nbA, 0, 0.75); bubble('อุแว้ๆๆๆ!', x + 150, y - 420, 1, 46); }
+      if (b === 'cover') { const [x, y] = wp(S.nbA, 0, 0.75); bubble('อุแว้ๆๆๆ!', x + (REEL ? -230 : 150), y - (REEL ? 250 : 420), 1, 46); }
       if (b === 's1') { const q = SP('s1', 0.5); const [x, y] = wp(C.yai.userData.head, 0, 0.95); bubble('หลานเห็นผีแน่ๆ!', x + 60, y - 70, U.clamp((t - at('s1') - 1.0) / 0.25) * U.clamp((q - t) / 0.25), 44); }
       if (b === 's2') {
         chipRow(['หิว', 'ผ้าอ้อม', 'ร้อน/หนาว', 'ง่วงเกิน', 'อะไรรัด'], ['bottle', 'diaper', 'therm', 'moon', 'finger'], [0, 1, 2, 3, 4].map(C2), -1, 500, true);
@@ -293,7 +293,7 @@
         [x, y] = wp(S.gut, 1.15, -0.1); tag('ลำไส้', x + 30, y, Math.round(38 * LF), U.clamp((t - TM('s5', 1, 0.3) - 0.3) / 0.3), '#ff8f6b'); }
       if (b === 's6') { const p = ph('s6', t), q = SP('s6', 0.55);
         const aL = U.clamp((q - t) / 0.3);
-        S.bars.forEach((bar, i) => { const k = U.clamp((p - 0.06 - i * 0.12) / 0.28); if (k <= 0.3 || aL <= 0) return; const [x, y] = proj(new T.Vector3(bar.position.x, bar.scale.y + 1.15, 0.2)); g.save(); g.globalAlpha = U.clamp((k - 0.3) / 0.3) * aL; txt(BARL[i], x, y - 30, Math.round((i === 1 ? 44 : 38) * LF), i === 1 ? '#ffd35e' : '#ffffff', 800); g.restore(); const [x2, y2] = proj(new T.Vector3(bar.position.x, bar.scale.y * 0.5, 0.7)); tag(BARW[i], x2, y2, Math.round(30 * LF), U.clamp((k - 0.3) / 0.3) * aL, ['#ffb3c9', '#ff5f86', '#79dcb4'][i]); });
+        S.bars.forEach((bar, i) => { const k = U.clamp((p - 0.06 - i * 0.12) / 0.28); if (k <= 0.3 || aL <= 0) return; const [x, y] = proj(new T.Vector3(bar.position.x, bar.scale.y + 1.15, 0.2)); g.save(); g.globalAlpha = U.clamp((k - 0.3) / 0.3) * aL; txt(BARL[i], x, y - 30, Math.round((i === 1 ? 44 : 38) * LF), i === 1 ? '#ffd35e' : '#ffffff', 800); g.restore(); const [x2, y2] = proj(new T.Vector3(bar.position.x, REEL ? bar.scale.y - 0.5 : bar.scale.y * 0.5, 0.7)); tag(BARW[i], x2, y2, Math.round(30 * LF), U.clamp((k - 0.3) / 0.3) * aL, ['#ffb3c9', '#ff5f86', '#79dcb4'][i]); });
         const a1 = U.clamp((t - q - 0.2) / 0.3); if (a1 > 0) { const n = 5, sp = REEL ? 150 : 170, x0 = 540 - (n - 1) * sp / 2 - (REEL ? 15 : 0), y0 = REEL ? 640 : 680; g.save(); g.globalAlpha = a1; rr(x0 - 100, y0 - 92, (n - 1) * sp + 200, 184, 40, 'rgba(255,255,255,.92)', '#ff8fab', 5);
           for (let i = 0; i < n; i++) { const cx = x0 + i * sp, cry = i === 2, pop = U.easeBack(U.clamp((t - q - 0.3 - i * 0.12) / 0.3)), r = 52 * pop; if (r <= 0) continue; g.beginPath(); g.arc(cx, y0, r, 0, 7); g.fillStyle = cry ? '#ffb3c9' : '#ffe6d6'; g.fill(); g.lineWidth = 5; g.strokeStyle = cry ? '#ff5f86' : '#ffc2a8'; g.stroke(); g.fillStyle = '#3a2f3f'; for (const s2 of [-1, 1]) { g.beginPath(); if (cry) { g.lineWidth = 5; g.strokeStyle = '#3a2f3f'; g.moveTo(cx + s2 * 18 - 8, y0 - 10); g.lineTo(cx + s2 * 18 + 8, y0 - 6); g.stroke(); } else { g.arc(cx + s2 * 17, y0 - 8, 6 * pop, 0, 7); g.fill(); } } g.beginPath(); if (cry) { g.ellipse(cx, y0 + 20, 13 * pop, 10 * pop, 0, 0, 7); g.fillStyle = '#3a2f3f'; g.fill(); g.fillStyle = '#5ab8ff'; g.beginPath(); g.arc(cx + 30, y0 + 8, 8, 0, 7); g.fill(); } else { g.lineWidth = 5; g.strokeStyle = '#3a2f3f'; g.arc(cx, y0 + 6, 16 * pop, 0.2 * PI, 0.8 * PI); g.stroke(); } g.fillStyle = '#ff6f9f'; g.beginPath(); g.arc(cx, y0 - 44 * pop, 9 * pop, 0, 7); g.fill(); }
           g.restore(); } }
