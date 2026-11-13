@@ -3,7 +3,7 @@ const ZK = 1.45;
 const fr = (st, lx, ly, lz, d, h, sx, fov) => { const c = ST[st]; const look = [c[0] + lx, c[1] + ly, c[2] + lz]; return { look, pos: [look[0] + (sx || 0) * ZK, look[1] + h * ZK, look[2] + d * ZK], fov: fov || 40 }; };
 const mfr = (lon, lat, ly, d, h, sx) => { const [x, z] = mapXZ(lon, lat); const look = [x, ly, z]; return { look, pos: [x + (sx || 0), ly + h, z + d], fov: 40 }; };
 const SHOT = {
-  cover: [[0, fr('CAL', 0, 3.3, 0, 11.5, 1.6, 0)]], hook1: [[0, fr('CAL', 0, 3.4, 0, 11, 1.5, 0)]], hook2: [[0, fr('CAL', -1.8, 3.6, 0, 10, 1.8, -1.0)]],
+  cover: [[0, fr('COV', 0.3, 4.3, -0.5, 14.5, 0.5, 0)]], hook1: [[0, fr('CAL', 0, 3.4, 0, 11, 1.5, 0)]], hook2: [[0, fr('CAL', -1.8, 3.6, 0, 10, 1.8, -1.0)]],
   hook3: [[0, fr('CAL', 0, 3.6, 0, 13, 2.6, 0.8)]], hook4: [[0, fr('CAL', 1.9, 2.4, 1.0, 7.5, 1.6, 1.2)]],
   c12: [[0, fr('CLK', 0, 5.0, -1.0, 16.5, 2.4, 0)]], c13: [[0, fr('CLK', 0.8, 4.4, 0, 15.5, 3.4, 1)]],
   loki1: [[0, fr('VAL', 0, 2.3, -1.5, 12, 3.2, 0)]], loki2: [[0, fr('VAL', 3.0, 2.1, -1.4, 9.5, 2.6, 1.0)]], loki3: [[0, fr('VAL', 0.4, 2.1, -1.8, 8.2, 2.0, 0)]],
@@ -23,7 +23,7 @@ const SHOT = {
   thai1: [[0, fr('THA', -1.6, 3.6, -1.5, 15, 2.2, 0)]], thai2: [[0, fr('THA', 0.6, 2.4, 0.4, 7.6, 1.8, 0)]], thai3: [[0, fr('THA', 3.6, 1.8, 1.0, 7.2, 1.6, 0.4)]],
   math1: [[0, fr('CAL', 0, 2.4, 2.7, 11.5, 1.6, 0)]], math2: [[0, fr('CAL', 0, 3.1, 0, 9.4, 1.4, 0)]], recap: [[0, fr('CAL', 0, 3.4, 0, 15, 2.6, 0)]], ask: [[0, fr('CAL', 1.0, 2.9, 0.5, 10.5, 2.0, 0.8)]],
 };
-const CUT = new Set(['ros1', 'ros2', 'law3', 'law4', 'w1', 'thai1', 'math1']);
+const CUT = new Set(['hook1', 'ros1', 'ros2', 'law3', 'law4', 'w1', 'thai1', 'math1']);
 const IRIS = [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
 const CAM = (() => {
   const keys = []; let prev = null;
@@ -44,8 +44,9 @@ const CAM = (() => {
 })();
 
 /* backgrounds + fog per place */
-const BG = { world: ['#1d2b5c', '#5a7cbc'], map: ['#0f1630', '#1b2a55'], hall: ['#24130a', '#5a3214'], room: ['#2a2238', '#8a7258'], sea: ['#070b1c', '#18223e'], paris: ['#2a2050', '#b98068'], thai: ['#2a3a7a', '#e2a86a'], tow: ['#1a2a5c', '#7aa0d8'] };
+const BG = { night: ['#03050c', '#161a33'], world: ['#1d2b5c', '#5a7cbc'], map: ['#0f1630', '#1b2a55'], hall: ['#24130a', '#5a3214'], room: ['#2a2238', '#8a7258'], sea: ['#070b1c', '#18223e'], paris: ['#2a2050', '#b98068'], thai: ['#2a3a7a', '#e2a86a'], tow: ['#1a2a5c', '#7aa0d8'] };
 const PLACE = (id) => {
+  if (id === 'cover') return 'night';
   if (['ros1', 'law3', 'w1', 'w3', 'w4'].includes(id)) return 'map';
   if (id.startsWith('loki')) return 'hall'; if (id.startsWith('supper') || id === 'cliff1') return 'room';
   if (['law4', 'law5', 'law6'].includes(id)) return 'sea'; if (id.startsWith('ros')) return 'paris'; if (id.startsWith('thai')) return 'thai';
@@ -102,6 +103,12 @@ function update(t, s, { camera, W, H }) {
     C.cards.forEach((p, i) => { const k = showC ? U.easeBack(sm(0.4 + i * 0.25, 0.8 + i * 0.25, m1)) : 0; const up = i === 4 && showC ? U.easeBack(sm(3.0, 3.6, m1)) : 0;
       p.visible = k > 0.01; p.scale.setScalar(Math.max(0.01, 0.8 * k * (1 + up * 0.25))); setP(p, 'CAL', -2.7 + i * 0.9, 0.62 + up * 0.5, 2.7); });
   }
+  /* ----- COV ----- */
+  if (t < end('cover') + 0.3) { const Cv = s.cov, fl = Math.sin(t * 37) > 0.93 ? 0.4 : 1; Cv.sgn.material.opacity = fl; Cv.sglow.material.opacity = 0.7 * fl;
+    const ck = U.clamp(t / 2.4); setP(Cv.ccat, 'COV', U.lerp(-2.4, -0.8, ck), Math.abs(Math.sin(t * 7)) * 0.04, 1.6); Cv.ccat.rotation.y = 0.15; Cv.ccat.userData.tail.rotation.z = Math.sin(t * 2.5) * 0.3; Cv.ccat.userData.head.rotation.y = 0.6;
+    Cv.fogS.forEach((f, i) => { f.position.x = ST.COV[0] - 8 + i * 3.2 + Math.sin(t * 0.4 + i) * 0.6; });
+    Cv.shade.position.y = 0.18 + Math.sin(t * 1.5) * 0.03;
+    if (pl === 'night') { const lf = t > 0.95 && t < 1.07 ? 1.4 : 0; s.hemi.intensity = 0.45 + lf; s.sun.intensity = 0.25 + lf * 0.4; } }
   /* ----- CLK ----- */
   { const K = s.clk; K.clk.userData.mh.rotation.z = -t * 1.1; K.clk.userData.hh.rotation.z = -t * 0.09 - 0.6;
     const on = between(t, 'c12', 'c13'), r1 = rel(t, 'c12'), r2 = rel(t, 'c13');

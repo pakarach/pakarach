@@ -1,7 +1,7 @@
 /* Part C: stations + setup */
 const ST = {
   CAL: [0, 0, 0], CLK: [40, 0, 0], VAL: [80, 0, 0], SUP: [120, 0, 0], HAR: [160, 0, 0], TMP: [200, 0, 0], PAR: [240, 0, 0], WALL: [280, 0, 0],
-  SEA: [330, 0, 0], CIN: [380, 0, 0], TOW: [420, 0, 0], ROAD: [460, 0, 0], OFF: [500, 0, 0], THA: [540, 0, 0], MAPC: [-1000, 0, 0],
+  SEA: [330, 0, 0], CIN: [380, 0, 0], TOW: [420, 0, 0], ROAD: [460, 0, 0], OFF: [500, 0, 0], THA: [540, 0, 0], MAPC: [-1000, 0, 0], COV: [-2000, 0, 0],
 };
 const MP = FK.project(10, 30, 0.32);
 const mapXZ = (lon, lat) => { const q = MP(lon, lat); return [ST.MAPC[0] + q[0], -q[1]]; };
@@ -196,6 +196,36 @@ function setupScene(scene) {
   const spark = []; for (let i = 0; i < 16; i++) { const q = softSprite('rgba(255,215,110,1)', 0.9); q.scale.setScalar(0.35); scene.add(q); spark.push(q); }
   for (const x of [-8, -6.8, 8.2]) { const tr = tree(1.2, '#4f9a4a'); place(tr, 'THA', x, 0, -1); scene.add(tr); }
   s.tha = { fam, spark, sign };
+
+  /* ---------- COV: night street cover ---------- */
+  { const cg = mk(new T.BoxGeometry(60, 0.4, 50), '#20242e'); place(cg, 'COV', 0, -0.2, -10); scene.add(cg);
+    const road = mk(new T.BoxGeometry(60, 0.05, 4), '#15171e'); place(road, 'COV', 0, 0.03, 1.8); scene.add(road);
+    for (let i = 0; i < 12; i++) { const d = mk(new T.BoxGeometry(1.0, 0.02, 0.12), '#c9c3a8'); place(d, 'COV', -11 + i * 2, 0.07, 1.8); scene.add(d); }
+    const walk2 = mk(new T.BoxGeometry(60, 0.18, 3), '#3a3e4a'); place(walk2, 'COV', 0, 0.09, -1.4); scene.add(walk2);
+    const bld = [[-5.2, 4.2, 7.5, '#2a2c3a'], [-0.4, 5.2, 10, '#262838'], [4.8, 4.4, 8, '#2e2f3e']];
+    s.covWin = [];
+    bld.forEach((q, bi) => { const b = mk(new T.BoxGeometry(q[1], q[2], 3), q[3]); place(b, 'COV', q[0], q[2] / 2, -4.6); scene.add(b);
+      for (let f = 0; f < Math.floor(q[2] / 1.4); f++) for (let k = 0; k < Math.floor(q[1] / 1.1); k++) { const lit = ((f * 7 + k * 3 + bi) % 5) === 0;
+        const w = new T.Mesh(new T.PlaneGeometry(0.5, 0.7), basic(lit ? '#ffcf6a' : '#141622')); place(w, 'COV', q[0] - q[1] / 2 + 0.6 + k * 1.1, 0.9 + f * 1.4, -3.08); scene.add(w); if (lit) s.covWin.push(w); } });
+    const t13 = ctex(512, 400, (x, w, h) => { x.shadowColor = '#ff2a3a'; x.shadowBlur = 40; x.fillStyle = '#ff4a5a'; x.font = KF(800, 330); x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('13', w / 2, h / 2 + 20); x.shadowBlur = 0; x.fillStyle = '#ffd0d4'; x.font = KF(800, 300); x.fillText('13', w / 2, h / 2 + 20); });
+    const sgn = plane(3.6, 2.8, t13); place(sgn, 'COV', -0.4, 3.5, -3.0); scene.add(sgn);
+    const sglow = softSprite('rgba(255,40,60,1)', 0.7); sglow.scale.set(6.5, 5, 1); place(sglow, 'COV', -0.4, 3.5, -3.05); scene.add(sglow);
+    const lad = new T.Group(); for (const x of [-0.35, 0.35]) { const r = mk(new T.BoxGeometry(0.1, 4.2, 0.1), '#8a6a3a'); r.position.set(x, 2.1, 0); lad.add(r); }
+    for (let i = 0; i < 7; i++) { const r = mk(new T.BoxGeometry(0.7, 0.07, 0.07), '#8a6a3a'); r.position.set(0, 0.4 + i * 0.55, 0); lad.add(r); }
+    lad.rotation.x = -0.32; place(lad, 'COV', -3.6, 0.18, -2.4); scene.add(lad);
+    const lamp = new T.Group(); const lp = mk(new T.CylinderGeometry(0.08, 0.1, 4.4, 6), '#1a1c24'); lp.position.y = 2.2; lamp.add(lp); const lh = mk(new T.BoxGeometry(0.9, 0.12, 0.3), '#1a1c24'); lh.position.set(-0.4, 4.4, 0); lamp.add(lh);
+    const bulb = new T.Mesh(new T.SphereGeometry(0.16, 8, 6), basic('#ffe2a0')); bulb.position.set(-0.75, 4.3, 0); lamp.add(bulb);
+    const cone = new T.Mesh(new T.ConeGeometry(1.5, 4.2, 16, 1, true), new T.MeshBasicMaterial({ color: '#ffe2a0', transparent: true, opacity: 0.12, side: T.DoubleSide, depthWrite: false })); cone.position.set(-0.75, 2.2, 0); lamp.add(cone);
+    place(lamp, 'COV', 3.4, 0.18, -1.2); scene.add(lamp);
+    const pool = new T.Mesh(new T.CircleGeometry(1.5, 20), new T.MeshBasicMaterial({ color: '#ffe2a0', transparent: true, opacity: 0.18, depthWrite: false })); pool.rotation.x = -Math.PI / 2; place(pool, 'COV', 2.65, 0.2, -1.2); scene.add(pool);
+    const shade = new T.Group(); { const c = '#07080d'; const body = mk(new T.CylinderGeometry(0.35, 0.75, 2.6, 10), c, { roughness: 1 }); body.position.y = 1.3; shade.add(body);
+      const head = mk(new T.SphereGeometry(0.42, 10, 8), c, { roughness: 1 }); head.position.y = 2.85; shade.add(head); const hood = mk(new T.ConeGeometry(0.55, 0.9, 10), c, { roughness: 1 }); hood.position.y = 3.2; shade.add(hood);
+      for (const x of [-0.14, 0.14]) { const e = new T.Mesh(new T.SphereGeometry(0.06, 8, 6), basic('#ff2a3a')); e.position.set(x, 2.9, 0.38); shade.add(e); }
+      const eg = softSprite('rgba(255,40,60,1)', 0.8); eg.scale.set(0.9, 0.45, 1); eg.position.set(0, 2.9, 0.42); shade.add(eg); }
+    place(shade, 'COV', 2.5, 0.18, -1.5); shade.rotation.y = -0.25; scene.add(shade);
+    const ccat = catM(); ccat.scale.setScalar(1.15); place(ccat, 'COV', -1.6, 0, 1.6); scene.add(ccat);
+    const fogS = []; for (let i = 0; i < 6; i++) { const f = softSprite('rgba(150,160,200,1)', 0.18); f.scale.set(9, 3, 1); place(f, 'COV', -8 + i * 3.2, 0.9, 0.5 - (i % 2) * 2); scene.add(f); fogS.push(f); }
+    s.cov = { sgn, sglow, ccat, shade, fogS }; }
 
   /* ---------- MAP ---------- */
   const oc = mk(new T.BoxGeometry(120, 0.2, 60), '#13204a'); oc.position.set(ST.MAPC[0], -0.15, 5); scene.add(oc);
