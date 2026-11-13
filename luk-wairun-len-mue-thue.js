@@ -5,7 +5,7 @@
   const BEATS = [['cover', 2.4], ['s1', 8], ['s2', 6.5], ['s3', 10.5], ['s4', 10.5], ['s5', 8.5], ['s6', 8], ['s7', 8.5], ['s8', 7.5], ['s9', 8.5], ['s10', 5.5], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
-  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1, OY = REEL && DATA.reel.dy != null ? DATA.reel.dy - 30 : 0;
+  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 64 : 0, LF = REEL ? 0.95 : 1, OY = REEL && DATA.reel.dy != null ? DATA.reel.dy - 30 : 0;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -34,11 +34,11 @@
   /* blocking */
   const TEEN = { scale: 1.12, lashes: true, top: '#8fd16a', bottom: '#6a6fd8', hair: '#3a2a22' };
   const TMOM = { scale: 1.3, lashes: true, top: '#5fb3ff', bottom: '#7a5a9a', hair: '#2b2b33' };
-  const BEDX = -0.9, MT = 0.75, LX = 180, PRX = -60, CX = -120;
+  const BEDX = REEL ? -0.7 : -0.9, MT = 0.75, LX = 180, PRX = -60, CX = -120;
   const FAM = { mom: [-1.9, -0.7], dad: [1.95, -0.7], nana: [-1.6, 1.4], mama: [0, 1.4], wawa: [1.45, 1.4] };
   const DOCK = [LX - 2.55, 1.32, -2.35];
 
-  const HT = REEL ? 3.3 : 4.1, TX = REEL ? 0.25 : -0.3, MX = REEL ? 1.3 : 1.75;
+  const HT = REEL ? 3.3 : 4.1, TX = REEL ? -0.1 : -0.3, MX = REEL ? 1.4 : 1.75, NSX = REEL ? -2.75 : -3.05;
   const SH = {
     cover: [FW(TX - 0.1, -0.6, 6.6, HT, 0.2), FW(TX - 0.1, -0.6, 6.3, HT, 0.2)],
     s1: [FW(TX, -0.6, 6.8, HT, 0.2), FW(TX, -0.6, 6.5, HT, 0.2)],
@@ -77,9 +77,9 @@
       const room = CK.room(T, { wall: '#bcd6ff', dots: 'rgba(255,255,255,0.8)', wain: '#ff9ec0', floor: '#e2a877', rug: '#ffd166', props: false, winX: 2.5 }); scene.add(room);
       const DAYT = room.userData.win.material.map;
       bed(scene, BEDX, 2.9, ['#58b06a', '#d8f5c8'], '#ffb3c6');
-      const ns = new T.Mesh(new T.BoxGeometry(0.95, 0.85, 0.8), M('#c98a5a')); ns.position.set(-3.05, 0.42, -1.7); scene.add(ns);
+      const ns = new T.Mesh(new T.BoxGeometry(0.95, 0.85, 0.8), M('#c98a5a')); ns.position.set(NSX, 0.42, -1.7); scene.add(ns);
       const alarm = new T.Group(); { const rim = new T.Mesh(new T.CylinderGeometry(0.34, 0.34, 0.16, 28), M('#ff5f86')); rim.rotation.x = PI / 2; alarm.add(rim); const fc = new T.Mesh(new T.CylinderGeometry(0.28, 0.28, 0.02, 28), M('#ffffff')); fc.rotation.x = PI / 2; fc.position.z = 0.085; alarm.add(fc); for (const s of [-1, 1]) { const bl = new T.Mesh(new T.SphereGeometry(0.13, 14, 10, 0, 2 * PI, 0, PI / 2), M('#ffd23f')); bl.position.set(s * 0.22, 0.3, 0); bl.rotation.z = -s * 0.5; alarm.add(bl); const lg = new T.Mesh(new T.CylinderGeometry(0.035, 0.035, 0.14, 8), M('#ff5f86')); lg.position.set(s * 0.2, -0.36, 0); alarm.add(lg); } const h1 = new T.Mesh(new T.BoxGeometry(0.03, 0.18, 0.02), M('#3a2f3f')); h1.position.set(0, 0.08, 0.1); alarm.add(h1); const h2 = new T.Mesh(new T.BoxGeometry(0.13, 0.03, 0.02), M('#3a2f3f')); h2.position.set(0.06, 0, 0.1); alarm.add(h2); }
-      alarm.position.set(-3.05, 1.27, -1.55); alarm.scale.setScalar(1.15); scene.add(alarm);
+      alarm.position.set(NSX, 1.27, -1.55); alarm.scale.setScalar(1.15); scene.add(alarm);
       const teen = CK.neighbor(T, 0, TEEN); teen.userData.base = 1.12; scene.add(teen);
       const tmom = CK.neighbor(T, 3, TMOM); tmom.userData.base = 1.3; scene.add(tmom);
       const phone = phoneMesh(1.25); scene.add(phone);
@@ -244,7 +244,7 @@
       /* teen bedroom: clock + bubbles */
       if (['cover', 's1', 's10'].includes(b)) {
         const [ax, ay] = wp(S.alarm, 0.9), clk = b === 'cover' ? 120 : b === 's1' ? clockMin(t) : 390, morn = b === 's10' || (b === 's1' && t > NF1() - 0.2);
-        pill(hhmm(clk), Math.max(REEL ? 180 : 120, ax + 6), ay - 34, 1, 50, morn ? '#ffb648' : '#3d4bb0', '#ffffff');
+        pill(hhmm(clk), Math.max(REEL ? 200 : 120, ax + 6), ay - 34, 1, 50, morn ? '#ffb648' : '#3d4bb0', '#ffffff');
         const [hx, hy] = wp(S.teen.userData.head, 1.2);
         if (b === 'cover') bubble('อีกคลิปเดียว…', hx + 40, hy - 40, U.clamp((t - 0.2) / 0.2), 44);
         if (b === 's1') { bubble('อีกคลิปเดียว…', hx + 40, hy - 40, U.clamp((P('s1', 0.12) - t) / 0.25 + 1) * U.clamp((P('s1', 0.14) - t) / 0.2), 42); if (t > P('s1', 0.3) && t < NF1()) zz(hx + 60, hy + 30, U.clamp((t - P('s1', 0.3)) / 0.3)); if (S.tmom.visible) { const [mx, my] = wp(S.tmom.userData.head, 1.5); bubble('ส้มโอ! สายแล้ว!', mx - 20, my - 40, U.clamp((t - NF1() - 0.5) / 0.3) * U.clamp((P('s1', 0.78) - t) / 0.3), 40); } bubble('อีก 5 นาที…', hx + 30, hy - 40, U.clamp((t - P('s1', 0.78) - 0.1) / 0.3) * U.clamp((end('s1') - 0.2 - t) / 0.3), 42); }
@@ -280,7 +280,7 @@
         const q = SP('s5', 0.5);
         if (t < q) { const a0 = U.clamp((t - at('s5') - 0.3) / 0.3) * U.clamp((q - t) / 0.25), D = ['จ', 'อ', 'พ', 'พฤ', 'ศ'], cw = REEL ? 150 : 166, gap = 16, x0 = 540 - (5 * cw + 4 * gap) / 2 - (REEL ? 15 : 0), y0 = 500 + OY, shown = Math.min(5, Math.floor((t - at('s5') - 0.4) / 0.45) + 1);
           g.save(); g.globalAlpha = a0; D.forEach((d, i) => { if (i >= shown) return; const x = x0 + i * (cw + gap), lvl = [0.8, 0.62, 0.45, 0.3, 0.14][i], col = lvl > 0.5 ? '#ffb648' : lvl > 0.25 ? '#ff8f4a' : '#ff3b5c'; rr(x, y0, cw, 190, 26, 'rgba(255,255,255,.92)', '#ff8fab'); plain(d, x + cw / 2, y0 + 36, 38, '#3a2f3f', 800, 'center'); const bx = x + cw / 2 - 34, by = y0 + 70; rr(bx, by, 68, 100, 12, '#ffffff', '#3a2f3f', 5); g.fillStyle = '#3a2f3f'; g.fillRect(bx + 22, by - 12, 24, 12); g.fillStyle = col; g.fillRect(bx + 8, by + 8 + 84 * (1 - lvl), 52, 84 * lvl); }); g.restore(); }
-        else { const a0 = U.clamp((t - q - 0.2) / 0.3), cols = 20, sp = REEL ? 40 : 44, x0 = 540 - (cols - 1) * sp / 2 - (REEL ? 15 : 0), y0 = 560 + OY, lit = Math.round(69 * U.easeOut(U.clamp((t - q - 0.4) / 1.4)));
+        else { const a0 = U.clamp((t - q - 0.2) / 0.3), cols = 20, sp = REEL ? 37 : 44, x0 = 540 - (cols - 1) * sp / 2 - (REEL ? 15 : 0), y0 = 560 + OY, lit = Math.round(69 * U.easeOut(U.clamp((t - q - 0.4) / 1.4)));
           g.save(); g.globalAlpha = a0; rr(x0 - 34, y0 - 34, (cols - 1) * sp + 68, 4 * sp + 68, 26, 'rgba(255,255,255,.55)'); for (let i = 0; i < 100; i++) { const cx = x0 + (i % cols) * sp, cy = y0 + Math.floor(i / cols) * sp, on = i < lit; g.beginPath(); g.arc(cx, cy, on ? 16 : 12, 0, 7); g.fillStyle = on ? '#ff5f86' : 'rgba(255,255,255,.95)'; g.fill(); if (on) { g.lineWidth = 3; g.strokeStyle = '#ffffff'; g.stroke(); } } g.restore(); }
         if (S.cteen.visible) { const [x, y] = wp(S.cteen.userData.head, 0.6); zz(x + 70, y - 10, U.clamp((t - at('s5') - 0.6) / 0.3)); }
       }

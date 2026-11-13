@@ -1,4 +1,4 @@
-/* VE core v1.12 (one-size TikTok+Facebook layout: DATA.reel.dy moves captions and the 3D picture down; Reels-safe captions when DATA.reel.on: 30 px lower, 6% smaller, wider side margins; live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
+/* VE core v1.12 (one-size TikTok+Facebook layout: DATA.reel.dy moves captions and the 3D picture down, DATA.reel.zoom shrinks the 3D picture for side margins; Reels-safe captions when DATA.reel.on: 30 px lower, 6% smaller, wider side margins; live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -260,7 +260,8 @@
     const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 500);
     /* one-size safe layout (DATA.reel.dy, Nov 2026): whole 3D picture moves down by dy-30 px via the camera view offset (projected HUD labels follow); captions move down by dy */
     const RDY = (window.DATA && window.DATA.reel && window.DATA.reel.on && window.DATA.reel.dy != null) ? window.DATA.reel.dy : 30; VE.reelDy = RDY;
-    if (RDY !== 30) camera.setViewOffset(W, H, 0, -(RDY - 30), W, H);
+    const RZ = (window.DATA && window.DATA.reel && window.DATA.reel.on && window.DATA.reel.zoom) || 1; VE.reelZoom = RZ; /* zoom < 1 shrinks the 3D picture around the centre (side margins) */
+    if (RDY !== 30 || RZ !== 1) { const vw = W / RZ, vh = H / RZ; camera.setViewOffset(W, H, (W - vw) / 2, (H - vh) / 2 - (RDY - 30) / RZ, vw, vh); }
     let state = {}; // built in start(), after Kanit has loaded (labels draw text into canvases)
 
     /* --- 2D helpers --- */
