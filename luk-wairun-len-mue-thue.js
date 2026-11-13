@@ -30,7 +30,7 @@
   /* s4 sleep blocks (hours after 21:00 -> x) */
   const XH = (h) => -4.95 + h * 0.9, RA = 3.0, RB = 1.55;
   const A0 = XH(2.5), A1 = XH(10), B0 = XH(2.5 + 65 / 60), B1 = XH(10.75);
-  const S4a = () => SP('s4', 0.34), S4b = () => SP2('s4', 0.7);
+  const S4a = () => SP('s4', 0.34), S4b = () => SP2('s4', 0.7), S4c = () => MK.s4 ? at('s4') + B.lead + 0.06 + MK.s4[0] - 0.12 : S4a() + 1.2;
   /* blocking */
   const TEEN = { scale: 1.12, lashes: true, top: '#8fd16a', bottom: '#6a6fd8', hair: '#3a2a22' };
   const TMOM = { scale: 1.3, lashes: true, top: '#5fb3ff', bottom: '#7a5a9a', hair: '#2b2b33' };
@@ -267,7 +267,7 @@
       /* s4 labels */
       if (b === 's4') {
         const lab = (str, v, a, sz, col, bg) => { if (a <= 0) return; const [x, y] = proj(v); g.save(); g.globalAlpha = a; g.font = '700 ' + sz + 'px Kanit,sans-serif'; const w = g.measureText(str).width + 36; rr(x - w / 2, y - sz * 0.72, w, sz * 1.44, sz * 0.72, bg || 'rgba(255,255,255,.94)', col); plain(str, x, y + 2, sz, '#3a2f3f', 700, 'center'); g.restore(); };
-        const a1 = U.clamp((t - at('s4') - 0.6) / 0.3), a2 = U.clamp((t - S4a() - 0.2) / 0.3), a3 = U.clamp((t - S4a() - 1.2) / 0.3), a4 = U.clamp((t - S4b() - 0.3) / 0.3);
+        const a1 = U.clamp((t - at('s4') - 0.6) / 0.3), a2 = U.clamp((t - S4a() - 0.2) / 0.3), a3 = U.clamp((t - S4c()) / 0.3), a4 = U.clamp((t - S4b() - 0.3) / 0.3);
         lab('4 ทุ่ม', new T.Vector3(120 + XH(1), 3.95, 0.45), a1, 34, '#ff5f86');
         lab('คืนปกติ', new T.Vector3(120 + (A0 + A1) / 2, RA + 0.78, 0), a1, 36, '#9b8cff');
         lab('คืนที่เล่นหลัง 4 ทุ่มมากกว่าปกติ', new T.Vector3(120 + (B0 + B1) / 2 + 0.3, RB + 0.78, 0), a2 * U.clamp((S4b() - t) / 0.3 + (a4 > 0 ? 0 : 0)), 34, '#ff8fab');
@@ -336,7 +336,7 @@
       ...[0, 1, 2, 3, 4, 5].map((i) => [NF1() + i * 0.32, 'warn']), [NF1() + 0.6, 'pop'], [P('s1', 0.78), 'boing'],
       [at('s2') + 0.5, 'whoosh'], [at('s2') + 0.8, 'pop'], [at('s2') + 2.1, 'pop'], [at('s2') + 3.1, 'thud'],
       [at('s3') + 0.4, 'warn'], [at('s3') + 0.6, 'boing'], [R3(1), 'boing'], [R3(1) + 0.4, 'ding'], [R3(1) + 0.8, 'ding'], [R3(2), 'boing'], [R3(2) + 0.5, 'shimmer'],
-      [at('s4') + 0.5, 'whoosh'], [at('s4') + 0.8, 'pop'], [S4a() + 0.2, 'whoosh'], [S4a() + 0.4, 'pop'], [S4a() + 1.2, 'warn'], [S4b() + 0.3, 'tick'], [S4b() + 0.55, 'tick'], [S4b() + 0.8, 'tick'],
+      [at('s4') + 0.5, 'whoosh'], [at('s4') + 0.8, 'pop'], [S4a() + 0.2, 'whoosh'], [S4a() + 0.4, 'pop'], [S4c(), 'warn'], [S4b() + 0.3, 'tick'], [S4b() + 0.55, 'tick'], [S4b() + 0.8, 'tick'],
       [at('s5') + 0.4, 'breath'], ...[0, 1, 2, 3, 4].map((i) => [at('s5') + 0.45 + i * 0.45, 'tick']), [SP('s5', 0.5) + 0.3, 'whoosh'], [SP('s5', 0.5) + 1.8, 'ding'],
       [at('s6') + 0.3, 'heartbeat'], ...[0, 1, 2, 3, 4].map((i) => [TM('s6', i, 0.1 + i * 0.1), 'tick']), [P('s6', 0.7), 'heartbeat'],
       [at('s7') + 0.4, 'shimmer'], [at('s7') + 0.7, 'pop'], [at('s7') + 2.2, 'pop'], [SP('s7', 0.5) + 0.8, 'whoosh'], [SP('s7', 0.5) + 1.35, 'ding'],
