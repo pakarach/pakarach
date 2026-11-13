@@ -259,12 +259,12 @@
         { const [x, y] = pv(MX + 2.55, 1.3, -0.3); tag('กระเป๋าแก้ม', x - 40, y - 40, a0 * U.clamp((q - t) / 0.3)); }
       }
       if (b === 's4') {
-        const q = SP('s4', 0.5);
+        const q = MK.s4 && MK.s4.length > 3 ? TM('s4', 3, 0) - 1.2 : SP('s4', 0.5), qi = MK.s4 && MK.s4.length > 4 ? TM('s4', 4, 0) + 0.5 : q + 2.2;
         if (t < q) BX.forEach((x, i) => { const a = U.clamp((t - TM('s4', i, 0.1 + i * 0.12) - 0.5) / 0.3) * U.clamp((q - t) / 0.3); if (a <= 0) return; const h = BV[i] / 69.8 * 3.0, [px, py] = pv(x, h + 0.15, 0.65); const n = Math.round(BV[i] * U.clamp((t - TM('s4', i, 0.1 + i * 0.12)) / 0.8)); card(U.clamp(px, 175 + LD, 905 - LD), py, 250, n + ' ใน 100', ['ก่อน 6 เดือน', '6–9 เดือน', 'หลัง 9 เดือน'][i], a, i === 1 ? '#2fbf71' : '#ff8fab'); });
         else { const a0 = U.clamp((t - q) / 0.35); g.save(); g.globalAlpha = a0; rr(80 + LD, 440 + PY, 920 - 2 * LD, 330, 30, 'rgba(255,255,255,.95)', '#ff8fab');
           plain('ตอน 7 ขวบ · กลุ่มเริ่ม "หลัง 9 เดือน"', 540, 482 + PY, 34, '#3a2f3f', 800, 'center'); g.restore();
           [['มีปัญหาการกิน มากกว่า', 0.25], ['กินผักผลไม้น้อยกว่า ครบ 10 หมวด', 0.55]].forEach(([s2, f], i) => { const a = U.clamp((t - (MK.s4 && MK.s4.length > 3 ? TM('s4', 3 + i, 0) : q + 0.4 + i * 1.0)) / 0.3); if (a <= 0) return; const y = 550 + PY + i * 72; badge(140 + LD, y, false, a0 * a, 24); g.save(); g.globalAlpha = a0 * a; plain(s2, 180 + LD, y + 2, Math.round(36 * LF), '#3a2f3f', 700); g.restore(); });
-          const a2 = U.clamp((t - q - 2.2) / 0.4); for (let i = 0; i < 10; i++) { const cx = 175 + LD + i * ((730 - 2 * LD) / 9), cy = 708 + PY, dim = U.clamp((t - q - 2.4 - i * 0.12) / 0.3); g.save(); g.globalAlpha = a0 * a2 * (1 - 0.6 * dim); g.beginPath(); g.arc(cx, cy, 25, 0, 7); g.fillStyle = i % 2 ? '#ff9a3c' : '#4fb86a'; g.fill(); g.restore(); }
+          const a2 = U.clamp((t - qi) / 0.4); for (let i = 0; i < 10; i++) { const cx = 175 + LD + i * ((730 - 2 * LD) / 9), cy = 708 + PY, dim = U.clamp((t - qi - 0.2 - i * 0.12) / 0.3); g.save(); g.globalAlpha = a0 * a2 * (1 - 0.6 * dim); g.beginPath(); g.arc(cx, cy, 25, 0, 7); g.fillStyle = i % 2 ? '#ff9a3c' : '#4fb86a'; g.fill(); g.restore(); }
         }
       }
       if (b === 's5') {
@@ -284,7 +284,7 @@
         else [['อม + วิ่ง / หัวเราะ', 'เสี่ยงสำลัก', false], ['นั่งกิน เคี้ยวแล้วกลืน', 'ปลอดภัยกว่า', true]].forEach(([l1, l2, ok], i) => { const a = U.clamp((t - (MK.s6 && MK.s6.length > 1 ? TM('s6', i, 0) : q + 0.3 + i * 0.9)) / 0.3); if (a <= 0) return; const X = [300, 780][i] + (REEL ? [30, -60][i] : 0), W = 400; g.save(); g.globalAlpha = a; rr(X - W / 2, 470 + PY, W, 150, 26, 'rgba(255,255,255,.95)', ok ? '#2fbf71' : '#ff8fab'); plain(l1, X, 510 + PY, 33, '#3a2f3f', 700, 'center'); plain(l2, X, 556 + PY, 30, ok ? '#1f9a58' : '#ff4f7a', 800, 'center'); g.restore(); badge(X, 470 + PY, ok, a, 24); });
       }
       if (b === 's7') {
-        const p = ph('s7', t), a0 = U.clamp((p - 0.04) / 0.07);
+        const p = ph('s7', t), a0 = MK.s7 ? U.clamp((t - TM('s7', 0, 0) + 0.7) / 0.4) : U.clamp((p - 0.04) / 0.07);
         g.save(); g.globalAlpha = a0; rr(56 + LD, 318 + PY, 968 - 2 * LD, 440, 30, 'rgba(25,18,50,.7)', 'rgba(255,120,150,.9)'); g.restore();
         list(['น้ำหนัก ส่วนสูง ไม่ขึ้น หรือลดลง', 'กินได้ไม่ถึง ~20 อย่าง / ไม่กินทั้งหมวด', 'ขย้อน สำลัก บ่อยตอนเคี้ยว-กลืน', 'อาหารนิ่มๆ ก็ยังเคี้ยวไม่ได้', 'กลัวการกิน ร้องหนักทุกมื้อ'], 368, 70, 's7', 0.1, 0.13, a0, true);
         g.save(); g.globalAlpha = a0; plain('ที่มา: ASHA · ARFID vs picky eating (Equip)', 540, 728 + PY, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
