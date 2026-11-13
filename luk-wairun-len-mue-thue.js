@@ -38,19 +38,19 @@
   const FAM = { mom: [-1.9, -0.7], dad: [1.95, -0.7], nana: [-1.6, 1.4], mama: [0, 1.4], wawa: [1.45, 1.4] };
   const DOCK = [LX - 2.55, 1.32, -2.35];
 
-  const HT = REEL ? 3.3 : 4.1;
+  const HT = REEL ? 3.3 : 4.1, TX = REEL ? 0 : -0.3, MX = REEL ? 1.35 : 1.75;
   const SH = {
-    cover: [FW(-0.4, -0.6, 6.6, HT, 0.2), FW(-0.4, -0.6, 6.3, HT, 0.2)],
-    s1: [FW(-0.3, -0.6, 6.8, HT, 0.2), FW(-0.3, -0.6, 6.5, HT, 0.2)],
-    s2: [FW(-0.3, -0.6, 6.9, REEL ? 3.0 : 3.7, 0.2), FW(-0.3, -0.6, 6.6, REEL ? 3.0 : 3.7, 0.2)],
+    cover: [FW(TX - 0.1, -0.6, 6.6, HT, 0.2), FW(TX - 0.1, -0.6, 6.3, HT, 0.2)],
+    s1: [FW(TX, -0.6, 6.8, HT, 0.2), FW(TX, -0.6, 6.5, HT, 0.2)],
+    s2: [FW(TX, -0.6, 6.9, REEL ? 3.0 : 3.7, 0.2), FW(TX, -0.6, 6.6, REEL ? 3.0 : 3.7, 0.2)],
     s3: REEL ? [FW(60, 0, 9.6, 5.6, 0.08), FW(60, 0, 9.3, 5.6, 0.08)] : [FW(60, 0, 9.4, 6.9, 0.08), FW(60, 0, 9.1, 6.9, 0.08)],
     s4: REEL ? [FW(120, 0, 12.4, 3.6, 0.1), FW(120, 0, 12.1, 3.6, 0.1)] : [FW(120, 0, 11.6, 4.2, 0.1), FW(120, 0, 11.3, 4.2, 0.1)],
     s5: [FW(CX, 0, 6.2, REEL ? 2.6 : 3.2, 0.16), FW(CX, 0, 5.9, REEL ? 2.6 : 3.2, 0.16)],
-    s6: [FW(-0.3, -0.6, 6.7, 4.1, 0.22), FW(-0.3, -0.6, 6.4, 4.1, 0.22)],
+    s6: [FW(TX, -0.6, 6.7, 4.1, 0.22), FW(TX, -0.6, 6.4, 4.1, 0.22)],
     s7: [FW(LX - 0.6, 0, 7.2, HT), FW(LX - 0.6, 0, 6.9, HT)],
     s8: [FW(PRX + 0.3, -0.6, 7.0, HT, 0.2), FW(PRX + 0.3, -0.6, 6.7, HT, 0.2)],
-    s9: [FW(LX, 0.3, 7.6, REEL ? 3.1 : 4.0, 0.14), FW(LX, 0.3, 7.3, REEL ? 3.1 : 4.0, 0.14)],
-    s10: [FW(-0.3, -0.6, 6.8, HT, 0.2), FW(-0.3, -0.6, 6.4, HT, 0.2)],
+    s9: REEL ? [FW(LX, 0.3, 8.3, 3.5, 0.14), FW(LX, 0.3, 8.1, 3.5, 0.14)] : [FW(LX, 0.3, 7.6, 4.0, 0.14), FW(LX, 0.3, 7.3, 4.0, 0.14)],
+    s10: [FW(TX, -0.6, 6.8, HT, 0.2), FW(TX, -0.6, 6.4, HT, 0.2)],
   };
   const CUT = new Set(['s3', 's4', 's5', 's6', 's7', 's8', 's9', 's10']);
   const CAM = [];
@@ -176,7 +176,7 @@
           if (ring) { s.alarm.rotation.z = 0.18 * Math.sin(t * 40); s.alarm.position.y = 1.27 + 0.03 * Math.abs(Math.sin(t * 40)); } else s.alarm.position.y = 1.27;
           /* teen's mom */
           const momOn = (bt === 's1' && t > NF1() + 0.3) || bt === 's2' || (bt === 's6' && t > at('s6') + 0.7);
-          if (momOn) { m.visible = true; m.position.set(1.75, 0, 0.3); m.rotation.set(0, -0.38, 0); const mex = bt === 's1' ? 'angry' : 'worried'; m.userData.setExpr(mex); m.userData.tick(t, { wave: bt === 's1' && t < P('s1', 0.75) }); if (bt === 's2') arms(m, 0.75, -0.2, -0.75, -0.2); if (bt === 's6') arms(m, 1.0 + 0.05 * Math.sin(t * 3), -0.6); }
+          if (momOn) { m.visible = true; m.position.set(MX, 0, 0.3); m.rotation.set(0, -0.38, 0); const mex = bt === 's1' ? 'angry' : 'worried'; m.userData.setExpr(mex); m.userData.tick(t, { wave: bt === 's1' && t < P('s1', 0.75) }); if (bt === 's2') arms(m, 0.75, -0.2, -0.75, -0.2); if (bt === 's6') arms(m, 1.0 + 0.05 * Math.sin(t * 3), -0.6); }
         } }
 
       /* ---------- three thieves ---------- */
@@ -244,7 +244,7 @@
       /* teen bedroom: clock + bubbles */
       if (['cover', 's1', 's10'].includes(b)) {
         const [ax, ay] = wp(S.alarm, 0.9), clk = b === 'cover' ? 120 : b === 's1' ? clockMin(t) : 390, morn = b === 's10' || (b === 's1' && t > NF1() - 0.2);
-        pill(hhmm(clk), ax + 6, ay - 34, 1, 50, morn ? '#ffb648' : '#3d4bb0', '#ffffff');
+        pill(hhmm(clk), Math.max(120, ax + 6), ay - 34, 1, 50, morn ? '#ffb648' : '#3d4bb0', '#ffffff');
         const [hx, hy] = wp(S.teen.userData.head, 1.2);
         if (b === 'cover') bubble('อีกคลิปเดียว…', hx + 40, hy - 40, U.clamp((t - 0.2) / 0.2), 44);
         if (b === 's1') { bubble('อีกคลิปเดียว…', hx + 40, hy - 40, U.clamp((P('s1', 0.12) - t) / 0.25 + 1) * U.clamp((P('s1', 0.14) - t) / 0.2), 42); if (t > P('s1', 0.3) && t < NF1()) zz(hx + 60, hy + 30, U.clamp((t - P('s1', 0.3)) / 0.3)); if (S.tmom.visible) { const [mx, my] = wp(S.tmom.userData.head, 1.5); bubble('ส้มโอ! สายแล้ว!', mx - 20, my - 40, U.clamp((t - NF1() - 0.5) / 0.3) * U.clamp((P('s1', 0.78) - t) / 0.3), 40); } bubble('อีก 5 นาที…', hx + 30, hy - 40, U.clamp((t - P('s1', 0.78) - 0.1) / 0.3) * U.clamp((end('s1') - 0.2 - t) / 0.3), 42); }
