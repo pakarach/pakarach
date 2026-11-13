@@ -301,12 +301,12 @@
         g.save(); g.globalAlpha = a0; rr(60 + LD, 330, 960 - 2 * LD, 500, 30, 'rgba(25,18,50,.66)', 'rgba(255,120,150,.9)'); g.restore();
         const L = ['ไข้ 38°C ขึ้นไป ในเด็กไม่ถึง 3 เดือน', 'ซึม ปลุกยาก หรือร้องเสียงแหลมผิดปกติ', 'ไม่ยอมกินนม', 'อาเจียนสีเขียว หรืออุจจาระมีเลือด', 'หายใจลำบาก ตัวซีดหรือเขียว'];
         L.forEach((s2, i) => { const a = U.clamp((t - TM('s7', i, 0.1 + i * 0.1)) / 0.35); if (a <= 0) return; const y = 392 + i * 78; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(118 + LD, y, 26, 0, 7); g.fillStyle = '#ff5f6d'; g.fill(); plain(String(i + 1), 118 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 160 + LD, y + 2, Math.round(38 * LF), '#ffffff', 600); g.restore(); });
-        g.save(); g.globalAlpha = U.clamp((t - TM('s7', 4, 0.5) - 0.5) / 0.3); plain('ฉุกเฉิน โทร 1669', 540, 795, 38, '#ffd35e', 800, 'center'); g.restore(); }
+        g.save(); g.globalAlpha = U.clamp((t - TM('s7', 5, 0.86)) / 0.3); plain('ฉุกเฉิน โทร 1669', 540, 795, 38, '#ffd35e', 800, 'center'); g.restore(); }
       if (b === 's8') { let cur = -1; for (let i = 0; i < 5; i++) if (t >= S8(i)) cur = i;
         chipRow(['ห่อตัว', 'อุ้มตะแคง', 'เสียงชู่ว', 'โยกเบาๆ', 'ให้ดูด'], ['wrap', 'side', 'shh', 'rock', 'paci'], [0, 1, 2, 3, 4].map(S8), cur, 520, false);
         if (cur === 2) { const [x, y] = wp(C.mom.userData.head, 0, 1.0); bubble('ชู่ววว…', x - 40, y - 60, U.clamp((t - S8(2) - 0.2) / 0.25), 42); } }
-      if (b === 's9') { const q = SP('s9', 0.55); let [x, y] = wp(C.yai.userData.head, 0, 0.95); bubble('ป้อนน้ำผึ้งสิ หายร้อง', x + 80, y - 70, U.clamp((t - at('s9') - 0.8) / 0.25) * U.clamp((P('s9', 0.32) - t) / 0.25), 40);
-        const ax = U.clamp((t - P('s9', 0.32)) / 0.25) * U.clamp((q - t) / 0.3); if (ax > 0) { [x, y] = wp(S.jar, 0, 0.1); const r = 78 * U.easeBack(Math.min(1, ax * 1.2)); g.save(); g.globalAlpha = ax; g.lineWidth = 16; g.strokeStyle = '#ff3b5c'; g.lineCap = 'round'; g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); g.beginPath(); g.moveTo(x - r * 0.68, y + r * 0.68); g.lineTo(x + r * 0.68, y - r * 0.68); g.stroke(); g.restore(); } }
+      if (b === 's9') { const q = SP('s9', 0.55); let [x, y] = wp(C.yai.userData.head, 0, 0.95); bubble('ป้อนน้ำผึ้งสิ หายร้อง', x + 80, y - 70, U.clamp((t - at('s9') - 0.8) / 0.25) * U.clamp((TM('s9', 0, 0.32) - t) / 0.25), 40);
+        const ax = U.clamp((t - TM('s9', 0, 0.32)) / 0.25) * U.clamp((q - t) / 0.3); if (ax > 0) { [x, y] = wp(S.jar, 0, 0.1); const r = 78 * U.easeBack(Math.min(1, ax * 1.2)); g.save(); g.globalAlpha = ax; g.lineWidth = 16; g.strokeStyle = '#ff3b5c'; g.lineCap = 'round'; g.beginPath(); g.arc(x, y, r, 0, 7); g.stroke(); g.beginPath(); g.moveTo(x - r * 0.68, y + r * 0.68); g.lineTo(x + r * 0.68, y - r * 0.68); g.stroke(); g.restore(); } }
       if (b === 's10') { if (t > Q10a + 1.6 && t < Q10b) { let [x, y] = wp(C.mom.userData.head, 0, 1.0); x = U.clamp(x, 240 + LD, 840 - LD); const k = U.clamp((t - Q10a - 1.6) / (Q10b - Q10a - 1.6)); g.save(); g.globalAlpha = U.clamp((t - Q10a - 1.6) / 0.3) * U.clamp((Q10b - t) / 0.3); rr(x - 170, y - 112, 340, 84, 42, 'rgba(255,255,255,.93)', '#79dcb4', 6); g.lineWidth = 6; g.strokeStyle = '#2fbf71'; g.beginPath(); g.arc(x - 122, y - 70, 22, -PI / 2, -PI / 2 + PI * 2 * k); g.stroke(); plain('พัก 10–15 นาที', x + 28, y - 68, 34, '#3a2f3f', 700, 'center'); g.restore(); }
         if (t >= Q10b) { const [x, y] = wp(C.dad.userData.head, 0, 1.0); bubble('เดี๋ยวพ่ออุ้มเอง', x + 40, y - 60, U.clamp((t - Q10b - 0.9) / 0.25), 40); } }
       if (b === 's11') { const p = ph('s11', t), a0 = U.clamp((p - 0.04) / 0.06);
@@ -348,9 +348,9 @@
       [at('s4') + 0.4, 'wah'], [at('s4') + 1.0, 'riser'], [SP('s4', 0.5) + 0.3, 'bubble'], [SP('s4', 0.5) + 0.9, 'bubble'], [SP('s4', 0.5) + 1.5, 'bubble'],
       [at('s5') + 0.3, 'wah'], [TM('s5', 0, 0.12), 'pop'], [TM('s5', 1, 0.3), 'pop'], [SP('s5', 0.55), 'shimmer'], [SP('s5', 0.55) + 0.4, 'giggle'],
       [at('s6') + 0.6, 'riser'], [at('s6') + 1.2, 'pop'], [at('s6') + 2.2, 'pop'], [at('s6') + 3.2, 'pop'], [SP('s6', 0.55) + 0.3, 'pop'], [SP('s6', 0.55) + 0.9, 'ding'],
-      [at('s7') + 0.3, 'heartbeat'], ...[0, 1, 2, 3, 4].map((i) => [TM('s7', i, 0.1 + i * 0.1), 'tick']), [P('s7', 0.7), 'heartbeat'], [P('s7', 0.82), 'warn'],
+      [at('s7') + 0.3, 'heartbeat'], ...[0, 1, 2, 3, 4].map((i) => [TM('s7', i, 0.1 + i * 0.1), 'tick']), [P('s7', 0.7), 'heartbeat'], [TM('s7', 5, 0.86), 'warn'],
       ...[0, 1, 2, 3, 4].map((i) => [S8(i), i === 4 ? 'twinkle' : 'pop']), [S8(2) + 0.3, 'breath'], [S8(4) + 0.6, 'shimmer'],
-      [at('s9') + 0.3, 'whoosh'], [at('s9') + 0.9, 'boing'], [P('s9', 0.32), 'warn'], [SP('s9', 0.55), 'pop'],
+      [at('s9') + 0.3, 'whoosh'], [at('s9') + 0.9, 'boing'], [TM('s9', 0, 0.32), 'warn'], [SP('s9', 0.55), 'pop'],
       [at('s10') + 0.3, 'wah'], [at('s10') + 1.3, 'heartbeat'], [Q10a, 'whoosh'], [Q10a + 1.8, 'breath'], [Q10a + 2.8, 'breath'], [Q10b, 'whoosh'], [Q10b + 0.9, 'twinkle'],
       ...[0, 1, 2, 3, 4].map((i) => [TM('s11', i, 0.1 + i * 0.16), i ? 'tick' : 'ding']),
       [at('s12') + 0.3, 'twinkle'], [at('s12') + 0.8, 'giggle'], [at('s12') + 1.4, 'heart'],
