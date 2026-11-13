@@ -1,4 +1,4 @@
-/* VE core v1.11 (Reels-safe captions when DATA.reel.on: 30 px lower, 6% smaller, wider side margins; live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
+/* VE core v1.12 (one-size TikTok+Facebook layout: DATA.reel.dy moves captions and the 3D picture down; Reels-safe captions when DATA.reel.on: 30 px lower, 6% smaller, wider side margins; live audio scheduled ~6 s ahead so long voiced clips don't stutter; voice-over plays even when Play is pressed before it finishes decoding; MP4 waits for it; status line while loading; cover voice: DATA.vo.cover [s0,s1] plays at t=0.15 and grows the cover beat; VE.beats, VE.voice, VE.voiceBed shared by both kits; iris without the corner hairline; opaque end card; cover at t=0: captions with instant:true skip the pop-in, cfg.coverAt0 shows the series badge from frame 0; landscape-safe end frame + caption width; custom bed: {play(base,from,A)} for pre-rendered music; Render MP4 in the browser; bed vol; cfg.brandBar:false hides the top brand bar for calm/long-form videos) — shared engine for Dan's two shorts channels.
    Provides: canvas compositing, captions, brand intro/end frame, transitions,
    Web Audio (SFX library, beds, brand motif), transport UI,
    'Render MP4' (frame-by-frame WebCodecs H.264 + AAC, offline soundtrack) and 'WebM (real-time)' fallback.
@@ -258,6 +258,9 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
     renderer.setPixelRatio(1); renderer.setSize(W, H, false);
     const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(40, W / H, 0.1, 500);
+    /* one-size safe layout (DATA.reel.dy, Nov 2026): whole 3D picture moves down by dy-30 px via the camera view offset (projected HUD labels follow); captions move down by dy */
+    const RDY = (window.DATA && window.DATA.reel && window.DATA.reel.on && window.DATA.reel.dy != null) ? window.DATA.reel.dy : 30; VE.reelDy = RDY;
+    if (RDY !== 30) camera.setViewOffset(W, H, 0, -(RDY - 30), W, H);
     let state = {}; // built in start(), after Kanit has loaded (labels draw text into canvases)
 
     /* --- 2D helpers --- */
@@ -286,7 +289,7 @@
     const REELS = !!(window.DATA && window.DATA.reel && window.DATA.reel.on); VE.reels = REELS;
     function drawCaps(t) {
       for (const c0 of cfg.caps || []) {
-        const c = REELS ? Object.assign({}, c0, { y: c0.y + 30 }) : c0;
+        const c = REELS ? Object.assign({}, c0, { y: c0.y + RDY }) : c0;
         if (t < c.t0 || t >= c.t1) continue;
         const p = c.instant ? 1 : clamp((t - c.t0) / 0.35), sc = 0.72 + 0.28 * easeBack(p), a = (c.instant ? 1 : clamp((t - c.t0) / 0.12)) * clamp((c.t1 - t) / 0.2);
         g.save(); g.globalAlpha = a; g.translate(W / 2, c.y); g.scale(sc, sc); g.translate(-W / 2, -c.y);

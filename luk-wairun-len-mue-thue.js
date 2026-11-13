@@ -5,7 +5,7 @@
   const BEATS = [['cover', 2.4], ['s1', 8], ['s2', 6.5], ['s3', 10.5], ['s4', 10.5], ['s5', 8.5], ['s6', 8], ['s7', 8.5], ['s8', 7.5], ['s9', 8.5], ['s10', 5.5], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => (t - at(id)) / dur(id), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
-  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1;
+  const REEL = !!(DATA.reel && DATA.reel.on), LD = REEL ? 40 : 0, LF = REEL ? 0.95 : 1, OY = REEL && DATA.reel.dy != null ? DATA.reel.dy - 30 : 0;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
   const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
   const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
@@ -38,7 +38,7 @@
   const FAM = { mom: [-1.9, -0.7], dad: [1.95, -0.7], nana: [-1.6, 1.4], mama: [0, 1.4], wawa: [1.45, 1.4] };
   const DOCK = [LX - 2.55, 1.32, -2.35];
 
-  const HT = REEL ? 3.3 : 4.1, TX = REEL ? 0 : -0.3, MX = REEL ? 1.35 : 1.75;
+  const HT = REEL ? 3.3 : 4.1, TX = REEL ? 0.25 : -0.3, MX = REEL ? 1.3 : 1.75;
   const SH = {
     cover: [FW(TX - 0.1, -0.6, 6.6, HT, 0.2), FW(TX - 0.1, -0.6, 6.3, HT, 0.2)],
     s1: [FW(TX, -0.6, 6.8, HT, 0.2), FW(TX, -0.6, 6.5, HT, 0.2)],
@@ -47,7 +47,7 @@
     s4: REEL ? [FW(120, 0, 12.4, 3.6, 0.1), FW(120, 0, 12.1, 3.6, 0.1)] : [FW(120, 0, 11.6, 4.2, 0.1), FW(120, 0, 11.3, 4.2, 0.1)],
     s5: [FW(CX, 0, 6.2, REEL ? 2.6 : 3.2, 0.16), FW(CX, 0, 5.9, REEL ? 2.6 : 3.2, 0.16)],
     s6: [FW(TX, -0.6, 6.7, 4.1, 0.22), FW(TX, -0.6, 6.4, 4.1, 0.22)],
-    s7: [FW(LX - 0.6, 0, 7.2, HT), FW(LX - 0.6, 0, 6.9, HT)],
+    s7: [FW(LX - (REEL ? 0.3 : 0.6), 0, 7.2, HT), FW(LX - (REEL ? 0.3 : 0.6), 0, 6.9, HT)],
     s8: [FW(PRX + 0.3, -0.6, 7.0, HT, 0.2), FW(PRX + 0.3, -0.6, 6.7, HT, 0.2)],
     s9: REEL ? [FW(LX, 0.3, 8.3, 3.5, 0.14), FW(LX, 0.3, 8.1, 3.5, 0.14)] : [FW(LX, 0.3, 7.6, 4.0, 0.14), FW(LX, 0.3, 7.3, 4.0, 0.14)],
     s10: [FW(TX, -0.6, 6.8, HT, 0.2), FW(TX, -0.6, 6.4, HT, 0.2)],
@@ -244,7 +244,7 @@
       /* teen bedroom: clock + bubbles */
       if (['cover', 's1', 's10'].includes(b)) {
         const [ax, ay] = wp(S.alarm, 0.9), clk = b === 'cover' ? 120 : b === 's1' ? clockMin(t) : 390, morn = b === 's10' || (b === 's1' && t > NF1() - 0.2);
-        pill(hhmm(clk), Math.max(120, ax + 6), ay - 34, 1, 50, morn ? '#ffb648' : '#3d4bb0', '#ffffff');
+        pill(hhmm(clk), Math.max(REEL ? 180 : 120, ax + 6), ay - 34, 1, 50, morn ? '#ffb648' : '#3d4bb0', '#ffffff');
         const [hx, hy] = wp(S.teen.userData.head, 1.2);
         if (b === 'cover') bubble('อีกคลิปเดียว…', hx + 40, hy - 40, U.clamp((t - 0.2) / 0.2), 44);
         if (b === 's1') { bubble('อีกคลิปเดียว…', hx + 40, hy - 40, U.clamp((P('s1', 0.12) - t) / 0.25 + 1) * U.clamp((P('s1', 0.14) - t) / 0.2), 42); if (t > P('s1', 0.3) && t < NF1()) zz(hx + 60, hy + 30, U.clamp((t - P('s1', 0.3)) / 0.3)); if (S.tmom.visible) { const [mx, my] = wp(S.tmom.userData.head, 1.5); bubble('ส้มโอ! สายแล้ว!', mx - 20, my - 40, U.clamp((t - NF1() - 0.5) / 0.3) * U.clamp((P('s1', 0.78) - t) / 0.3), 40); } bubble('อีก 5 นาที…', hx + 30, hy - 40, U.clamp((t - P('s1', 0.78) - 0.1) / 0.3) * U.clamp((end('s1') - 0.2 - t) / 0.3), 42); }
@@ -253,7 +253,7 @@
       if (b === 'cover' || b === 's1') { if (S.teen.visible && (b === 'cover' || t < P('s1', 0.3))) name(S.teen, 'ส้มโอ 14 ขวบ', 0.1, b === 'cover' ? 1 : U.clamp((P('s1', 0.3) - t) / 0.3), 250); }
       /* s2 hours bars */
       if (b === 's2') {
-        const a0 = U.clamp((t - at('s2') - 0.4) / 0.3), x0 = 330 + LD * 0.5, px = (REEL ? 56 : 62), y0 = 520, grow = (d) => U.easeOut(U.clamp((t - at('s2') - d) / 0.8));
+        const a0 = U.clamp((t - at('s2') - 0.4) / 0.3), x0 = 330 + LD * 0.5, px = (REEL ? 56 : 62), y0 = 520 + OY, grow = (d) => U.easeOut(U.clamp((t - at('s2') - d) / 0.8));
         g.save(); g.globalAlpha = a0; rr(60 + LD, y0 - 60, 960 - 2 * LD, 250, 30, 'rgba(255,255,255,.9)', '#ff8fab');
         plain('ควรนอน', 100 + LD, y0 + 10, Math.round(40 * LF), '#3a2f3f', 700); plain('ส้มโอนอน', 100 + LD, y0 + 120, Math.round(40 * LF), '#3a2f3f', 700);
         const w8 = 8 * px * grow(0.7), w10 = 2 * px * grow(1.3); rr(x0, y0 - 22, Math.max(1, w8), 64, 18, '#4fc27a'); if (w10 > 2) { g.save(); g.setLineDash([10, 8]); rr(x0 + 8 * px - 4, y0 - 22, w10 + 4, 64, 18, 'rgba(79,194,122,.35)', '#4fc27a', 4); g.restore(); }
@@ -278,19 +278,19 @@
       /* s5 battery strip / grid */
       if (b === 's5') {
         const q = SP('s5', 0.5);
-        if (t < q) { const a0 = U.clamp((t - at('s5') - 0.3) / 0.3) * U.clamp((q - t) / 0.25), D = ['จ', 'อ', 'พ', 'พฤ', 'ศ'], cw = REEL ? 150 : 166, gap = 16, x0 = 540 - (5 * cw + 4 * gap) / 2 - (REEL ? 15 : 0), y0 = 500, shown = Math.min(5, Math.floor((t - at('s5') - 0.4) / 0.45) + 1);
+        if (t < q) { const a0 = U.clamp((t - at('s5') - 0.3) / 0.3) * U.clamp((q - t) / 0.25), D = ['จ', 'อ', 'พ', 'พฤ', 'ศ'], cw = REEL ? 150 : 166, gap = 16, x0 = 540 - (5 * cw + 4 * gap) / 2 - (REEL ? 15 : 0), y0 = 500 + OY, shown = Math.min(5, Math.floor((t - at('s5') - 0.4) / 0.45) + 1);
           g.save(); g.globalAlpha = a0; D.forEach((d, i) => { if (i >= shown) return; const x = x0 + i * (cw + gap), lvl = [0.8, 0.62, 0.45, 0.3, 0.14][i], col = lvl > 0.5 ? '#ffb648' : lvl > 0.25 ? '#ff8f4a' : '#ff3b5c'; rr(x, y0, cw, 190, 26, 'rgba(255,255,255,.92)', '#ff8fab'); plain(d, x + cw / 2, y0 + 36, 38, '#3a2f3f', 800, 'center'); const bx = x + cw / 2 - 34, by = y0 + 70; rr(bx, by, 68, 100, 12, '#ffffff', '#3a2f3f', 5); g.fillStyle = '#3a2f3f'; g.fillRect(bx + 22, by - 12, 24, 12); g.fillStyle = col; g.fillRect(bx + 8, by + 8 + 84 * (1 - lvl), 52, 84 * lvl); }); g.restore(); }
-        else { const a0 = U.clamp((t - q - 0.2) / 0.3), cols = 20, sp = REEL ? 40 : 44, x0 = 540 - (cols - 1) * sp / 2 - (REEL ? 15 : 0), y0 = 560, lit = Math.round(69 * U.easeOut(U.clamp((t - q - 0.4) / 1.4)));
+        else { const a0 = U.clamp((t - q - 0.2) / 0.3), cols = 20, sp = REEL ? 40 : 44, x0 = 540 - (cols - 1) * sp / 2 - (REEL ? 15 : 0), y0 = 560 + OY, lit = Math.round(69 * U.easeOut(U.clamp((t - q - 0.4) / 1.4)));
           g.save(); g.globalAlpha = a0; rr(x0 - 34, y0 - 34, (cols - 1) * sp + 68, 4 * sp + 68, 26, 'rgba(255,255,255,.55)'); for (let i = 0; i < 100; i++) { const cx = x0 + (i % cols) * sp, cy = y0 + Math.floor(i / cols) * sp, on = i < lit; g.beginPath(); g.arc(cx, cy, on ? 16 : 12, 0, 7); g.fillStyle = on ? '#ff5f86' : 'rgba(255,255,255,.95)'; g.fill(); if (on) { g.lineWidth = 3; g.strokeStyle = '#ffffff'; g.stroke(); } } g.restore(); }
         if (S.cteen.visible) { const [x, y] = wp(S.cteen.userData.head, 0.6); zz(x + 70, y - 10, U.clamp((t - at('s5') - 0.6) / 0.3)); }
       }
       /* s6 doctor list */
       if (b === 's6') {
         const p = ph('s6', t), a0 = U.clamp((p - 0.05) / 0.08);
-        g.save(); g.globalAlpha = a0; rr(50 + LD, 330, 980 - 2 * LD, 470, 30, 'rgba(25,18,50,.62)', 'rgba(255,120,150,.9)'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(50 + LD, 330 + OY, 980 - 2 * LD, 470, 30, 'rgba(25,18,50,.62)', 'rgba(255,120,150,.9)'); g.restore();
         const L = ['ง่วงจนหลับในห้องเรียนบ่อย', 'เศร้า เก็บตัว หงุดหงิด นานเกิน 2 สัปดาห์', 'กรนดัง หรือหยุดหายใจตอนหลับ', 'วางมือถือแล้ว ก็ยังหลับไม่ลงแทบทุกคืน', 'เลิกเล่นเองไม่ได้ ห้ามแล้วโกรธรุนแรง'];
-        L.forEach((s2, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.1)) / 0.35); if (a <= 0) return; const y = 390 + i * 80; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(110 + LD, y, 26, 0, 7); g.fillStyle = '#ff5f6d'; g.fill(); plain(String(i + 1), 110 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 152 + LD, y + 2, Math.round(39 * LF), '#ffffff', 600); g.restore(); });
-        g.save(); g.globalAlpha = a0; plain('ที่มา: AASM, AAP · สายด่วนสุขภาพจิต 1323', 540, 768, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
+        L.forEach((s2, i) => { const a = U.clamp((t - TM('s6', i, 0.1 + i * 0.1)) / 0.35); if (a <= 0) return; const y = 390 + OY + i * 80; g.save(); g.globalAlpha = a; g.beginPath(); g.arc(110 + LD, y, 26, 0, 7); g.fillStyle = '#ff5f6d'; g.fill(); plain(String(i + 1), 110 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 152 + LD, y + 2, Math.round(39 * LF), '#ffffff', 600); g.restore(); });
+        g.save(); g.globalAlpha = a0; plain('ที่มา: AASM, AAP · สายด่วนสุขภาพจิต 1323', 540, 768 + OY, 26, 'rgba(255,255,255,.9)', 400, 'center'); g.restore();
       }
       /* s7 bubbles + dock label */
       if (b === 's7') { const q = SP('s7', 0.5); let [x, y] = wp(S.lmom.userData.head, 1.5); bubble('วางมือถือกี่โมงดี?', x + 10, y - 40, U.clamp((t - at('s7') - 0.6) / 0.3) * U.clamp((q - t) / 0.3), 40); [x, y] = wp(S.lteen.userData.head, 1.3); bubble('4 ทุ่มก็ได้…', x - 10, y - 40, U.clamp((t - at('s7') - 2.2) / 0.3) * U.clamp((q - t) / 0.3), 40);
@@ -301,11 +301,11 @@
       /* s9 tips */
       if (b === 's9') {
         const p = ph('s9', t), a0 = U.clamp((p - 0.04) / 0.06);
-        g.save(); g.globalAlpha = a0; rr(60 + LD, 320, 960 - 2 * LD, REEL ? 440 : 495, 30, 'rgba(255,255,255,.88)', '#ff8fab'); g.restore();
+        g.save(); g.globalAlpha = a0; rr(60 + LD, 320 + OY, 960 - 2 * LD, REEL ? 440 : 495, 30, 'rgba(255,255,255,.88)', '#ff8fab'); g.restore();
         const L = ['วางจอ 30–60 นาที ก่อนนอน', 'ปิดแจ้งเตือน เปิดโหมดนอน', 'ตื่นเวลาเดิมทุกวัน รวมวันหยุด', 'งดกาแฟ ชา เครื่องดื่มชูกำลัง หลังบ่าย', 'ห้องนอนมืด เงียบ เย็นสบาย'];
         let cur = -1; for (let i = 0; i < 5; i++) if (t >= TM('s9', i, 0.1 + i * 0.17)) cur = i;
-        L.forEach((s2, i) => { const a = U.clamp((t - TM('s9', i, 0.1 + i * 0.17)) / 0.3); if (a <= 0) return; const y = 380 + i * (REEL ? 72 : 84) - (REEL ? 8 : 0); g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84 + LD, y - (REEL ? 32 : 36), 912 - 2 * LD, REEL ? 64 : 72, 32, '#ffd6e4'); g.beginPath(); g.arc(130 + LD, y, 27, 0, 7); g.fillStyle = i === cur ? '#ff6f91' : '#ff9ec0'; g.fill(); plain(String(i + 1), 130 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 176 + LD, y + 2, Math.round(38 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
-        g.save(); g.globalAlpha = a0; plain('ที่มา: AASM, Sleep Foundation, AAP', 540, (REEL ? 735 : 790), 26, '#7a5a70', 400, 'center'); g.restore();
+        L.forEach((s2, i) => { const a = U.clamp((t - TM('s9', i, 0.1 + i * 0.17)) / 0.3); if (a <= 0) return; const y = 380 + OY + i * (REEL ? 72 : 84) - (REEL ? 8 : 0); g.save(); g.globalAlpha = a0 * a; if (i === cur) rr(84 + LD, y - (REEL ? 32 : 36), 912 - 2 * LD, REEL ? 64 : 72, 32, '#ffd6e4'); g.beginPath(); g.arc(130 + LD, y, 27, 0, 7); g.fillStyle = i === cur ? '#ff6f91' : '#ff9ec0'; g.fill(); plain(String(i + 1), 130 + LD, y + 2, 32, '#ffffff', 800, 'center'); plain(s2, 176 + LD, y + 2, Math.round(38 * LF), '#3a2f3f', i === cur ? 800 : 600); g.restore(); });
+        g.save(); g.globalAlpha = a0; plain('ที่มา: AASM, Sleep Foundation, AAP', 540, (REEL ? 735 : 790) + OY, 26, '#7a5a70', 400, 'center'); g.restore();
       }
     },
     caps: [

@@ -1,4 +1,7 @@
-# Two builds per clip: TikTok + Facebook Reels (Nov 2026)
+# ONE build for TikTok + Facebook Reels (13 Nov 2026; replaces the tt-/fb- pair and the 'cre' step)
+Every file (draft, voiced, final) is built with `--data reel=docs/family/safe.json` (`{"on":true,"dy":130}`): the safe layout for both apps, with captions and the whole 3D picture moved 100 px further down (core v1.12: `dy` = caption shift, camera view offset = dy-30). Combined safe zone: x 90-960, y 270-1250. HUD panels at fixed y add `OY = DATA.reel.dy - 30` in video.js. Sections below are history.
+
+# Two builds per clip: TikTok + Facebook Reels (Nov 2026, superseded)
 Both are 9:16 1080x1920 from the same video.js, and since 13 Nov 2026 both use the safe layout (`REEL` true): TikTok's overlay zones (below) are almost as large as Facebook's.
 
 ## TikTok safe zone (Dan, 13 Nov 2026; given as 12.5% / 34% / 80 px on a 720x1280 frame)
