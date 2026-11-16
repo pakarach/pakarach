@@ -4,50 +4,47 @@ const fr = (st, lx, ly, lz, d, h, sx, fov) => { const c = ST[st]; const look = [
 const mfr = (lon, lat, ly, d, h, sx) => { const [x, z] = mapXZ(lon, lat); const look = [x, ly, z]; return { look, pos: [x + (sx || 0), ly + h * 1.25, z + d * 1.25], fov: 40 }; };
 const SHOT = {
   cover: [[0, L.LAND ? fr('PEN', -2.6, 2.3, -0.6, 6.2, 0.4, -1.2) : fr('PEN', 0, 2.5, -0.6, 6.2, 0.4, 0.6)]],
-  hook1: [[0, fr('HEAV', 0, 4.4, -1, 11, 0.4, 0.6)]],
+  hook1: [[0, fr('HEAV', 0, 4.0, -1, 8.4, 0.05, 0.5)]],
   hook2: [[0, fr('HEAV', 0, 3.2, 0.5, 7, 0.4, 1.2)]],
-  src1: [[0, mfr(84, 26, 0.3, 15, 19, 0)], [2.2, mfr(PL.ind[0], PL.ind[1] + 4, 0.5, 9, 11, 0)]],
-  src2: [[0, mfr(93, 17, 0.4, 19, 24, 0)]],
   fam1: [[0, fr('HERM', 0.6, 3.0, -1, 13, 1.2, 0)]],
   fam2: [[0, fr('HERM', -2.8, 3.4, -2.2, 8, 0.4, -0.6)]],
   fam3: [[0, fr('HERM', 2.0, 2.4, -0.6, 6.5, 0.6, 1.0)]],
   fam4: [[0, fr('HERM', 1.4, 1.9, 0.6, 5.4, 0.6, 0.4)]],
   fam5: [[0, fr('HERM', 2.8, 1.8, 0.6, 6.5, 0.6, 0.4)]],
   fam6: [[0, fr('HERM', 0, 2.6, -0.4, 11, 1.0, 0.4)]],
-  fam7: [[0, fr('HERM', -2.3, 2.6, -0.8, 6.2, 0.4, -0.6)]],
   fam8: [[0, fr('HERM', -0.6, 2.4, 0, 9.5, 0.8, 0.6)]],
   fam9: [[0, fr('HERM', 1.2, 1.6, 0.9, 3.8, 0.3, 0.4)]],
   tp1: [[0, fr('PEN', 0, 3.0, -1.4, 13.5, 1.2, 0)]],
   tp2: [[0, fr('PEN', 0, 2.4, -0.6, 7.5, 0.7, 0.9)]],
   tp3: [[0, fr('PEN', 0, 2.4, -0.6, 7, 0.6, -0.9)]],
-  tp4: [[0, fr('PEN', 0, 2.0, -0.6, 4.6, 0.3, 0.5)]],
+  tp4: [[0, fr('PEN', 0, 1.8, -0.6, 3.1, 0.12, 0.35)]],
   bn1: [[0, fr('PEN', 1.1, 3.4, -0.8, 10.5, 0.4, 0.8)]],
   bn2: [[0, fr('PEN', 1.1, 3.2, -0.8, 9.5, 0.4, 1.2)]],
   bn3: [[0, fr('PEN', 0.6, 3.6, -1.2, 10.5, 0.5, 0.4)]],
   bn4: [[0, fr('PEN', 0, 3.4, -0.4, 9.5, 0.4, -0.8)]],
   bn5: [[0, fr('PEN', 0, 2.6, -0.8, 7, 0.4, 0)]],
   bn6: [[0, fr('PEN', -3.2, 2.6, -1.8, 6.5, 0.4, -0.4)]],
-  bn7: [[0, fr('PEN', -3.0, 2.4, -1.8, 7.5, 0.6, 0.6)]],
+  bn7: [[0, fr('PEN', -3.0, 2.3, -1.8, 4.4, 0.18, 0.5)], [1.7, fr('PEN', -3.9, 1.3, -1.8, 5.2, 0.4, 0.2)]],
   bn8: [[0, fr('PEN', -2.2, 2.4, -1.6, 7.5, 0.8, 1.2)]],
   bn9: [[0, fr('PEN', 3.4, 2.3, -2.4, 5.8, 0.4, 0.6)]],
   lk1: [[0, fr('LANKA', 1.0, 3.0, -1, 13, 1.6, 2.0)]],
   lk2: [[0, fr('LANKA', -3.2, 2.8, -0.6, 10, 1.0, 0.6)]],
   lk3: [[0, fr('LANKA', 0, 4.4, -2, 11, 0.6, 0.6)]],
   kl1: [[0, fr('KAIL', 0, 4.4, -1, 13, 0.6, 2.4)]],
-  kl2: [[0, fr('KAIL', 0, 3.0, 0.2, 9.5, 0.2, 1.4)]],
+  kl2: [[0, fr('KAIL', 0, 2.6, 0.2, 7.0, -0.05, 1.0)]],
   kl3: [[0, fr('TOP', -0.2, 2.6, -2.6, 6.5, 0.6, 0.6)], [2.2, fr('KAIL', 0, 2.6, 0.4, 7.5, 0.3, -1.2), true]],
   kl4: [[0, fr('KAIL', 0, 6.0, -4, 18, 0.6, 1.6)]],
   kl5: [[0, fr('KAIL', 0, 3.2, 0.4, 8.5, 0.3, -0.8)]],
-  kl6: [[0, fr('ELL', 0, 4.6, -2, 11.5, 0.2, 0.4)]],
   sv1: [[0, fr('HEAV', 0, 3.0, 0, 11, 0.8, 1.6)]],
   sv2: [[0, fr('HEAV', 0, 4.2, -1, 10, 0.2, 0)]],
   sv3: [[0, fr('AYO', 0, 2.2, -1.0, 8.5, 1.8, 1.0)]],
   sv4: [[0, fr('LANKA', 0, 2.8, -2.4, 6.5, 0.4, 0.6)], [2.8, fr('AYO', 0, 1.9, -0.8, 6.2, 1.5, 0.8), true]],
-  recap: [[0, fr('AYO', 0, 2.6, -1, 10, 1.8, 0.6)]],
+  facts: [[0, fr('AYO', 0, 2.6, -1, 10, 1.8, 0.6)]],
   next: [[0, fr('AYO', 0, 2.2, -1.0, 7.5, 1.6, 0.8)]],
   ask: [[0, fr('PEN', 0, 2.6, -1.0, 6.5, 0.4, 0.4)]],
 };
-const CUT = new Set(['hook1', 'src1', 'fam1', 'tp1', 'lk1', 'kl1', 'kl6', 'sv1', 'sv3', 'sv4', 'recap', 'ask']);
+const PUSHK = { hook1: 0.84, fam4: 0.86, tp2: 0.86, tp4: 0.8, bn2: 0.86, bn7: 0.84, kl2: 0.84, kl4: 0.86, sv4: 0.86 }; // slower, deeper push-in on emotional beats
+const CUT = new Set(['hook1', 'fam1', 'tp1', 'lk1', 'kl1', 'sv1', 'sv3', 'sv4', 'facts', 'ask']);
 const IRIS = [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
 const CAM = (() => {
   const keys = []; let prev = null;
@@ -55,7 +52,7 @@ const CAM = (() => {
   for (const id of ORDER) {
     if (id === 'end') continue; const segsS = SHOT[id];
     segsS.forEach((sg, j) => {
-      const t0 = at(id) + sg[0], t1 = j + 1 < segsS.length ? at(id) + segsS[j + 1][0] : end(id), f = sg[1], fe = push(f, 0.93);
+      const t0 = at(id) + sg[0], t1 = j + 1 < segsS.length ? at(id) + segsS[j + 1][0] : end(id), f = sg[1], fe = push(f, PUSHK[id] || 0.93);
       const cut = j === 0 ? CUT.has(id) : !!sg[2];
       if (prev) {
         if (cut) { keys.push(Object.assign({ t: t0 - 0.002 }, prev)); keys.push(Object.assign({ t: t0 }, f)); }
@@ -120,7 +117,7 @@ function update(t, s, { camera, W, H }) {
   /* ---------- penance forest ---------- */
   { const p = s.pen, on = sc === 'pen'; vis(p.f, on); vis(p.kum, on); vis(p.vib, on); vis(p.brahma, false); p.glow.visible = false; p.flare.visible = false;
     if (on) {
-      p.f.userData.f.scale.set(1, 1 + 0.15 * Math.sin(t * 9), 1);
+      fireTick(p.f, t);
       R.visible = true; setSit(R, true); setP(R, 'PEN', 0, 0, -1.2); face(R, 0, 1); lapHands(R); ravArms(R, 0.55, true, t);
       resetFig(p.kum); setSit(p.kum, true); lapHands(p.kum); setP(p.kum, 'PEN', -3.3, 0, -2.0); face(p.kum, 0.4, 1); p.kum.rotation.order = 'YXZ'; p.kum.rotation.z = 0;
       resetFig(p.vib); setSit(p.vib, false); anjali(p.vib); setP(p.vib, 'PEN', 3.5, 0, -2.6); face(p.vib, -0.3, 1);
@@ -180,14 +177,13 @@ function update(t, s, { camera, W, H }) {
       ravArms(h.kid, 1, true, t); h.kid.userData.xheads.forEach((q) => (q.visible = true));
       h.vis.userData.head.rotation.y = Math.sin(t * 0.6) * 0.15; lapHands(h.vis);
       const pr = (t * 0.5) % 6.283; setP(h.push, 'HERM', -3.2 + Math.cos(pr) * 1.6, 3.6 + Math.sin(t * 1.3) * 0.2, -3.6 + Math.sin(pr) * 1.2); h.push.rotation.y = -pr;
-      h.aura.material.opacity = (inB(t, 'fam1') || inB(t, 'fam2') || inB(t, 'fam7') ? 0.55 : 0.25) + 0.15 * Math.sin(t * 3);
+      h.aura.material.opacity = (inB(t, 'fam1') || inB(t, 'fam2') ? 0.55 : 0.25) + 0.15 * Math.sin(t * 3);
       const pop = (c, s0, tb) => { const k = U.easeBack(sm(tb, tb + 0.45, t)); c.scale.setScalar(Math.max(0.001, s0 * k)); c.visible = k > 0.01; };
       pop(h.kid, 0.62, at('fam4', 0.4)); pop(h.kum, 0.8, at('fam5', 0.3)); pop(h.vib, 0.6, at('fam5', 1.0)); pop(h.sur, 0.58, at('fam5', 2.2)); pop(h.kai, 1.0, at('fam3', 0.2));
       if (inB(t, 'fam1')) { h.kub.userData.arms.R.rotation.set(0, 0, 1.6); }
       if (inB(t, 'fam2')) { h.kub.userData.arms.R.rotation.set(-2.4, 0, 0.6); h.kub.userData.head.rotation.x = -0.3; }
       if (inB(t, 'fam4')) { const r = rel(t, 'fam4'); if (r > 1.0) say(h.kid, 'อุแว้!', { dy: 1.6 }); }
       if (inB(t, 'fam6') || inB(t, 'fam8')) { face(h.kai, -1, 0.2); h.kai.userData.arms.R.rotation.set(-1.5, 0, 0); h.kid.userData.head.rotation.y = -0.9; face(h.kid, -0.6, 1); if (inB(t, 'fam6') && rel(t, 'fam6') > 3.0) say(h.kid, 'ฮึ่ม!', { dy: 1.5 }); }
-      if (inB(t, 'fam7')) { h.kub.userData.arms.L.rotation.set(0, 0, -1.6); h.kub.userData.arms.R.rotation.set(0, 0, 1.6); }
       if (inB(t, 'fam9')) { face(h.kid, -0.5, 1); h.kid.userData.head.rotation.x = 0.15; say(h.kid, '…', { dy: 1.5 }); }
     } }
 
@@ -234,7 +230,7 @@ function update(t, s, { camera, W, H }) {
 
   /* ---------- Ayodhya ---------- */
   { const A = s.ay, on = sc === 'ayo'; vis(A.f, on); vis(A.king, on); A.pr.forEach((p) => vis(p, on)); A.glow.visible = on; A.orb.visible = false;
-    if (on) { const big = inB(t, 'sv3') ? sm(3.0, 4.4, rel(t, 'sv3')) : 1; A.f.scale.setScalar(1.2 + big * 0.5); A.f.userData.f.scale.set(1, 1 + 0.2 * Math.sin(t * 9), 1); A.glow.scale.setScalar(4 + big * 4); A.glow.material.opacity = 0.45 + big * 0.35 + 0.08 * Math.sin(t * 5);
+    if (on) { const big = inB(t, 'sv3') ? sm(3.0, 4.4, rel(t, 'sv3')) : 1; A.f.scale.setScalar(1.2 + big * 0.5); fireTick(A.f, t); A.glow.scale.setScalar(4 + big * 4); A.glow.material.opacity = 0.45 + big * 0.35 + 0.08 * Math.sin(t * 5);
       A.pr.forEach((p, i) => { p.userData.head.rotation.x = 0.15 * Math.sin(t * 2 + i); });
       if (inB(t, 'sv3')) { const r = rel(t, 'sv3'), k = U.clamp((r - 0.8) / 2.2); if (r > 0.8 && r < 3.1) { A.orb.visible = true; setP(A.orb, 'AYO', 0, U.lerp(8, 1.0, k * k), 0); } }
       if (id === 'sv4' || id === 'next') { const r = id === 'sv4' ? rel(t, 'sv4') - 2.8 : 3; A.glow.scale.setScalar(8 + Math.min(1, r / 2) * 3); } } }
@@ -243,6 +239,7 @@ function update(t, s, { camera, W, H }) {
   VE.camAt(CAM, t, camera, 0.12);
   if (inB(t, 'kl3') && rel(t, 'kl3') > 2.3 && rel(t, 'kl3') < 2.9) { camera.position.x += Math.sin(t * 60) * 0.12; camera.position.y += Math.sin(t * 47) * 0.1; }
   camera.updateMatrixWorld(true);
+  atmoUpdate(t, s, bk, camera, sc === 'pen' && (inB(t, 'tp2') || inB(t, 'tp3') || inB(t, 'cover')) ? 1 : 0.8);
   const v = s.anchorV;
   for (const b of BUB) { b.o.updateMatrixWorld(true); b.o.getWorldPosition(v); v.y += (b.dy || 2) * (b.o.scale.y || 1); v.x += (b.dx || 0); v.project(camera); b.x = (v.x + 1) / 2 * W; b.y = (1 - v.y) / 2 * H; }
 }

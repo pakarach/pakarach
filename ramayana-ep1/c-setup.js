@@ -9,7 +9,7 @@ const PL = { ind: [79, 22], mm: [96, 21], th: [101, 15.2], la: [102.6, 19.5], kh
 let S = null;
 function place(o, st, x, y, z) { o.position.set(ST[st][0] + (x || 0), ST[st][1] + (y || 0), ST[st][2] + (z || 0)); return o; }
 const RAV = '#7a5a8a';
-function ravana(s) { const c = chibi({ robe: '#8a2a2a', sash: P.gold, skin: RAV, crown: true, eyeGlow: YAK_EYE, fangs: true, sleeve: RAV, s: s || 1 }); xHeads(c, 'in', RAV, YAK_EYE); xArms(c, 18, RAV, null, 0.9);
+function ravana(s) { const c = chibi({ robe: '#8a2a2a', sash: P.gold, skin: RAV, crown: true, eyeGlow: YAK_EYE, fangs: true, sleeve: RAV, s: s || 1 }); xHeads(c, 'in', RAV, YAK_EYE); c.userData.weapons = true; xArms(c, 18, RAV, null, 0.9);
   const sw = new T.Group(); const bl = mk(new T.BoxGeometry(0.07, 0.95, 0.02), '#e8f4ff', { emissive: new T.Color('#9fd8ff'), emissiveIntensity: 0.6 }); bl.position.y = -1.05; const hd = mk(new T.BoxGeometry(0.24, 0.05, 0.06), P.gold, GOLDM); hd.position.y = -0.58; sw.add(bl, hd); sw.visible = false; c.userData.arms.R.add(sw); c.userData.sword = sw; return c; }
 function kumbha(s) { const c = chibi({ robe: '#6a4a2a', sash: P.gold, skin: '#5f7a5a', eyeGlow: YAK_EYE, fangs: true, sleeve: '#5f7a5a', crown: true, s: s || 1.45 }); const belly = mk(new T.SphereGeometry(0.42, 12, 8), '#5f7a5a'); belly.position.set(0, 0.62, 0.18); c.add(belly); return c; }
 function pushpaka() {
@@ -78,7 +78,7 @@ function setupScene(scene) {
   for (let i = 0; i < 6; i++) { const r = chibi({ robe: '#5a2a3a', skin: ['#6a7a5a', '#7a5a6a', '#5a6a8a'][i % 3], eyeGlow: YAK_EYE, fangs: true, s: 0.8 }); scene.add(r); s.lk.army.push(r); }
 
   /* ---------- penance forest ---------- */
-  const ig = mk(new T.CylinderGeometry(10, 10.5, 0.4, 20), '#7a5a32'); place(ig, 'PEN', 0, -0.2, -1); scene.add(ig);
+  const ig = mk(new T.CylinderGeometry(10, 10.5, 0.4, 20), '#7a5a32'); place(ig, 'PEN', 0, -0.2, -1); /* replaced by terrain() */
   for (const q of [[-6, -4], [6, -3.5], [-4, -7], [4.5, -7.5], [7.5, 0.5], [-7.6, 0]]) { const tr = tree(1.6, '#4f7a3a'); place(tr, 'PEN', q[0], 0, q[1]); scene.add(tr); }
   s.pen = { f: fire(), brahma: chibi({ robe: '#ff9a4a', sash: P.gold, skin: '#e8b04a', crown: true, beard: '#ffffff', sleeve: '#e8b04a', s: 1.25 }), lotus: lotus(0.75), kum: kumbha(1.35), vib: chibi({ robe: '#f4f4f4', sash: P.gold, skin: '#7a8ab8', crown: true, eyeGlow: '#bfefff', sleeve: '#7a8ab8', s: 1.0 }) };
   place(s.pen.f, 'PEN', 0, 0, 1.1); s.pen.f.scale.setScalar(1.5);
@@ -92,7 +92,7 @@ function setupScene(scene) {
   for (let i = 0; i < 12; i++) { const m = softSprite('rgba(255,210,140,1)', 0.9); m.scale.setScalar(0.4); m.visible = false; scene.add(m); s.sparks.push(m); }
 
   /* ---------- hermitage (family) ---------- */
-  const hg = mk(new T.CylinderGeometry(10, 10.5, 0.4, 20), '#6f8f4a'); place(hg, 'HERM', 0, -0.2, -1); scene.add(hg);
+  const hg = mk(new T.CylinderGeometry(10, 10.5, 0.4, 20), '#6f8f4a'); place(hg, 'HERM', 0, -0.2, -1); /* replaced by terrain() */
   { const hut = mk(new T.BoxGeometry(3, 2, 2.4), '#c9a06a'); place(hut, 'HERM', -0.4, 1, -4.4); scene.add(hut); const rf = mk(new T.ConeGeometry(2.6, 1.6, 4), '#8a6a3a'); rf.rotation.y = Math.PI / 4; place(rf, 'HERM', -0.4, 2.8, -4.4); scene.add(rf); }
   for (const q of [[-6, -4], [6, -3.5], [-5, -7], [5, -7.5], [7.5, 0.5]]) { const tr = tree(1.5, '#3f7a3a'); place(tr, 'HERM', q[0], 0, q[1]); scene.add(tr); }
   s.h = {
@@ -119,7 +119,7 @@ function setupScene(scene) {
     s.ell = { vis: [0, 1].map(() => { const p = chibi({ robe: '#7fb3d5', hair: '#2a2228', s: 0.75 }); scene.add(p); return p; }) }; }
 
   /* ---------- Ayodhya fire ritual ---------- */
-  const ag = mk(new T.CylinderGeometry(10, 10.5, 0.4, 20), '#c9a77a'); place(ag, 'AYO', 0, -0.2, -1); scene.add(ag);
+  const ag = mk(new T.CylinderGeometry(10, 10.5, 0.4, 20), '#c9a77a'); place(ag, 'AYO', 0, -0.2, -1); /* replaced by terrain() */
   { const pa = palace('#f6ead2'); pa.scale.setScalar(1.3); place(pa, 'AYO', 0, 0, -7.5); scene.add(pa);
     const alt = mk(new T.BoxGeometry(1.8, 0.5, 1.8), '#b8452f'); place(alt, 'AYO', 0, 0.25, 0); scene.add(alt); }
   s.ay = { f: fire(), king: chibi({ robe: '#c0304a', sash: P.gold, skin: SKIN, crown: true, beard: '#f4f4f4', s: 1.1 }), pr: [], orb: orb('rgba(140,200,255,1)'), glow: softSprite('rgba(255,200,120,1)', 0.7) };
@@ -128,6 +128,13 @@ function setupScene(scene) {
   for (let i = 0; i < 3; i++) { const p = chibi({ robe: '#f4f0e0', skin: SKIN, hair: '#2a2228', bun: true, s: 0.9 }); setSit(p, true); anjali(p); const a = [-1.0, 1.0, -0.5][i] * 1.4; place(p, 'AYO', [-2.1, 2.1, -1.9][i], 0, [-0.6, -0.6, 1.5][i]); face(p, -[-2.1, 2.1, -1.9][i], -[-0.6, -0.6, 1.5][i]); scene.add(p); s.ay.pr.push(p); }
   scene.add(s.ay.f, s.ay.king, s.ay.orb, s.ay.glow);
 
+  atmoSetup(scene, s);
+  /* terrain + backdrop ranges replace the round ground plates */
+  scene.add(terrain('PEN', '#7a5a32', '#3a2a18', { hill: 6, seed: 3 }), ranges('PEN', [[34, '#4a2c1c', 7, 13, 11, 2.6], [46, '#2e1c16', 12, 20, 9, 2.8]], { seed: 4 }));
+  scene.add(terrain('HERM', '#6f8f4a', '#3f6a3a', { hill: 5, seed: 5 }), ranges('HERM', [[32, '#4f7a5a', 6, 11, 11, 2.6], [46, '#6f8fb0', 14, 22, 8, 2.8]], { seed: 6, snow: true }));
+  scene.add(terrain('AYO', '#c9a77a', '#8a6a42', { hill: 3.5, seed: 8 }), ranges('AYO', [[36, '#8a5a3a', 5, 9, 12, 2.6], [48, '#6a3a2a', 9, 15, 9, 2.8]], { seed: 9 }));
+  { const lg = mk(new T.BoxGeometry(40, 0.6, 8), '#3a5a4a'); place(lg, 'LANKA', 0, -0.1, -23); scene.add(lg); }
+  scene.add(skyline('LANKA', -23), ranges('LANKA', [[40, '#2a2450', 6, 12, 10, 2.4]], { seed: 11 }));
   s.anchorV = new T.Vector3(); s.tmpA = new T.Vector3(); s.tmpB = new T.Vector3();
   return s;
 }

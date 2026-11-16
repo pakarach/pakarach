@@ -41,26 +41,25 @@ function boonPanel(g, t) {
 function headCount(g, t) {
   const n = headsLeft(t); g.save(); panel(g, 330, 1300, 420, 170, 1); txt(g, 'หัวที่เหลือ', 540, 1338, 34, '#fff', 600); txt(g, String(n), 540, 1412, 86, n <= 1 ? P.coral : P.gold, 800); g.restore();
 }
-function recapCard(g, t) {
-  const r = rel(t, 'recap'), a = U.clamp(r / 0.3) * U.clamp((dur('recap') - r) / 0.3);
+function factCard(g, t) {
+  const r = rel(t, 'facts'), a = U.clamp(r / 0.3) * U.clamp((dur('facts') - r) / 0.3);
   g.save(); g.globalAlpha = a; panel(g, 60, 280, 960, 1180, 1);
-  txt(g, 'สรุป EP1', 540, 370, 56, '#fff', 800); txt(g, 'ทศกัณฐ์ตัดหัวแลกพร', 540, 450, 72, P.gold, 800);
-  const rows = ['ทศกัณฐ์ ลูกรากษส อิจฉาพี่ชายกุเวร', 'อดอาหารหมื่นปี ตัดหัวบูชาไฟ 9 หัว', 'พร: ใครก็ฆ่าไม่ได้… ยกเว้นมนุษย์', 'ยึดลงกา ยกเขาไกรลาส ได้ชื่อ “ราวณะ”', 'พระวิษณุ จะลงมาเกิดเป็นมนุษย์'];
-  rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.8) / 0.3); if (k <= 0) return; const y = 580 + i * 150; g.save(); g.globalAlpha = a * k;
-    g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 58, 880, 116, 26); g.fill(); g.fillStyle = i === 4 ? P.coral : P.teal; g.beginPath(); g.arc(170, y, 38, 0, 6.283); g.fill();
-    g.fillStyle = '#0f1630'; g.font = F(800, 40); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 170, y + 2); txt(g, s, 232, y, 38, '#fff', 600, 'left'); g.restore(); });
+  txt(g, 'รู้งี้…', 540, 370, 56, '#fff', 800); txt(g, 'จากต้นฉบับ', 540, 450, 72, P.gold, 800);
+  const rows = [['ทศครีพ / ทศกัณฐ์ แปลว่า “สิบคอ”', '“ราวณะ” แปลว่า ผู้ร้องคำราม'], ['กุเวร คือท้าวเวสสุวรรณ ราชาแห่งยักษ์', 'ราวณะเป็น “รากษส” คนละเผ่ากับพี่'], ['พระวิษณุ คือพระนารายณ์', 'ที่คนไทยคุ้นชื่อ'], ['ภาพสลักราวณะยกเขาไกรลาส', 'ยังอยู่ที่ถ้ำเอลโลรา อินเดีย'], ['รามเกียรติ์ของไทยแต่งใหม่ทีหลัง', 'มีตอน “นนทก” ที่อินเดียไม่มี']];
+  rows.forEach((row, i) => { const k = U.clamp((r - 0.6 - i * 2.2) / 0.3); if (k <= 0) return; const y = 590 + i * 148; g.save(); g.globalAlpha = a * k;
+    g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 62, 880, 124, 26); g.fill(); g.fillStyle = P.teal; g.beginPath(); g.arc(165, y, 34, 0, 6.283); g.fill();
+    g.fillStyle = '#0f1630'; g.font = F(800, 38); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 165, y + 2); txt(g, row[0], 222, y - 22, 36, '#fff', 700, 'left'); txt(g, row[1], 222, y + 24, 32, P.gold, 600, 'left'); g.restore(); });
   g.globalAlpha = a * 0.85; g.font = F(400, 24); g.fillStyle = '#fff'; g.textAlign = 'center';
-  g.fillText('ที่มา: รามายณะ ฉบับวาลมีกิ (อุตตรกัณฑ์ · พาลกัณฑ์)', 540, 1360);
-  g.fillText('บางตอนมีหลายสำนวน · ภาพจำลอง', 540, 1398);
+  g.fillText('ที่มา: รามายณะ ฉบับวาลมีกิ (อุตตรกัณฑ์ · พาลกัณฑ์)', 540, 1360); g.fillText('บางตอนมีหลายสำนวน · ภาพจำลอง', 540, 1398);
   g.restore();
 }
-const s0 = () => S;
 function coverLand(g) {
   g.save(); g.textAlign = 'left'; const rows = [[64, 'รามายณะ (อินเดีย) EP1', P.teal, 300], [120, 'ตัดหัวตัวเอง 9 หัว', P.gold, 420], [96, 'เพื่อพร', '#fff', 550], [150, 'ข้อเดียว', P.coral, 700]];
   rows.forEach((r) => txt(g, r[1], 120, r[3], r[0], r[2], 800, 'left')); g.restore();
 }
 function hud(g, t, { W, H }) {
   const id = beatAt(t), LA = L.LAND;
+  atmoGrade(g, t, W, H, bgKey(t), id === 'bn1' ? 2.2 : (id === 'bn2' || id === 'sv2' ? 1.3 : null));
   if (LA) FK.landGradients(g, W, H, { left: t < end('cover') });
   if (LA && t < end('cover')) coverLand(g);
   if (['tp4', 'fam9', 'kl4'].includes(id)) { g.fillStyle = 'rgba(10,6,30,0.22)'; g.fillRect(0, 0, W, H); }
@@ -68,11 +67,11 @@ function hud(g, t, { W, H }) {
   if (inB(t, 'bn1') && rel(t, 'bn1') < 0.35) { g.fillStyle = 'rgba(255,240,200,' + (0.5 * (1 - rel(t, 'bn1') / 0.35)) + ')'; g.fillRect(0, 0, W, H); }
   for (const b of BUB) bubble(g, b);
   const sh = (dx, dy, f) => { g.save(); if (LA) g.translate(dx, dy); f(); g.restore(); };
-  if (t >= at('fam1') && t < at('recap')) sh(L.CX - 540, -70, () => chapter(g, t));
+  if (t >= at('fam1') && t < at('facts')) sh(L.CX - 540, -70, () => chapter(g, t));
   if (TAG[id]) sh(L.CX - 540, -70, () => tagPill(g, TAG[id], t, id));
   if (between(t, 'tp2', 'tp4')) sh(W - 820, -1060, () => headCount(g, t));
   if (inB(t, 'bn3') || inB(t, 'bn4')) sh(-180, -640, () => boonPanel(g, t));
-  if (inB(t, 'recap')) { g.save(); if (LA) { g.translate(L.CX - 389, -30); g.scale(0.72, 0.72); } recapCard(g, t); g.restore(); }
+  if (inB(t, 'facts')) { g.save(); if (LA) { g.translate(L.CX - 389, -30); g.scale(0.72, 0.72); } factCard(g, t); g.restore(); }
 }
 
 /* audio */
@@ -80,11 +79,11 @@ FK.softSfx();
 VE.registerSfx('gong', (tt) => { VE.audio.tone(tt, 330, 1.8, { type: 'sine', vol: 0.04, rel: 1.6 }); VE.audio.tone(tt + 0.01, 495, 1.2, { type: 'sine', vol: 0.016, rel: 1.0 }); });
 VE.registerSfx('zap', (tt) => { VE.audio.tone(tt, 1300, 0.18, { type: 'sine', vol: 0.03, rel: 0.15 }); VE.audio.tone(tt + 0.05, 900, 0.22, { type: 'sine', vol: 0.025, rel: 0.2 }); });
 VE.registerSfx('ching', (tt) => { VE.audio.tone(tt, 1760, 0.4, { type: 'sine', vol: 0.02, rel: 0.35 }); VE.audio.tone(tt + 0.12, 2350, 0.3, { type: 'sine', vol: 0.014, rel: 0.25 }); });
-const AUD = [[0.1, 'gong'], [at('bn1', 0.1), 'gong'], [at('recap'), 'gong']];
+const AUD = [[0.1, 'gong'], [at('bn1', 0.1), 'gong'], [at('facts'), 'gong']];
 IRIS.forEach((r) => AUD.push([r.t, 'glide']));
 { let pl = null; for (const id of ORDER) { if (id === 'end' || !SHOT[id]) continue; const L0 = SHOT[id][0][1].look; if (pl && !CUT.has(id) && Math.hypot(pl[0] - L0[0], pl[1] - L0[1], pl[2] - L0[2]) > 10) AUD.push([at(id), 'glide', { dur: 1.2 }]); pl = SHOT[id][SHOT[id].length - 1][1].look; } }
 HRT.forEach((h) => AUD.push([h, 'zap'], [h + 0.05, 'soft']));
-AUD.push([at('fam2', 0.4), 'shimmer'], [at('fam4', 0.4), 'pop'], [at('fam5', 0.3), 'pop'], [at('fam5', 1.0), 'pop'], [at('fam5', 2.2), 'pop'], [at('fam7', 0.3), 'chime'], [at('tp4', 0.4), 'tok'], [at('tp4', 1.4), 'tok'], [at('tp4', 2.4), 'tok']);
+AUD.push([at('fam2', 0.4), 'shimmer'], [at('fam4', 0.4), 'pop'], [at('fam5', 0.3), 'pop'], [at('fam5', 1.0), 'pop'], [at('fam5', 2.2), 'pop'], [at('tp4', 0.4), 'tok'], [at('tp4', 1.4), 'tok'], [at('tp4', 2.4), 'tok']);
 AUD.push([at('bn2', 2.4), 'soft'], [at('bn4', 0.4), 'bell'], [at('bn5', 0.5), 'shimmer'], [at('bn6', 3.2), 'ching'], [at('bn7', 2.8), 'soft'], [at('bn9', 0.4), 'chime']);
 for (let i = 0; i < 5; i++) AUD.push([at('bn3', 0.8 + i * 0.6), 'tok']);
 AUD.push([at('lk1', 3.0), 'bell'], [at('lk3', 1.6), 'shimmer'], [at('kl1', 2.4), 'pop'], [at('kl2', 0.8), 'soft'], [at('kl3', 0.9), 'chime'], [at('kl3', 2.3), 'gong'], [at('kl4', 0.4), 'bell'], [at('kl5', 3.2), 'chime'], [at('sv2', 2.8), 'shimmer'], [at('sv3', 3.0), 'chime'], [at('sv4', 2.8), 'gong'], [at('next', 0.8), 'pop']);
@@ -93,9 +92,9 @@ AUD.sort((a, b) => a[0] - b[0]);
 
 caps.forEach((c) => { if (L.LAND) { if (!c.instant) c.y = FK.subtitleY(c); else c.t1 = 0; } });
 VE.run({
-  DUR, W: L.W, H: L.H, coverAt0: true, file: L.LAND ? 'ramayana-ep1-youtube' : 'ramayana-ep1', title: 'รามายณะ EP1 ทศกัณฐ์ตัดหัวแลกพร',
+  DUR, W: L.W, H: L.H, coverAt0: true, capFont: 'Trirong', file: L.LAND ? 'ramayana-ep1-youtube' : 'ramayana-ep1', title: 'รามายณะ EP1 ทศกัณฐ์ตัดหัวแลกพร',
   brand: { name: 'RuNgee รู้งี้', series: 'ตำนานเล่าใหม่', color: P.teal, icon: 'globe', bg: ['#0f1630', '#1b2a55'], endLine: 'รู้งี้... ติดตามไว้', motif: { notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' } },
   setup({ scene }) { S = setupScene(scene); return S; },
   update, bgAt, hud, caps, trans: IRIS, audio: AUD,
-  bed: [FK.chillBed({ DUR, calm: (t) => between(t, 'tp3', 'bn1') || inB(t, 'fam9') || inB(t, 'kl4'), vol: window.DATA && DATA.vo ? 0.6 : 1, voice: FK.voice(window.DATA && DATA.vo, B) })],
+  bed: [FK.chillBed({ DUR, calm: (t) => between(t, 'tp3', 'bn1') || inB(t, 'fam9') || inB(t, 'kl4') || inB(t, 'facts'), vol: window.DATA && DATA.vo ? 0.6 : 1, voice: FK.voice(window.DATA && DATA.vo, B) })],
 });
