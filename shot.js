@@ -22,7 +22,10 @@ const css = [400, 600, 800].map((w) =>
   const p = await b.newPage({ viewport: { width: 700, height: 1000 } });
   const errs = []; p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); }); p.on('pageerror', (e) => errs.push('PAGEERROR ' + e.message));
   await p.route('**/three.min.js', (r) => r.fulfill({ path: path.join(nm, 'three/build/three.min.js'), contentType: 'application/javascript' }));
-  await p.route('https://fonts.googleapis.com/**', (r) => r.fulfill({ body: r.request().url().includes('Plex') ? plexCss : css, contentType: 'text/css' }));
+  await p.route('https://fonts.googleapis.com/**', (r) => { const u = decodeURIComponent(r.request().url()); if (u.includes('Plex')) return r.fulfill({ body: plexCss, contentType: 'text/css' }); const fam = (u.match(/family=([^:&]+)/) || [])[1];
+    if (fam && fam !== 'Kanit') { const fdir = path.join(nm, '@fontsource', fam.replace(/\+/g, '-').toLowerCase(), 'files'); if (fs.existsSync(fdir)) { const fam2 = fam.replace(/\+/g, ' '); const body = fs.readdirSync(fdir).filter((f) => /-(thai|latin)-\d+-normal\.woff2$/.test(f)).map((f) => { const m = f.match(/-(thai|latin)-(\d+)-normal/); return "@font-face{font-family:'" + fam2 + "';font-weight:" + m[2] + ';src:url(https://fonts.gstatic.com/extra/' + fam.toLowerCase() + '/' + f + ');unicode-range:' + (m[1] === 'thai' ? 'U+0E01-0E5B,U+200C-200D,U+25CC' : 'U+0000-00FF,U+2000-206F') + '}'; }).join(''); return r.fulfill({ body, contentType: 'text/css' }); } return r.fulfill({ body: '', contentType: 'text/css' }); }
+    return r.fulfill({ body: css, contentType: 'text/css' }); });
+  await p.route('https://fonts.gstatic.com/extra/**', (r) => { const parts = r.request().url().split('/'); return r.fulfill({ path: path.join(nm, '@fontsource', parts[parts.length - 2], 'files', parts.pop()), contentType: 'font/woff2' }); });
   await p.route('https://fonts.gstatic.com/local/**', (r) => r.fulfill({ path: path.join(fontDir, r.request().url().split('/').pop()), contentType: 'font/woff2' }));
   await p.route('https://fonts.gstatic.com/plex/**', (r) => r.fulfill({ path: path.join(plexDir, r.request().url().split('/').pop()), contentType: 'font/woff2' }));
   await p.goto('file://' + path.resolve(html));

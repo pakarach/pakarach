@@ -251,6 +251,7 @@
     const W = cfg.W || 1080, H = cfg.H || 1920, DUR = cfg.DUR, ENDLEN = cfg.endLen == null ? 1.5 : cfg.endLen;
     const brand = Object.assign({ name: 'Channel', series: '', color: '#2ee6c5', bg: ['#0f1630', '#1b2a55'], icon: 'globe', endLine: '', slug: 'clip', motif: {} }, cfg.brand);
     brand.motif = Object.assign({ notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' }, brand.motif);
+    const CF = (cfg.capFont ? "'" + cfg.capFont + "'," : '') + 'Kanit,sans-serif'; // caption font family (optional cfg.capFont, e.g. 'Trirong'; build with --font)
     document.body.style.cssText = 'margin:0;background:#0b0d14;color:#fff;font-family:Kanit,sans-serif;display:flex;justify-content:center';
     document.body.innerHTML = '<div id="app" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:10px"><canvas id="cv" width="' + W + '" height="' + H + '" style="height:min(86vh,900px);max-width:96vw;aspect-ratio:' + W + '/' + H + ';background:#000;border-radius:8px"></canvas><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center"><button id="pb">Play</button><input id="sc" type="range" min="0" max="1000" value="0" style="width:260px"><span id="tm" style="font-size:14px;min-width:90px">0.0/' + DUR + 's</span><button id="mp4" style="font-weight:700">Render MP4</button><button id="ex">WebM (real-time)</button></div><div id="msg" style="font-size:13px;opacity:.7"></div></div>';
     const cv = document.getElementById('cv'), g = cv.getContext('2d');
@@ -299,18 +300,18 @@
           const size0 = REELS ? Math.round(line[0] * 0.94) : line[0], segs = line.slice(1).map((s) => ({ t: typeof s[0] === 'function' ? s[0](t) : s[0], c: s[1] || '#fff', w: s[2] || 800 }));
           if (prev) y += (prev + size0) / 2 * 1.34; // space by both line heights so a small line never sits inside a big one (Thai marks above/below)
           let size = size0, tw = 0;
-          const meas = (sz) => segs.reduce((acc, s) => { g.font = s.w + ' ' + sz + 'px Kanit,sans-serif'; return acc + g.measureText(s.t).width; }, 0);
+          const meas = (sz) => segs.reduce((acc, s) => { g.font = s.w + ' ' + sz + 'px ' + CF; return acc + g.measureText(s.t).width; }, 0);
           const MW = W - (REELS ? 240 : 160); tw = meas(size); if (tw > MW) { size = size0 * MW / tw; tw = MW; }
           let x = W / 2 - tw / 2;
           for (const s of segs) {
-            g.font = s.w + ' ' + size + 'px Kanit,sans-serif'; const w = g.measureText(s.t).width;
+            g.font = s.w + ' ' + size + 'px ' + CF; const w = g.measureText(s.t).width;
             g.textAlign = 'left'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = size * 0.16; g.strokeStyle = 'rgba(10,12,30,.85)';
             g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 12; g.shadowOffsetY = 4; g.strokeText(s.t, x, y); g.shadowColor = 'transparent';
             g.fillStyle = s.c; g.fillText(s.t, x, y); x += w;
           }
           prev = size0;
         }
-        if (c.foot) { g.font = '400 28px Kanit,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 6; g.strokeStyle = 'rgba(10,12,30,.7)'; g.strokeText(c.foot, W / 2, y + prev * 0.7 + 26); g.fillStyle = 'rgba(255,255,255,.95)'; g.fillText(c.foot, W / 2, y + prev * 0.7 + 26); }
+        if (c.foot) { g.font = '400 28px ' + CF; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 6; g.strokeStyle = 'rgba(10,12,30,.7)'; g.strokeText(c.foot, W / 2, y + prev * 0.7 + 26); g.fillStyle = 'rgba(255,255,255,.95)'; g.fillText(c.foot, W / 2, y + prev * 0.7 + 26); }
         g.restore();
       }
     }
@@ -499,6 +500,6 @@
     window.__ve = { S, renderFrame, play, pause, DUR, exportMp4 };
 
     const start = () => { state = cfg.setup ? cfg.setup({ THREE, scene, camera, renderer, W, H }) || {} : {}; renderFrame(0); ui(); window.__veReady = true; };
-    Promise.race([Promise.all(['400', '600', '800'].map((w) => document.fonts.load(w + ' 40px Kanit', 'ก A1'))), new Promise((r) => setTimeout(r, 3000))]).then(start, start);
+    Promise.race([Promise.all(['400', '600', '800'].map((w) => document.fonts.load(w + ' 40px Kanit', 'ก A1')).concat(cfg.capFont ? ['600', '800'].map((w) => document.fonts.load(w + " 40px '" + cfg.capFont + "'", 'ก A1')) : [])), new Promise((r) => setTimeout(r, 3000))]).then(start, start);
   };
 })();
