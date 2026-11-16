@@ -20,7 +20,9 @@ const SHOT = {
   rprof: [[0, kp('R', 13, 2.6)]], r1: [[0, fr('RAIN', 1.2, 2.2, 0, 12, 2.4, 0)]],
   r3: [[0, fr('RAIN', 1.8, 1.9, 0, 10.5, 2.0, 0.6)]], r4: [[0, fr('RAIN', 0, 1.3, 0.4, 9.2, 2.4, 0)]],
   c2: [[0, fr('KAP', 0.5, 2.9, 7.4, 10, 1.8, 0)]],
-  c3: [[0, fr('COURT', -3.4, 1.5, 0.4, 7.6, 2.6, 0)]], c4: [[0, fr('COURT', 3.4, 1.5, 0.4, 7.6, 2.6, 0)]], c5: [[0, fr('COURT', 0, 2.2, 0.2, 16, 3.6, 0)]],
+  p1: [[0, fr('PLEA', 0, 2.0, -0.6, 12.5, 3.2, 0)]], p2: [[0, fr('PLEA', 0, 1.9, -2.2, 8.5, 1.8, 0.3)]], p3: [[0, fr('PLEA', 0, 2.2, -0.4, 13.5, 3.6, 0)]], p4: [[0, fr('PLEA', -0.2, 2.2, -2.8, 8.5, 3.4, 0)]],
+  t5b: [[0, fr('PLEA', 0, 1.8, -0.8, 11, 4.0, 0)]],
+  q1: [[0, fr('KAP', 0, 2.6, 3.5, 9.5, 2.2, 0)]], q2: [[0, fr('ROAD', -5, 1.9, 2.4, 12, 2.4, 0)], [2.4, fr('ROAD', 7, 1.9, 2.4, 12, 2.4, 0)]], q3: [[0, fr('GATE', 0, 2.2, 3.0, 10, 1.8, -0.6)]], q4: [[0, fr('KAP', 0, 2.8, 3.8, 11, 2.4, 0)]],
   t1: [[0, fr('KAP', 0, 2.4, 4.0, 11, 2.0, 0)]], t2: [[0, fr('KAP', -0.8, 2.0, 4.2, 9.5, 1.6, -0.4)]], t3: [[0, fr('KAP', 0, 2.0, 4.4, 10.5, 1.8, 0.4)]],
   t4: [[0, fr('KAP', 0.4, 2.8, 4.0, 10, 1.6, 0)]],
   t5: [[0, fr('ROAD', -6, 1.9, 1.8, 11, 2.4, 0)], [2.0, fr('ROAD', 3.5, 1.9, 1.8, 11.5, 2.4, 0)]],
@@ -29,10 +31,10 @@ const SHOT = {
   f5: [[0, fr('KAP', 0, 3.6, -1.6, 21, 7, 0)]],
   g1: [[0, mfr(83.5, 26.6, 0.4, 7.5, 9.5, 0)]], g2: [[0, mfr(PL.kap[0], PL.kap[1] + 0.9, 0.5, 4.2, 5.2, 0)]],
   g3: [[0, fr('HALL', 0, 3.4, -0.6, 15, 6, 0)]], g4: [[0, fr('HALL', 0, 2.6, -2.8, 8.5, 2.2, 0)]], g5: [[0, mfr(82.4, 27.4, 0.4, 6.5, 8.5, 0)]],
-  l1: [[0, fr('HALL', 0, 3.4, -0.6, 15, 6, 0)]], l2: [[0, fr('HALL', 0, 2.4, -1.2, 10.5, 3.4, 0)]], l4: [[0, fr('HALL', 0, 2.2, 0.0, 10, 4.2, 0)]],
+  l1: [[0, fr('HALL', 0, 3.4, -0.6, 15, 6, 0)]], l2: [[0, fr('HALL', 0, 2.4, -1.2, 10.5, 3.4, 0)]],
   moral: [[0, fr('KAP', 0, 3.4, -1.0, 21, 6, 0)]], moral2: [[0, fr('KAP', 0, 7.2, -0.6, 23, 2.6, 0)]], recap: [[0, KO]], ask: [[0, KO]],
 };
-const CUT = new Set(['hook2', 'hook3', 'map1', 'g3', 'g5', 'birth', 'build', 'w1', 'sprof', 's1', 'm1', 'rprof', 'r1', 'c2', 'c3', 't1', 't5', 't6', 't7', 'f2', 'f3', 'l1']);
+const CUT = new Set(['hook2', 'hook3', 'map1', 'g3', 'g5', 'birth', 'build', 'w1', 'sprof', 's1', 'm1', 'rprof', 'r1', 'p1', 'c2', 'p2', 't1', 't5', 't5b', 't6', 't7', 'q1', 'q2', 'q3', 'q4', 'f2', 'f3', 'l1']);
 const IRIS = [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
 const CAM = (() => {
   const keys = []; let prev = null;
@@ -54,7 +56,7 @@ const CAM = (() => {
 
 /* backgrounds */
 const BG = { temple: ['#1a0d0a', '#4a1e14'], map: ['#0f1630', '#1b2a55'], day: ['#2a4a85', '#8fc0e8'], night: ['#070b1e', '#16224a'], dusk: ['#2a1a40', '#d0806a'], room: ['#3a2a20', '#7a5a40'] };
-const NIGHT = ['hook2', 't1', 't2', 't3', 't4', 't6'];
+const NIGHT = ['hook2', 't1', 't2', 't3', 't4', 't5b', 't6'];
 const DUSK = ['f1', 'f2', 'f3', 'moral'];
 function bgKey(t) {
   const id = beatAt(t);
@@ -118,6 +120,11 @@ function update(t, s, { camera, W, H }) {
     if (inB(t, 'c2')) { pOn = true; const k = ph(t, 'c2', 5.6) / 5.6; setP(P0, 'KAP', U.lerp(-3.4, 2.6, k), 0, 7.4); face(P0, 1, 0.15); walk(P0, t * 0.6, 0.5); }
     if (between(t, 't1', 't4')) { pOn = true; setP(P0, 'KAP', 0.9, 0, 3.6); face(P0, -0.6, 1); P0.userData.head.rotation.x = inB(t, 't1') ? 0.0 : 0.15;
       if (inB(t, 't1') && ph(t, 't1', 5) > 1.4) BUB.push({ o: P0, dy: 2.3, txt: '…', c: '#fff', big: true }); }
+    const cq1 = inB(t, 'q1') ? ph(t, 'q1', 5) : -1, cq4 = inB(t, 'q4') ? ph(t, 'q4', 6) : -1;
+    if (cq1 >= 0 || cq4 >= 0) { pOn = true; const out = cq4 >= 0 ? U.easeIO(sm(2.2, 4.4, cq4)) : 0; setP(P0, 'KAP', 0, 0, 3.5 + out * 2.4); face(P0, 0, 1); if (out > 0 && out < 1) walk(P0, t, 0.8);
+      if (cq1 >= 0 && cq1 > 1.4) BUB.push({ o: P0, dy: 2.2, txt: '?', c: '#fff', big: true }); }
+    { const on = cq1 >= 0 || cq4 >= 0; K.cage.visible = on; if (on) { const drop = cq1 >= 0 ? U.easeOut(sm(0.2, 1.0, cq1)) : 1; setP(K.cage, 'KAP', 0, (1 - drop) * 6, 3.5); const open = cq4 >= 0 ? U.easeIO(sm(0.6, 2.0, cq4)) : 0;
+      K.cage.children.forEach((b) => { if (b.userData.a == null) return; const front = Math.sin(b.userData.a) > 0.5; b.scale.y = front ? Math.max(0.01, 1 - open) : 1; b.position.y = front ? 1.5 * b.scale.y + (1 - b.scale.y) * 3.0 : 1.5; }); } }
     vis(P0, pOn);
     const brOn = inB(t, 'c2'); vis(K.bearer, brOn); vis(K.para, brOn);
     if (brOn) { K.bearer.position.copy(P0.position).add(new T.Vector3(-1.1, 0, -0.5)); face(K.bearer, 1, 0.15); walk(K.bearer, t * 0.6 + 0.4, 0.5); K.bearer.userData.arms.R.rotation.set(-0.3, 0, 2.2); K.para.position.copy(P0.position).add(new T.Vector3(-0.35, 0.4, -0.2)); K.para.rotation.z = -0.12; }
@@ -229,12 +236,7 @@ function update(t, s, { camera, W, H }) {
     if (both) { for (const [pp, sx] of [[Rr.cool, 1], [Rr.warm, -1]]) { const pos = pp.geometry.attributes.position; for (let i = 0; i < 70; i++) { const u = (i / 70 + t * 0.3) % 1, a = i * 2.4; pos.setXYZ(i, ST.RAIN[0] + sx * (1.0 + u * 1.6) + Math.cos(a) * 0.3, 0.6 + u * 2.6, -0.7 + Math.sin(a) * 0.6); } pos.needsUpdate = true; } }
   }
   /* ---------- servants' court ---------- */
-  { const Cc = s.court, on = between(t, 'c3', 'c5'); const fL = inB(t, 'c4') ? 0.35 : 1, fR = inB(t, 'c3') ? 0.35 : 1;
-    Cc.sv.forEach((c, i) => { rest(c); const left = i < 3; c.userData.arms.R.rotation.set(-1.1 - Math.max(0, Math.sin(t * 3 + i)) * 0.4, 0, 0.2); c.userData.head.rotation.x = left ? 0.25 : -0.05; void on; });
-    if (inB(t, 'c3') && ph(t, 'c3', 5) > 2.0) BUB.push({ o: Cc.sv[1], dy: 2.0, txt: 'ปลายข้าวอีกแล้ว…', c: '#fff' });
-    if (inB(t, 'c4') && ph(t, 'c4', 5.6) > 2.0) BUB.push({ o: Cc.sv[4], dy: 2.0, txt: 'มีเนื้อด้วย!', c: '#fff' });
-    Cc.tables[0].material.emissive = Cc.tables[0].material.emissive || new T.Color(); Cc.tables[1].material.emissive.set('#5a3a00'); Cc.tables[1].material.emissiveIntensity = inB(t, 'c4') ? 0.4 + 0.2 * Math.sin(t * 4) : 0.1; void fL; void fR;
-    vis(Cc.labL, on); vis(Cc.labR, inB(t, 'c4') || inB(t, 'c5') || (inB(t, 'c3') && false)); }
+  vis(s.court.labL, false); vis(s.court.labR, false);
   /* ---------- road (t5) ---------- */
   { const Rd = s.road, r = inB(t, 't5') ? ph(t, 't5', 6) : -1; const cx = r >= 0 ? U.lerp(-11, 13, U.easeIO(sm(0.2, 5.8, r))) : -11;
     setP(Rd.ch, 'ROAD', cx, 0, 0.8); gallop(Rd.ch.userData.horse, t, r >= 0 ? 0.6 : 0); setSit(Rd.p, false); rest(Rd.p); setP(Rd.p, 'ROAD', cx - 0.1, 0.92, 0.8); face(Rd.p, 0.3, 1);
@@ -246,6 +248,28 @@ function update(t, s, { camera, W, H }) {
       setP(G.h, 'GATE', 0, 0, z); G.h.rotation.y = Math.PI / 2; gallop(G.h, t, 1); G.h.position.y = Math.abs(Math.sin(t * 12)) * 0.08;
       setSit(G.p, true); rest(G.p); G.p.position.set(G.h.position.x, G.h.position.y + 1.25, G.h.position.z + 0.0); G.p.rotation.y = Math.PI; G.p.scale.setScalar(0.85);
       setP(G.channa, 'GATE', 0.9, 0, z + 1.4); G.channa.rotation.y = Math.PI; walk(G.channa, t * 1.4, 1.2); } }
+  /* ---------- pleasure hall ---------- */
+  { const Pl = s.plea, onB = between(t, 'p1', 'p4') || inB(t, 't5b'), sleep = inB(t, 't5b'), r3 = inB(t, 'p3') ? ph(t, 'p3', 5.6) : -1;
+    Pl.dancers.forEach((d, i) => { let on = onB, k = 1; if (d.userData.extra) { if (between(t, 'p1', 'p2')) on = false; if (r3 >= 0) k = U.easeBack(sm(1.2 + (i - 8) * 0.18, 1.6 + (i - 8) * 0.18, r3)); }
+      d.visible = on && k > 0.01; if (!d.visible) return; const h = d.userData.home; rest(d); d.rotation.set(0, 0, 0); d.scale.setScalar(0.8 * Math.max(0.01, k));
+      if (!sleep) { setP(d, 'PLEA', h[0] + Math.sin(t * 1.3 + i) * 0.25, 0.4 + Math.abs(Math.sin(t * 3 + i)) * 0.12, h[1]); face(d, Math.sin(t * 2 + i) * 0.8, 1); d.userData.arms.L.rotation.set(0, 0, -1.6 - Math.sin(t * 3 + i) * 0.6); d.userData.arms.R.rotation.set(0, 0, 1.6 + Math.sin(t * 3 + i + 1) * 0.6); }
+      else { setP(d, 'PLEA', h[0] * 1.05, 0.62, h[1] + (i % 2) * 0.2); d.rotation.set(0, (i * 1.3) % 3, Math.PI / 2 * (i % 2 ? 1 : -1)); } });
+    rest(Pl.p); lapHands(Pl.p); setSit(Pl.p, true); Pl.p.userData.head.rotation.x = 0; vis(Pl.p, onB); vis(Pl.yaso, onB && !sleep);
+    if (inB(t, 'p4')) { Pl.p.userData.head.rotation.x = 0.25; if (ph(t, 'p4', 4.6) > 1.2) BUB.push({ o: Pl.p, dy: 2.2, txt: '…', c: '#fff', big: true }); }
+    if (sleep) { const r = ph(t, 't5b', 6.4); Pl.p.userData.head.rotation.y = Math.sin(r * 0.8) * 0.6; if (r > 2.8) BUB.push({ o: Pl.p, dy: 2.2, dx: -0.3, txt: 'เหมือนป่าช้า…', c: '#fff' });
+      [1, 6, 10].forEach((di, j) => { const d = Pl.dancers[di]; if (d.visible && r > 0.6 + j * 0.5) BUB.push({ o: d, dy: 1.0, txt: ['ครอก~', 'zZz', 'งึมงำ…'][j], c: '#cfe0ff' }); }); }
+    vis(Pl.king, r3 >= 0); if (r3 >= 0) { rest(Pl.king); setP(Pl.king, 'PLEA', 4.8, 0.4, 1.6); face(Pl.king, -1, 0.3); Pl.king.userData.arms.R.rotation.set(0, 0, 2.2 + Math.sin(t * 6) * 0.2); if (r3 > 0.6) BUB.push({ o: Pl.king, dy: 2.4, txt: 'เพิ่มนางรำอีก!', c: '#fff' }); }
+    Pl.lamps.forEach((l, i) => { l.material.opacity = (sleep ? 0.35 : 0.9) + 0.1 * Math.sin(t * 7 + i); });
+    Pl.smoke.forEach((sp, i) => { const u = (t * 0.25 + i / 3) % 1; sp.visible = inB(t, 'p1'); setP(sp, 'PLEA', 4.4 + Math.sin(u * 4 + i) * 0.3, 1.2 + u * 2.6, -2.6); sp.scale.setScalar(0.5 + u * 1.2); sp.material.opacity = 0.45 * (1 - u); }); }
+  /* ---------- gate by day (q3) ---------- */
+  { const G = s.gate, on = inB(t, 'q3'); vis(G.monk, on); vis(G.dad, on); vis(G.mom, on);
+    if (on) { const r = ph(t, 'q3', 6.6); const k = U.easeIO(sm(1.6, 5.6, r)); setP(G.monk, 'GATE', 0, 0, U.lerp(3.2, -1.0, k)); face(G.monk, 0, -1); if (k > 0 && k < 1) walk(G.monk, t, 0.8); else rest(G.monk);
+      setP(G.dad, 'GATE', -1.6, 0, 4.4); face(G.dad, 0.4, -1); setP(G.mom, 'GATE', 1.5, 0, 4.4); face(G.mom, -0.4, -1); rest(G.dad); rest(G.mom);
+      G.dad.userData.arms.R.rotation.set(-1.2, 0, 0.3); G.mom.userData.arms.L.rotation.set(-2.2, 0, -0.3);
+      if (r > 0.8) BUB.push({ o: G.dad, dy: 2.5, txt: 'ลูกเอ๋ย…', c: '#fff' }); }
+    G.tears.forEach((d, i) => { const who = i < 3 ? G.dad : G.mom; d.visible = on; if (!on) return; const u = (t * 1.2 + i / 3) % 1; who.userData.head.getWorldPosition(s.anchorV); d.position.set(s.anchorV.x + (i % 2 ? 0.18 : -0.18), s.anchorV.y - 0.05 - u * 0.9, s.anchorV.z + 0.35); d.scale.setScalar(1 - u * 0.5); }); }
+  /* ---------- road reused for q2 (story borrowed from Vipassi) ---------- */
+  if (inB(t, 'q2')) { const Rd = s.road; setP(Rd.ch, 'ROAD', -9, 0, 0.8); setP(Rd.p, 'ROAD', -9.1, 0.92, 0.8); Rd.sights.forEach((o, i) => { o.visible = true; o.scale.setScalar(i === 2 ? 0.9 : 1); Rd.labs[i].visible = true; }); }
   /* ---------- map: mahajanapada discs ---------- */
   { const m = s.map, D = m.discs; const g1 = inB(t, 'g1') ? ph(t, 'g1', 6) : -1, g5 = inB(t, 'g5') ? ph(t, 'g5', 5.6) : -1, gOn = between(t, 'g1', 'g2') || inB(t, 'g5');
     for (const k in D) { const o = D[k]; let a = 0, sc = o.r;
@@ -255,7 +279,7 @@ function update(t, s, { camera, W, H }) {
     D.kap.ring.scale.setScalar(D.kap.ring.scale.x * (1 + (inB(t, 'g2') ? 0.25 * Math.sin(t * 5) : 0)));
     m.approx.visible = inB(t, 'g1'); if (gOn) { m.pin.visible = true; m.pin.scale.setScalar(0.8); m.lab.visible = false; m.mini.visible = false; } }
   /* ---------- assembly hall ---------- */
-  { const Hl = s.hall; const lay = between(t, 'g3', 'g4') || inB(t, 'f2'); const sang = between(t, 'l1', 'l4');
+  { const Hl = s.hall; const lay = between(t, 'g3', 'g4') || inB(t, 'f2'); const sang = between(t, 'l1', 'l2');
     const l1 = inB(t, 'l1') ? ph(t, 'l1', 6) : -1; const morph = l1 >= 0 ? sm(1.4, 3.2, l1) : sang ? 1 : 0;
     Hl.nobles.forEach((n, i) => { const k = (lay || l1 >= 0) ? 1 - U.clamp(morph * 1.6 - (i % 5) * 0.12) : 0; n.visible = k > 0.02 && !inB(t, 'f2'); n.scale.setScalar(Math.max(0.01, 0.85 * k)); rest(n); lapHands(n);
       if (inB(t, 'g3')) { n.userData.head.rotation.y = Math.sin(t * 1.5 + i) * 0.4; n.userData.arms.R.rotation.set(-1.0 + Math.sin(t * 4 + i * 1.7) * 0.4, 0, 0.3); }
@@ -264,7 +288,7 @@ function update(t, s, { camera, W, H }) {
     vis(Hl.leader, lay && !inB(t, 'f2')); if (inB(t, 'g4')) { const r = ph(t, 'g4', 6); Hl.leader.position.y = ST.HALL[1] + 0.9 + 0.05 * Math.abs(Math.sin(t * 3)); if (r > 2.6) BUB.push({ o: Hl.leader, dy: 2.4, txt: 'มติสภา…', c: '#fff' }); }
     vis(Hl.elder, sang && morph > 0.6); vis(Hl.cand, inB(t, 'l2'));
     if (inB(t, 'l2')) { const r = ph(t, 'l2', 6.4); const round = Math.min(4, Math.floor(r / 1.3)); if (r > 0.6) BUB.push({ o: Hl.elder, dy: 2.2, txt: round === 0 ? 'ขอเสนอญัตติ…' : 'ท่านใดเห็นด้วย พึงนิ่ง (' + Math.min(3, round) + ')', c: '#fff' }); }
-    const l4 = inB(t, 'l4') ? ph(t, 'l4', 6) : -1; vis(Hl.bowl, l4 >= 0);
+    const l4 = -1; vis(Hl.bowl, l4 >= 0);
     Hl.tickets.forEach((tk, i) => { const seat = Hl.seats[i]; const q = l4 >= 0 ? U.easeIO(sm(0.8 + i * 0.32, 1.5 + i * 0.32, l4)) : 0; tk.visible = l4 >= 0;
       const x0 = ST.HALL[0] + seat[0] * 0.8, z0 = seat[1] + 0.3, x1 = ST.HALL[0] + (i - 4.5) * 0.06, z1 = 0.6; tk.position.set(U.lerp(x0, x1, q), 1.3 + Math.sin(q * Math.PI) * 1.4 - q * 0.2, U.lerp(z0, z1, q)); tk.rotation.z = q * 0.4 * (i % 2 ? 1 : -1); });
     /* f2: Vidudabha visits, maid washes his seat with milk */

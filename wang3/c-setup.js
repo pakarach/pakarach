@@ -1,7 +1,7 @@
 /* Part C: stations + setup */
 const ST = {
   TEMPLE: [-500, 0, 0], MAPC: [-1000, 0, 0], KAP: [0, 0, 0], BIRTH: [40, 0, 0], WIN: [80, 0, 0], SUM: [120, 0, 0], RAIN: [160, 0, 0],
-  HOUSE: [200, 0, 0], COURT: [240, 0, 0], ROAD: [280, 0, 0], GATE: [320, 0, 0], HALL: [360, 0, 0],
+  HOUSE: [200, 0, 0], COURT: [240, 0, 0], ROAD: [280, 0, 0], GATE: [320, 0, 0], HALL: [360, 0, 0], PLEA: [400, 0, 0],
 };
 const MP = FK.project(90, 22, 0.42);
 const mapXZ = (lon, lat) => { const q = MP(lon, lat); return [ST.MAPC[0] + q[0], -q[1]]; };
@@ -20,9 +20,9 @@ function setupScene(scene) {
 
   /* ---------- ground world ---------- */
   const ground = mk(new T.BoxGeometry(400, 0.4, 120), '#4f7a52'); ground.position.set(160, -0.2, -30); scene.add(ground);
-  const stx = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360];
-  for (let i = 0; i < 170; i++) {
-    const x = -25 + rnd() * 370, z = -75 + rnd() * 78; if (stx.some((c) => Math.abs(c - x) < (c === 0 ? 17 : 10)) && z > -16) continue;
+  const stx = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400];
+  for (let i = 0; i < 190; i++) {
+    const x = -25 + rnd() * 450, z = -75 + rnd() * 78; if (stx.some((c) => Math.abs(c - x) < (c === 0 ? 17 : 10)) && z > -16) continue;
     const tr = tree(0.8 + rnd() * 0.9, ['#3f8f5a', '#4f9a4a', '#2f7f5a'][i % 3]); tr.position.set(x, 0, z); scene.add(tr);
   }
   for (const h of [[-20, -62, 16], [30, -66, 20], [100, -64, 18], [170, -60, 20], [250, -64, 18], [320, -58, 16]]) { const m = mk(new T.ConeGeometry(h[2], h[2] * 0.7, 7), '#5a7f5e'); m.position.set(h[0], h[2] * 0.35 - 0.2, h[1]); scene.add(m); }
@@ -124,6 +124,28 @@ function setupScene(scene) {
   for (const k of ['W', 'S', 'R']) { const [px, pz] = PAL[k]; const W0 = 5.1, D0 = 4.25;
     for (const q of [[0, -D0 / 2, W0, 0.3], [0, D0 / 2, W0, 0.3], [-W0 / 2, 0, 0.3, D0], [W0 / 2, 0, 0.3, D0], [0, 0, 0.3, D0 * 0.6]]) { const b = mk(new T.BoxGeometry(q[2], 0.45 + rnd() * 0.3, q[3]), '#a8583a'); b.position.set(ST.KAP[0] + px + q[0], 0.25, pz + q[1]); K.ruins.add(b); }
     for (let i = 0; i < 6; i++) { const br = mk(new T.BoxGeometry(0.4, 0.15, 0.2), '#b8683a'); br.position.set(ST.KAP[0] + px + (rnd() - 0.5) * 6, 0.1, pz + 2.6 + rnd() * 1.4); br.rotation.y = rnd() * 3; K.ruins.add(br); } }
+
+  /* ---------- pleasure hall (p1-p3, t5b) ---------- */
+  const Pl = { dancers: [], mus: [] }; s.plea = Pl;
+  const pfl = mk(new T.BoxGeometry(14, 0.4, 10), '#c9a24a', GOLDE); place(pfl, 'PLEA', 0, 0.2, -0.5); scene.add(pfl);
+  const pcarpet = mk(new T.BoxGeometry(8, 0.05, 6), '#a8323a'); place(pcarpet, 'PLEA', 0, 0.42, 0.4); scene.add(pcarpet);
+  const pback = mk(new T.BoxGeometry(14, 5, 0.4), '#7a2a3a'); place(pback, 'PLEA', 0, 2.9, -5.4); scene.add(pback);
+  for (let i = 0; i < 6; i++) { const pl = mk(new T.CylinderGeometry(0.25, 0.25, 5, 8), P.gold, GOLDE); place(pl, 'PLEA', -6 + i * 2.4, 2.9, -5.0); scene.add(pl); }
+  const throne = mk(new T.BoxGeometry(3.2, 0.7, 1.8), P.gold, GOLDE); place(throne, 'PLEA', 0, 0.75, -3.4); scene.add(throne);
+  const thb = mk(new T.BoxGeometry(3.2, 1.8, 0.3), '#b8452f'); place(thb, 'PLEA', 0, 1.9, -4.3); scene.add(thb);
+  Pl.p = prince(1.0); setSit(Pl.p, true); lapHands(Pl.p); place(Pl.p, 'PLEA', -0.6, 1.1, -3.4); scene.add(Pl.p);
+  Pl.yaso = lady('#ffd0e0', 0.95); setSit(Pl.yaso, true); { const tiara = mk(new T.ConeGeometry(0.2, 0.35, 6), P.gold, GOLDE); tiara.position.y = 0.55; Pl.yaso.userData.head.add(tiara); } place(Pl.yaso, 'PLEA', 0.7, 1.1, -3.4); scene.add(Pl.yaso);
+  Pl.lamps = []; for (const x of [-5.5, 5.5]) for (const z of [-2.5, 2.5]) { const st = mk(new T.CylinderGeometry(0.08, 0.12, 1.4, 6), P.gold, GOLDE); place(st, 'PLEA', x, 1.1, z); scene.add(st); const fl = softSprite('rgba(255,190,90,1)', 0.9); fl.scale.set(0.7, 1.0, 1); place(fl, 'PLEA', x, 2.0, z); scene.add(fl); Pl.lamps.push(fl); }
+  const dcol = ['#ff8fb0', '#ffd56a', '#c8a8ff', '#8fd8c0', '#ff9a6a', '#9fc0ff'];
+  for (let i = 0; i < 16; i++) { const d = lady(dcol[i % 6], 0.8); const row = Math.floor(i / 4), col = i % 4; d.userData.home = [-3.0 + col * 2.0 + (row % 2) * 0.5, -1.4 + row * 1.25]; d.userData.extra = i >= 8; scene.add(d); Pl.dancers.push(d); }
+  Pl.zz = [];
+  Pl.king = king(1.0); scene.add(Pl.king);
+  Pl.smoke = [0, 1, 2].map(() => { const sp = softSprite('rgba(230,230,240,1)', 0.4); sp.material.blending = T.NormalBlending; scene.add(sp); return sp; });
+
+  /* ---------- golden cage (q1, q4) ---------- */
+  K.cage = new T.Group(); { const n = 14, R = 1.3, H = 3.0; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2; const b = mk(new T.CylinderGeometry(0.04, 0.04, H, 5), P.gold, GOLDE); b.position.set(Math.cos(a) * R, H / 2, Math.sin(a) * R); b.userData.a = a; K.cage.add(b); }
+    const top = mk(new T.SphereGeometry(R, 16, 8, 0, 6.283, 0, Math.PI / 2), P.gold, Object.assign({ wireframe: true }, GOLDE)); top.position.y = H; K.cage.add(top); const ring = mk(new T.TorusGeometry(R, 0.06, 6, 24), P.gold, GOLDE); ring.rotation.x = Math.PI / 2; ring.position.y = 0.05; K.cage.add(ring); const hook = mk(new T.TorusGeometry(0.25, 0.05, 6, 12), P.gold, GOLDE); hook.position.y = H + R + 0.2; K.cage.add(hook); }
+  scene.add(K.cage);
 
   /* ---------- birth courtyard ---------- */
   const B0 = {}; s.birth = B0;
@@ -236,7 +258,7 @@ function setupScene(scene) {
   /* ---------- road of the four sights ---------- */
   const Rd = {}; s.road = Rd;
   const road = mk(new T.BoxGeometry(30, 0.06, 2.2), '#c8aa78'); place(road, 'ROAD', 0, 0.03, 0.8); scene.add(road);
-  for (const q of [[-11, -2.5], [-6, -3], [0, -3.2], [6, -2.8], [11, -2.6], [-9, 3.6], [8, 3.8]]) { const tr = tree(1.3); place(tr, 'ROAD', q[0], 0, q[1]); scene.add(tr); }
+  for (const q of [[-11, -2.5], [-6, -3], [0, -3.2], [6, -2.8], [11, -2.6]]) { const tr = tree(1.3); place(tr, 'ROAD', q[0], 0, q[1]); scene.add(tr); }
   Rd.ch = chariot(); scene.add(Rd.ch); Rd.p = prince(0.9); scene.add(Rd.p);
   Rd.sights = [];
   { const old = chibi({ robe: '#9a8f7a', hair: '#e8e8e8', beard: '#e8e8e8' }); const cane = mk(new T.CylinderGeometry(0.04, 0.04, 1.2, 5), '#7a5236'); cane.position.y = -0.6; old.userData.arms.R.add(cane); old.userData.body.rotation.x = 0.3; old.userData.head.position.z = 0.25;
@@ -253,6 +275,11 @@ function setupScene(scene) {
   const gp = mk(new T.BoxGeometry(4, 0.05, 14), '#a89070'); place(gp, 'GATE', 0, 0.03, 1); scene.add(gp);
   Gt.h = horse('#f4f2ec'); scene.add(Gt.h); Gt.p = prince(0.85); scene.add(Gt.p);
   Gt.channa = chibi({ robe: '#d8d0c0', hair: '#2a2228', band: '#c9a24a', s: 0.9 }); scene.add(Gt.channa);
+  /* ---------- gate by day (q3): going forth before weeping parents ---------- */
+  Gt.monk = chibi({ robe: ROBE, sash: ROBE2, s: 0.95 }); scene.add(Gt.monk);
+  Gt.dad = king(1.05); scene.add(Gt.dad); Gt.mom = lady('#e8c0d8', 0.95); scene.add(Gt.mom);
+  Gt.tears = [0, 1, 2, 3, 4, 5].map(() => { const d = new T.Mesh(new T.SphereGeometry(0.06, 6, 5), basic('#8fd0ff')); scene.add(d); return d; });
+
 
   /* ---------- temple (Emerald Buddha, present day) ---------- */
   const TP = new T.Group(); place(TP, 'TEMPLE'); scene.add(TP);

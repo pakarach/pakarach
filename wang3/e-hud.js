@@ -10,12 +10,12 @@ function bubble(g, b) {
   g.fillStyle = b.c === '#fff' ? '#1a1f3a' : '#a01830'; g.font = F(700, px); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(b.txt, x + w / 2, y + h / 2 + 3); g.restore();
 }
 function chapter(g, t) {
-  const n = CHAP.length, w = 96, gap = 6, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
+  const n = CHAP.length, w = 88, gap = 5, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
   let cur = -1; CHAP.forEach((c, i) => { if (t >= at(c[1])) cur = i; });
   CHAP.forEach((c, i) => {
     const x = x0 + i * (w + gap); g.save(); g.globalAlpha = 0.95; g.fillStyle = i < cur ? 'rgba(46,230,197,.35)' : i === cur ? P.teal : 'rgba(255,255,255,.14)'; rr(g, x, y, w, 40, 20); g.fill();
     if (i === cur) { const k = U.clamp((t - at(c[1])) / (end(c[2]) - at(c[1]))); g.fillStyle = 'rgba(15,22,48,.25)'; rr(g, x + w * k, y, w * (1 - k), 40, 20); g.fill(); }
-    g.font = F(600, 21); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
+    g.font = F(600, 19); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
   });
 }
 function tagPill(g, k, t, id) {
@@ -79,12 +79,12 @@ function recapCard(g, t) {
   const r = ph(t, 'recap', 9.6), a = U.clamp(r / 0.3) * U.clamp((9.6 - r) / 0.3);
   g.save(); g.globalAlpha = a; panel(g, 60, 280, 960, 1180, 1);
   txt(g, 'สรุป', 540, 370, 56, '#fff', 800); txt(g, 'วัง 3 ฤดู', 540, 450, 80, P.gold, 800);
-  const rows = [['ศากยะ: รัฐเล็ก ปกครองด้วยสภา', 'เป็นเมืองขึ้นของโกศล', '#ff9a6a'], ['หนาว · รมยะ 9 ชั้น', 'เพดานต่ำ ผนังวาดเปลวไฟ', '#a8c4ff'], ['ร้อน · สุรมยะ 5 ชั้น', 'ฝนเทียม + ฟ้าร้องเทียม', '#ffb36a'], ['ฝน · สุภะ 7 ชั้น', '4 เดือน ไม่ลงจากวัง', P.teal], ['สุขครบ…แต่หนีแก่ เจ็บ ตายไม่พ้น', 'อายุ 29 จึงออกบวช', P.coral], ['วังพัง รัฐหาย เหลือฐานอิฐ', 'แต่วิธีประชุมสงฆ์ ยังใช้ถึงวันนี้', P.gold]];
+  const rows = [['ศากยะ: รัฐเล็ก ปกครองด้วยสภา', 'เป็นเมืองขึ้นของโกศล', '#ff9a6a'], ['วังหนาว 9 · ร้อน 5 · ฝน 7 ชั้น', 'ผนังวาดไฟ · ฝนเทียม · ฟ้าร้องเทียม', '#a8c4ff'], ['กามคุณ 5 ครบชุด', 'นางรำ 4 หมื่น (อรรถกถา)', '#ff8fb0'], ['สุขครบ…แต่หนีแก่ เจ็บ ตายไม่พ้น', 'อายุ 29 จึงออกบวช', P.coral], ['ถูกขัง? ไม่ใช่คุก', 'กรงทองที่เลือกเดินออกมาเอง', P.teal], ['วังพัง รัฐหาย เหลือฐานอิฐ', 'แต่วิธีประชุมสงฆ์ ยังใช้ถึงวันนี้', P.gold]];
   rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.7) / 0.3); if (k <= 0) return; const y = 570 + i * 128; g.save(); g.globalAlpha = a * k;
     g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 56, 880, 112, 26); g.fill(); g.fillStyle = s[2]; g.beginPath(); g.arc(170, y, 38, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 40); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 170, y + 2); txt(g, s[0], 232, y - 22, 38, '#fff', 700, 'left'); txt(g, s[1], 232, y + 26, 32, '#d8e0ff', 500, 'left'); g.restore(); });
   g.globalAlpha = a * 0.85; g.font = F(400, 24); g.fillStyle = '#fff'; g.textAlign = 'center';
-  g.fillText('ที่มา: พระไตรปิฎก (สุขุมาลสูตร · อัคคัญญสูตร · มหาปรินิพพานสูตร · วินัยปิฎก)', 540, 1355);
+  g.fillText('ที่มา: พระไตรปิฎก (สุขุมาลสูตร · มาคัณฑิยสูตร · อริยปริเยสนสูตร · มหาปทานสูตร ฯลฯ)', 540, 1355);
   g.fillText('อรรถกถาธรรมบท · ฎีกา (มหาพุทธวงศ์ มิงกุนสยาดอ) · งานวิชาการเรื่องคณสังฆะ/กบิลพัสดุ์', 540, 1390);
   g.fillText('ภาพจำลองตามคติความเชื่อ', 540, 1425);
   g.restore();
@@ -93,6 +93,15 @@ function tally(g, t) { const r = ph(t, 'l4', 6); let a = 0, b = 0; for (let i = 
   const y = 1560, al = U.clamp((r - 0.6) / 0.3); g.save(); g.globalAlpha = al; panel(g, 240, y - 70, 600, 140, al);
   txt(g, 'เห็นด้วย', 380, y - 30, 34, P.teal, 700); txt(g, String(a), 380, y + 28, 64, P.teal, 800); txt(g, 'ค้าน', 700, y - 30, 34, P.coral, 700); txt(g, String(b), 700, y + 28, 64, P.coral, 800); txt(g, ':', 540, y + 20, 60, '#fff', 800);
   if (r > 5.0) txt(g, 'ผ่าน ✓', 540, y - 100, 44, P.gold, 800); g.restore(); }
+function senses(g, t) { const r = ph(t, 'p1', 6.4); const L = ['รูป', 'เสียง', 'กลิ่น', 'รส', 'สัมผัส'], C = ['#ff8fb0', '#ffd56a', '#8fd8c0', '#ff9a6a', '#9fc0ff'];
+  const w = 150, gap = 14, x0 = 540 - (5 * w + 4 * gap) / 2, y = 1540; g.save();
+  L.forEach((l, i) => { const k = U.easeBack(U.clamp((r - 1.0 - i * 0.6) / 0.35)); if (k <= 0) return; const cx = x0 + i * (w + gap) + w / 2; g.save(); g.translate(cx, y); g.scale(k, k);
+    g.fillStyle = 'rgba(15,22,48,.92)'; rr(g, -w / 2, -70, w, 140, 30); g.fill(); g.strokeStyle = C[i]; g.lineWidth = 5; g.stroke(); txt(g, String(i + 1), 0, -24, 46, C[i], 800); txt(g, l, 0, 34, 38, '#fff', 700); g.restore(); });
+  g.restore(); }
+function legendVs(g, t) { const id = inB(t, 'q2') ? 'q2' : 'q3', r = ph(t, id, 6.6), a = U.clamp((r - 0.5) / 0.3); const y = 1560; g.save(); g.globalAlpha = a;
+  const L = id === 'q2' ? ['ตำนาน', 'พ่อกักไว้ · เทวทูต 4', P.violet] : ['ตำนาน', 'แอบหนีกลางดึก', P.violet], R = id === 'q2' ? ['พระไตรปิฎก', 'เป็นเรื่องพระวิปัสสี', P.teal] : ['พระสูตรเก่าสุด', 'พ่อแม่ร้องไห้ต่อหน้า', P.teal];
+  [[L, 290], [R, 790]].forEach(([d, cx]) => { g.fillStyle = 'rgba(15,22,48,.92)'; rr(g, cx - 230, y - 80, 460, 160, 28); g.fill(); g.strokeStyle = d[2]; g.lineWidth = 5; g.stroke(); txt(g, d[0], cx, y - 32, 40, d[2], 800); txt(g, d[1], cx, y + 30, 32, '#fff', 600); });
+  txt(g, 'vs', 540, y, 44, P.gold, 800); g.restore(); }
 const PROFS = ['wprof', 'sprof', 'rprof'];
 function hud(g, t, { W, H }) {
   const id = beatAt(t);
@@ -106,7 +115,8 @@ function hud(g, t, { W, H }) {
   if (inB(t, 'm1')) dayNight(g, 0); if (inB(t, 'm2')) dayNight(g, 1);
   if (inB(t, 'r3')) months(g, t);
   if (inB(t, 't5')) { const r = ph(t, 't5', 6), cx = U.lerp(-11, 13, U.easeIO(sm(0.2, 5.8, r))); let n = 0; for (let i = 0; i < 4; i++) if (cx > -6 + i * 5 - 0.5) n = i + 1; dots(g, t, 'เห็น', 4, Math.max(1, n), P.gold); }
-  if (inB(t, 'l4')) tally(g, t);
+  if (inB(t, 'p1')) senses(g, t);
+  if (inB(t, 'q2') || inB(t, 'q3')) legendVs(g, t);
   if (inB(t, 'recap')) recapCard(g, t);
 }
 
@@ -125,12 +135,12 @@ for (let i = 0; i < 6; i++) { const t0 = 1.0 + i * 0.75 + 0.55; AUD.push([at('s5
 AUD.push([at('s5', 3.5), 'rain', { dur: 2.4 }]);
 AUD.push([at('s7', 2.6), 'tok'], [at('m1', 1.8), 'tok'], [at('m2', 0.8), 'tok'], [at('r1', 0.2), 'rain', { dur: 4 }], [at('r4', 0.4), 'harp'], [at('r4', 2.6), 'harp']);
 for (let i = 0; i < 4; i++) AUD.push([at('r3') + (0.8 + i) * dur('r3') / 6, 'tok']);
-AUD.push([at('c4', 0.6), 'chime'], [at('t2', 0.7), 'soft'], [at('t3', 0.7), 'soft'], [at('t3', 1.9), 'soft']);
+AUD.push([at('p1', 0.4), 'harp'], [at('p2', 0.5), 'harp'], [at('p3', 1.3), 'pop'], [at('p3', 1.6), 'pop'], [at('p3', 1.9), 'pop'], [at('p3', 2.2), 'pop'], [at('p4', 0.8), 'soft'], [at('t5b', 0.6), 'soft'], [at('q1', 0.5), 'tok'], [at('q1', 0.9), 'chime'], [at('q2', 0.4), 'soft'], [at('q3', 0.6), 'bell'], [at('q4', 0.8), 'shimmer'], [at('t2', 0.7), 'soft'], [at('t3', 0.7), 'soft'], [at('t3', 1.9), 'soft']);
 for (let i = 0; i < 3; i++) AUD.push([at('t4') + (0.45 + i * 0.4) * dur('t4') / 6.4, 'pop'], [at('t4') + (3.45 + i * 0.35) * dur('t4') / 6.4, 'shimmer']);
 for (let i = 0; i < 4; i++) AUD.push([at('t5') + (1.4 + i * 1.2) * dur('t5') / 6, 'bell']);
 AUD.push([at('hook2', 0.4), 'clop'], [at('hook2', 1.7), 'clop'], [at('t6', 0.4), 'clop'], [at('t6', 1.7), 'clop'], [at('t6', 3.0), 'clop']);
-AUD.push([at('t7', 0.8), 'soft'], [at('g1', 0.7), 'pop'], [at('g1', 1.3), 'pop'], [at('g1', 2.5), 'bell'], [at('g2', 0.3), 'soft'], [at('g4', 1.7), 'tok'], [at('g4', 1.9), 'tok'], [at('g4', 2.1), 'tok'], [at('g5', 1.0), 'soft', {}], [at('f1', 0.4), 'clop'], [at('f1', 2.2), 'clop'], [at('f2', 4.0), 'soft'], [at('f3', 0.4), 'clop'], [at('f3', 2.4), 'roar', { dur: 1.6 }], [at('f5', 0.5), 'soft'], [at('l1', 1.4), 'shimmer'], [at('l2', 1.3), 'bell'], [at('l2', 2.6), 'bell'], [at('l2', 3.9), 'bell'], [at('l4', 5.1), 'chime'], [at('moral2', 0.4), 'shimmer'], [at('moral2', 1.7), 'pop'], [at('moral2', 2.1), 'pop'], [at('moral2', 2.5), 'pop'], [at('ask', 0.6), 'bell']);
-for (let i = 0; i < 10; i++) AUD.push([at('l4') + (1.5 + i * 0.32) * dur('l4') / 6, 'tok']);
+AUD.push([at('t7', 0.8), 'soft'], [at('g1', 0.7), 'pop'], [at('g1', 1.3), 'pop'], [at('g1', 2.5), 'bell'], [at('g2', 0.3), 'soft'], [at('g4', 1.7), 'tok'], [at('g4', 1.9), 'tok'], [at('g4', 2.1), 'tok'], [at('g5', 1.0), 'soft', {}], [at('f1', 0.4), 'clop'], [at('f1', 2.2), 'clop'], [at('f2', 4.0), 'soft'], [at('f3', 0.4), 'clop'], [at('f3', 2.4), 'roar', { dur: 1.6 }], [at('f5', 0.5), 'soft'], [at('l1', 1.4), 'shimmer'], [at('l2', 1.3), 'bell'], [at('l2', 2.6), 'bell'], [at('l2', 3.9), 'bell'], [at('moral2', 0.4), 'shimmer'], [at('moral2', 1.7), 'pop'], [at('moral2', 2.1), 'pop'], [at('moral2', 2.5), 'pop'], [at('ask', 0.6), 'bell']);
+for (let i = 0; i < 5; i++) AUD.push([at('p1') + (1.0 + i * 0.6) * dur('p1') / 6.4, 'pop']);
 AUD.sort((a, b) => a[0] - b[0]);
 
 caps.forEach((c) => { if (L.LAND) { if (!c.instant) c.y = FK.subtitleY(c); else c.t1 = 0; } });
