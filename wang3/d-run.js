@@ -12,23 +12,27 @@ const SHOT = {
   birth: [[0, fr('BIRTH', 0, 3.4, 0.8, 11.5, 2.6, 0)]], fear: [[0, fr('BIRTH', -0.6, 3.6, 1.2, 13.5, 3.2, 0)]],
   build: [[0, fr('KAP', 0, 5.4, -2.6, 25, 5, 0)]], tiers: [[0, KO]],
   wprof: [[0, kp('W', 13, 2.6)]], w1: [[0, fr('WIN', 0.6, 1.7, -0.3, 8.6, 1.6, 0)]], w2: [[0, fr('WIN', -1.8, 1.8, -1.4, 7.2, 0.9, -0.6)]],
-  w3: [[0, fr('WIN', 1.6, 1.3, 0.3, 7.4, 2.0, 0.4)]], w4: [[0, fr('WIN', 2.0, 1.8, -1.4, 7.4, 1.0, 0.6)]], w5: [[0, kp('S', 14, 3)]],
+  w3: [[0, fr('WIN', 1.6, 1.3, 0.3, 7.4, 2.0, 0.4)]], w4: [[0, fr('WIN', 2.0, 1.8, -1.4, 7.4, 1.0, 0.6)]],
   sprof: [[0, kp('S', 13, 2.6)]], s1: [[0, fr('SUM', 0, 3.0, 0, 12.5, 2.6, 0)]], s2: [[0, fr('SUM', -1.0, 1.4, -1.0, 8.4, 2.0, 0)]],
   s3: [[0, fr('SUM', -3.6, 5.6, -0.6, 11.5, 4.2, -0.6)]], s4: [[0, fr('SUM', 0.6, 2.6, 0.4, 10.5, 2.0, 0)]],
-  s5: [[0, fr('SUM', 3.0, 7.0, -0.6, 7.4, 2.2, 0)]], s6: [[0, fr('SUM', 0.8, 4.4, 0, 14.5, 2.2, 0)]], s7: [[0, fr('SUM', 0, 3.4, -1.6, 8.2, 0.4, 0)]],
+  s5: [[0, fr('SUM', 3.0, 7.0, -0.6, 7.4, 2.2, 0)], [3.4, fr('SUM', 0.8, 4.4, 0, 14.5, 2.2, 0)]], s7: [[0, fr('SUM', 0, 3.4, -1.6, 8.2, 0.4, 0)]],
   m1: [[0, fr('HOUSE', 0, 1.8, -0.4, 9.6, 2.0, 0)]], m2: [[0, fr('HOUSE', 0.4, 1.9, -0.4, 9.0, 1.8, 0.4)]],
-  rprof: [[0, kp('R', 13, 2.6)]], r1: [[0, fr('RAIN', 1.2, 2.2, 0, 12, 2.4, 0)]], r2: [[0, fr('RAIN', 0, 2.5, -1.8, 9.4, 0.6, 0)]],
+  rprof: [[0, kp('R', 13, 2.6)]], r1: [[0, fr('RAIN', 1.2, 2.2, 0, 12, 2.4, 0)]],
   r3: [[0, fr('RAIN', 1.8, 1.9, 0, 10.5, 2.0, 0.6)]], r4: [[0, fr('RAIN', 0, 1.3, 0.4, 9.2, 2.4, 0)]],
-  c1: [[0, fr('KAP', 0, 2.2, 2.8, 16, 8.5, 0)]], c2: [[0, fr('KAP', 0.5, 2.9, 7.4, 10, 1.8, 0)]],
+  c2: [[0, fr('KAP', 0.5, 2.9, 7.4, 10, 1.8, 0)]],
   c3: [[0, fr('COURT', -3.4, 1.5, 0.4, 7.6, 2.6, 0)]], c4: [[0, fr('COURT', 3.4, 1.5, 0.4, 7.6, 2.6, 0)]], c5: [[0, fr('COURT', 0, 2.2, 0.2, 16, 3.6, 0)]],
   t1: [[0, fr('KAP', 0, 2.4, 4.0, 11, 2.0, 0)]], t2: [[0, fr('KAP', -0.8, 2.0, 4.2, 9.5, 1.6, -0.4)]], t3: [[0, fr('KAP', 0, 2.0, 4.4, 10.5, 1.8, 0.4)]],
   t4: [[0, fr('KAP', 0.4, 2.8, 4.0, 10, 1.6, 0)]],
   t5: [[0, fr('ROAD', -6, 1.9, 1.8, 11, 2.4, 0)], [2.0, fr('ROAD', 3.5, 1.9, 1.8, 11.5, 2.4, 0)]],
   t6: [[0, fr('GATE', 0, 2.6, 0.5, 14, 3.0, -0.4)]], t7: [[0, fr('KAP', 0, 6.0, -3.0, 29, 5, 0)]],
-  n1: [[0, fr('TEMPLE', 0, 5.4, -1.5, 22, 2.4, 0)]], n2: [[0, fr('TEMPLE', 0, 6.0, -2.6, 12.5, 1.2, 0)]], n3: [[0, fr('TEMPLE', 0, 5.6, -2.4, 15, 1.6, 0.6)]],
-  moral: [[0, fr('KAP', 0, 7.4, -0.6, 25, 3.0, 0)]], moral2: [[0, fr('KAP', 0, 7.2, -0.6, 23, 2.6, 0)]], recap: [[0, KO]], ask: [[0, KO]],
+  f1: [[0, fr('KAP', 11, 2.2, 4.6, 10.5, 2.2, 0)]], f2: [[0, fr('HALL', 1.2, 1.9, 0.6, 9.5, 2.2, 0)]], f3: [[0, fr('KAP', 2, 5.4, -1, 24, 5, 0)]],
+  f5: [[0, fr('KAP', 0, 3.6, -1.6, 21, 7, 0)]],
+  g1: [[0, mfr(83.5, 26.6, 0.4, 7.5, 9.5, 0)]], g2: [[0, mfr(PL.kap[0], PL.kap[1] + 0.9, 0.5, 4.2, 5.2, 0)]],
+  g3: [[0, fr('HALL', 0, 3.4, -0.6, 15, 6, 0)]], g4: [[0, fr('HALL', 0, 2.6, -2.8, 8.5, 2.2, 0)]], g5: [[0, mfr(82.4, 27.4, 0.4, 6.5, 8.5, 0)]],
+  l1: [[0, fr('HALL', 0, 3.4, -0.6, 15, 6, 0)]], l2: [[0, fr('HALL', 0, 2.4, -1.2, 10.5, 3.4, 0)]], l4: [[0, fr('HALL', 0, 2.2, 0.0, 10, 4.2, 0)]],
+  moral: [[0, fr('KAP', 0, 3.4, -1.0, 21, 6, 0)]], moral2: [[0, fr('KAP', 0, 7.2, -0.6, 23, 2.6, 0)]], recap: [[0, KO]], ask: [[0, KO]],
 };
-const CUT = new Set(['hook2', 'hook3', 'map1', 'birth', 'build', 'w1', 'w5', 's1', 'm1', 'rprof', 'r1', 'c1', 'c3', 't1', 't5', 't6', 't7', 'n1', 'moral']);
+const CUT = new Set(['hook2', 'hook3', 'map1', 'g3', 'g5', 'birth', 'build', 'w1', 'sprof', 's1', 'm1', 'rprof', 'r1', 'c2', 'c3', 't1', 't5', 't6', 't7', 'f2', 'f3', 'l1']);
 const IRIS = [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
 const CAM = (() => {
   const keys = []; let prev = null;
@@ -51,12 +55,12 @@ const CAM = (() => {
 /* backgrounds */
 const BG = { temple: ['#1a0d0a', '#4a1e14'], map: ['#0f1630', '#1b2a55'], day: ['#2a4a85', '#8fc0e8'], night: ['#070b1e', '#16224a'], dusk: ['#2a1a40', '#d0806a'], room: ['#3a2a20', '#7a5a40'] };
 const NIGHT = ['hook2', 't1', 't2', 't3', 't4', 't6'];
+const DUSK = ['f1', 'f2', 'f3', 'moral'];
 function bgKey(t) {
   const id = beatAt(t);
   if (NIGHT.includes(id)) return 'night';
-  if (['map1', 'seasons'].includes(id)) return 'map';
-  if (['n1', 'n2', 'n3'].includes(id)) return 'temple';
-  if (['moral', 'moral2'].includes(id)) return 'dusk';
+  if (['map1', 'seasons', 'g1', 'g2', 'g5'].includes(id)) return 'map';
+  if (DUSK.includes(id)) return 'dusk';
   return 'day';
 }
 function bgAt(t) { return BG[bgKey(t)]; }
@@ -77,14 +81,28 @@ function update(t, s, { camera, W, H }) {
   const K = s.kap, night = bk === 'night';
   /* ---------- KAP ---------- */
   { const bRel = inB(t, 'build') ? ph(t, 'build', 6) : t >= end('build') ? 9 : 9;
-    ['W', 'S', 'R'].forEach((k, i) => { const g = inB(t, 'build') ? U.easeOut(sm(0.6 + i * 1.3, 2.2 + i * 1.3, bRel)) : 1; K.pal[k].scale.set(0.85, Math.max(0.01, 0.85 * g), 0.85); });
+    const rf3 = inB(t, 'f3') ? ph(t, 'f3', 6.4) : -1;
+    ['W', 'S', 'R'].forEach((k, i) => { let g = inB(t, 'build') ? U.easeOut(sm(0.6 + i * 1.3, 2.2 + i * 1.3, bRel)) : 1, tilt = 0;
+      if (rf3 >= 0) { const q = sm(2.2 + i * 0.5, 3.6 + i * 0.5, rf3); g = 1 - q * q; tilt = q * 0.35 * (i % 2 ? -1 : 1); }
+      if (inB(t, 'f5') || inB(t, 'moral')) g = 0;
+      if (inB(t, 'moral2')) g = U.easeOut(sm(0.3 + i * 0.35, 1.4 + i * 0.35, ph(t, 'moral2', 5.6)));
+      K.pal[k].scale.set(0.85, Math.max(0.01, 0.85 * g), 0.85); K.pal[k].rotation.z = tilt; K.pal[k].visible = g > 0.02; });
+    K.ruins.visible = (rf3 > 3.0) || inB(t, 'f5') || inB(t, 'moral');
+    /* army + Vidudabha (f1, f3) */
+    const armyOn = inB(t, 'f1') || inB(t, 'f3'); const ra = inB(t, 'f1') ? ph(t, 'f1', 5.4) / 5.4 : rf3 >= 0 ? rf3 / 6.4 : 0;
+    const front = inB(t, 'f1') ? U.lerp(18, 9.5, ra) : U.lerp(9.5, 3.5, U.clamp(ra * 1.6));
+    vis(K.vh, armyOn); vis(K.vk, armyOn);
+    if (armyOn) { setP(K.vh, 'KAP', front, 0, 5.4); K.vh.rotation.y = Math.PI; gallop(K.vh, t, 0.5); setSit(K.vk, true); rest(K.vk); K.vk.position.set(K.vh.position.x, 1.15, K.vh.position.z); K.vk.rotation.y = -Math.PI / 2; K.vk.scale.setScalar(0.85);
+      if (inB(t, 'f1') && ra > 0.45) BUB.push({ o: K.vk, dy: 2.4, txt: 'วิฑูฑภะ', c: '#fff' }); }
+    K.army.forEach((c, i) => { vis(c, armyOn); if (!armyOn) return; const row = Math.floor(i / 4), col = i % 4; setP(c, 'KAP', front + 1.8 + row * 1.2, 0, 3.8 + col * 1.1); c.rotation.y = -Math.PI / 2; walk(c, t + i * 0.3, 0.8); c.userData.arms.R.rotation.set(0, 0, 0.3); });
+    K.dust.forEach((d, i) => { const q = rf3 >= 0 ? sm(2.2 + (i % 3) * 0.5, 4.6 + (i % 3) * 0.5, rf3) : 0; d.visible = q > 0 && q < 1; const k3 = ['W', 'S', 'R'][i % 3]; setP(d, 'KAP', PAL[k3][0] + (i > 2 ? 1.2 : -1.2), 1 + q * 3, PAL[k3][1] + 1); d.scale.setScalar(2 + q * 5); d.material.opacity = 0.7 * (1 - q); });
     K.workers.forEach((w, i) => { const on = inB(t, 'build'); vis(w, on); if (on) { const a = t * 0.8 + i * 1.05; setP(w, 'KAP', Math.cos(a) * (6 + (i % 2) * 2), 0, 1.0 + Math.sin(a) * 1.4); face(w, -Math.sin(a), Math.cos(a)); walk(w, t + i, 1); } });
     const pop = (o, on, t0) => { o.visible = on; if (on) o.scale.multiplyScalar(1); };
     ['W', 'S', 'R'].forEach((k, i) => {
       const lt = inB(t, 'tiers') && ph(t, 'tiers', 5.4) > 0.6 + i * 0.6; pop(K.labs[k], lt);
       vis(K.names[k], (inB(t, 'hook3') && ph(t, 'hook3', 4.6) > 1.0 + i * 0.4) || (inB(t, 'build') && bRel > 4.6));
       vis(K.nums[k], inB(t, 'ask') && ph(t, 'ask', 5.6) > 0.5 + i * 0.4);
-      vis(K.life[k], inB(t, 'moral') && ph(t, 'moral', 5.6) > 1.6 + i * 0.6 || inB(t, 'moral2'));
+      vis(K.life[k], inB(t, 'moral2') && ph(t, 'moral2', 5.6) > 1.6 + i * 0.4);
       for (const grp of [K.labs, K.life]) grp[k].position.y = (k === 'S' ? 9.4 : 8.6) + 0.12 * Math.sin(t * 3 + i); setP(K.nums[k], 'KAP', PAL[k][0], 3.4 + 0.12 * Math.sin(t * 3 + i), PAL[k][1] + 3.2);
     });
     const dayK = !night; const snowOn = dayK; K.snow.visible = snowOn;
@@ -160,9 +178,9 @@ function update(t, s, { camera, W, H }) {
   }
   /* ---------- summer room ---------- */
   { const Sm = s.sum, on = between(t, 's1', 's7');
-    const r3 = inB(t, 's3') ? ph(t, 's3', 5.6) : -1, rainK = between(t, 's4', 's6') ? 1 : inB(t, 's3') ? sm(4.4, 5.4, r3) : 0;
+    const r3 = inB(t, 's3') ? ph(t, 's3', 5.6) : -1, rainK = between(t, 's4', 's5') ? 1 : inB(t, 's3') ? sm(4.4, 5.4, r3) : 0;
     Sm.rain.visible = on && rainK > 0; if (Sm.rain.visible) { rainAt(Sm.rain, t, 5.5, 0.3); setP(Sm.rain, 'SUM', 0, 0, 0); Sm.rain.material.opacity = 0.75 * rainK; }
-    Sm.bells.forEach((b, i) => { b.rotation.z = Math.sin(t * 2.2 + i) * (between(t, 's1', 's6') ? 0.25 : 0.08); b.rotation.x = Math.sin(t * 1.7 + i * 2) * 0.12; });
+    Sm.bells.forEach((b, i) => { b.rotation.z = Math.sin(t * 2.2 + i) * (between(t, 's1', 's5') ? 0.25 : 0.08); b.rotation.x = Math.sin(t * 1.7 + i * 2) * 0.12; });
     Sm.spray.visible = on; if (on) { const pos = Sm.spray.geometry.attributes.position; for (let i = 0; i < 80; i++) { const u = (i / 80 + t * 0.7) % 1, a = i * 2.4; const r = u * 0.8; pos.setXYZ(i, ST.SUM[0] - 2.2 + Math.cos(a) * r, 0.5 + Math.sin(u * Math.PI) * 1.4, 1.0 + Math.sin(a) * r); } pos.needsUpdate = true; }
     /* wind through the netted windows */
     const wOn = on && (inB(t, 's1') || inB(t, 's2') || (inB(t, 's7') && dn(t, 's7', 2.4, 3.0) > 0.5)); Sm.wind.visible = wOn;
@@ -172,13 +190,13 @@ function update(t, s, { camera, W, H }) {
     if (inB(t, 's3')) { Sm.pumper.userData.arms.R.rotation.set(-1.2 + Math.sin(t * 4) * 0.5, 0, 0.2); Sm.pumper.userData.arms.L.rotation.set(-1.2 - Math.sin(t * 4) * 0.5, 0, -0.2); }
     Sm.tank.scale.y = 0.4 + 0.6 * (inB(t, 's3') ? sm(0.6, 4.0, r3) : t > end('s3') ? 1 : 0.4);
     /* pebbles onto the stretched hide (s5, s6) */
-    const rp = inB(t, 's5') ? ph(t, 's5', 5.2) : inB(t, 's6') ? ph(t, 's6', 5.6) + 5 : -1; rest(Sm.dropper); face(Sm.dropper, -1, 0);
+    const rp = inB(t, 's5') ? ph(t, 's5', 6) : -1; rest(Sm.dropper); face(Sm.dropper, -1, 0);
     let boomK = 0;
-    Sm.pebbles.forEach((pb, i) => { const t0 = 1.6 + i * 0.9; const u = rp >= 0 ? sm(t0, t0 + 0.55, rp) : 0; pb.visible = rp >= t0 - 0.3 && u < 1; setP(pb, 'SUM', 3.8 - u * 1.0, 8.6 - u * u * 1.4, -0.6 + (i % 3 - 1) * 0.3); if (u >= 1 && rp < t0 + 1.0) boomK = Math.max(boomK, 1 - (rp - t0 - 0.55) / 0.45); });
+    Sm.pebbles.forEach((pb, i) => { const t0 = 1.0 + i * 0.75; const u = rp >= 0 ? sm(t0, t0 + 0.55, rp) : 0; pb.visible = rp >= t0 - 0.3 && u < 1; setP(pb, 'SUM', 3.8 - u * 1.0, 8.6 - u * u * 1.4, -0.6 + (i % 3 - 1) * 0.3); if (u >= 1 && rp < t0 + 1.0) boomK = Math.max(boomK, 1 - (rp - t0 - 0.55) / 0.45); });
     if (rp >= 0) { const thr = Math.max(0, Math.sin((rp - 1.3) * 7)); Sm.dropper.userData.arms.R.rotation.set(-1.0 - thr * 0.8, 0, 0.3); }
     Sm.boom.material.opacity = 0.8 * boomK; Sm.boom.scale.setScalar(1 + (1 - boomK) * 2.5); Sm.hideTop.position.y = 0.52 - boomK * 0.06;
-    rest(Sm.p); lapHands(Sm.p); Sm.p.userData.head.rotation.x = between(t, 's4', 's6') ? -0.35 : 0;
-    if (inB(t, 's6') && ph(t, 's6', 5.6) > 1.8) BUB.push({ o: Sm.p, dy: 2.0, dx: -0.4, txt: 'ครืนน… ครืนน…', c: '#fff' });
+    rest(Sm.p); lapHands(Sm.p); Sm.p.userData.head.rotation.x = between(t, 's4', 's5') ? -0.35 : 0;
+    if (inB(t, 's5') && ph(t, 's5', 6) > 3.6) BUB.push({ o: Sm.p, dy: 2.0, dx: -0.4, txt: 'ครืนน… ครืนน…', c: '#fff' });
     if (inB(t, 's4') && ph(t, 's4', 5) > 1.6) BUB.push({ o: Sm.p, dy: 2.0, dx: -0.4, txt: 'ฝนตก…ในบ้าน!', c: '#fff' });
     const k7 = inB(t, 's7') ? dn(t, 's7', 2.4, 3.0) : 0; Sm.win.userData.set(inB(t, 's7') ? k7 : 0.9); skyCol(Sm.win.userData.sky, k7, '#ffe08a', '#14204a');
     const hOn = inB(t, 's7') && k7 < 0.5; Sm.heat.visible = hOn;
@@ -202,7 +220,7 @@ function update(t, s, { camera, W, H }) {
   }
   /* ---------- rainy-season room ---------- */
   { const Rr = s.rain, on = between(t, 'r1', 'r4'); Rr.out.visible = on || inB(t, 'rprof'); if (Rr.out.visible) rainAt(Rr.out, t, 6, 0.4);
-    const r2 = inB(t, 'r2') ? ph(t, 'r2', 5.4) : -1; Rr.paint.forEach((p, i) => { p.scale.setScalar(r2 >= 0 && ((r2 > 1.2 && r2 < 3.0 && i === 0) || (r2 > 3.0 && i === 1)) ? 1.08 : 1); });
+    const r2 = inB(t, 'r1') ? ph(t, 'r1', 5.6) : -1; Rr.paint.forEach((p, i) => { p.scale.setScalar(r2 >= 0 && ((r2 > 1.2 && r2 < 3.0 && i === 0) || (r2 > 3.0 && i === 1)) ? 1.08 : 1); });
     const lv = Rr.win.userData.leaves; lv[0].rotation.y = -1.35 * (0.5 + 0.5 * Math.sin(t * 0.9)) * (r2 >= 0 ? 1 : 0.5); lv[1].rotation.y = 1.35 * (0.5 + 0.5 * Math.cos(t * 0.9));
     rest(Rr.p); lapHands(Rr.p); Rr.p.userData.head.rotation.y = inB(t, 'r4') ? Math.sin(t * 1.2) * 0.25 : 0;
     Rr.mus.forEach((l, i) => { const play = between(t, 'r3', 'r4'); l.position.y = ST.RAIN[1] + (play ? Math.abs(Math.sin(t * 4 + i)) * 0.06 : 0); l.userData.arms.R.rotation.set(-0.9 + (play ? Math.sin(t * 6 + i) * 0.35 : 0), 0, 0.3); l.userData.arms.L.rotation.set(-0.9, 0, -0.3); vis(l, on); });
@@ -228,13 +246,33 @@ function update(t, s, { camera, W, H }) {
       setP(G.h, 'GATE', 0, 0, z); G.h.rotation.y = Math.PI / 2; gallop(G.h, t, 1); G.h.position.y = Math.abs(Math.sin(t * 12)) * 0.08;
       setSit(G.p, true); rest(G.p); G.p.position.set(G.h.position.x, G.h.position.y + 1.25, G.h.position.z + 0.0); G.p.rotation.y = Math.PI; G.p.scale.setScalar(0.85);
       setP(G.channa, 'GATE', 0.9, 0, z + 1.4); G.channa.rotation.y = Math.PI; walk(G.channa, t * 1.4, 1.2); } }
-  /* ---------- temple ---------- */
-  { const Tp = s.temple, r2 = inB(t, 'n2') ? ph(t, 'n2', 6) : -1;
-    const seas = r2 >= 0 ? Math.min(2, Math.floor(r2 / 2)) : inB(t, 'n3') ? 2 : 0;
-    const CL = ['#ffc94a', '#4fb8ff', '#f4f0e8'][seas]; Tp.cloak.material.color.set(CL); Tp.cloak.material.emissive.set(seas === 1 ? '#103a6a' : '#6a4a00');
-    Tp.cloak.visible = between(t, 'n1', 'n3'); Tp.halo.rotation.z = t * 0.3;
-    const flash = r2 >= 0 ? 1 - sm(0, 0.6, r2 % 2) : 0; Tp.sparks.forEach((sp, i) => { sp.visible = flash > 0.02; const a = i * 0.63 + t; sp.position.set(Math.cos(a) * 1.6, 5.4 + Math.sin(i * 1.3) * 1.2, -2.6); sp.material.opacity = flash; }); }
-
+  /* ---------- map: mahajanapada discs ---------- */
+  { const m = s.map, D = m.discs; const g1 = inB(t, 'g1') ? ph(t, 'g1', 6) : -1, g5 = inB(t, 'g5') ? ph(t, 'g5', 5.6) : -1, gOn = between(t, 'g1', 'g2') || inB(t, 'g5');
+    for (const k in D) { const o = D[k]; let a = 0, sc = o.r;
+      if (k === 'kos' || k === 'mag') { a = g1 >= 0 ? U.easeOut(sm(0.6 + (k === 'mag' ? 0.6 : 0), 1.4 + (k === 'mag' ? 0.6 : 0), g1)) : (inB(t, 'g2') || g5 >= 0) ? 1 : 0; if (k === 'mag' && g5 >= 0) a = 0; if (k === 'kos' && g5 >= 0) sc = o.r * U.lerp(1, 1.85, U.easeIO(sm(1.0, 3.2, g5))); }
+      else a = (g1 >= 0 && g1 > 2.4) || inB(t, 'g2') || g5 >= 0 ? 1 : 0;
+      o.d.visible = o.ring.visible = a > 0.01 && gOn; o.lb.visible = o.d.visible && a > 0.5; o.d.scale.setScalar(Math.max(0.01, sc * a)); o.ring.scale.setScalar(Math.max(0.01, sc * a)); o.d.material.opacity = (k === 'kos' && g5 >= 0 ? 0.42 : 0.55) * a; }
+    D.kap.ring.scale.setScalar(D.kap.ring.scale.x * (1 + (inB(t, 'g2') ? 0.25 * Math.sin(t * 5) : 0)));
+    m.approx.visible = inB(t, 'g1'); if (gOn) { m.pin.visible = true; m.pin.scale.setScalar(0.8); m.lab.visible = false; m.mini.visible = false; } }
+  /* ---------- assembly hall ---------- */
+  { const Hl = s.hall; const lay = between(t, 'g3', 'g4') || inB(t, 'f2'); const sang = between(t, 'l1', 'l4');
+    const l1 = inB(t, 'l1') ? ph(t, 'l1', 6) : -1; const morph = l1 >= 0 ? sm(1.4, 3.2, l1) : sang ? 1 : 0;
+    Hl.nobles.forEach((n, i) => { const k = (lay || l1 >= 0) ? 1 - U.clamp(morph * 1.6 - (i % 5) * 0.12) : 0; n.visible = k > 0.02 && !inB(t, 'f2'); n.scale.setScalar(Math.max(0.01, 0.85 * k)); rest(n); lapHands(n);
+      if (inB(t, 'g3')) { n.userData.head.rotation.y = Math.sin(t * 1.5 + i) * 0.4; n.userData.arms.R.rotation.set(-1.0 + Math.sin(t * 4 + i * 1.7) * 0.4, 0, 0.3); }
+      if (inB(t, 'g4')) { const up = sm(1.6 + (i % 5) * 0.15, 2.2 + (i % 5) * 0.15, ph(t, 'g4', 6)); n.userData.arms.R.rotation.set(0, 0, 0.14 + up * 2.7); } });
+    Hl.monks.forEach((m, i) => { const k = sang ? U.clamp(morph * 1.6 - (i % 5) * 0.12) : 0; m.visible = k > 0.02; m.scale.setScalar(Math.max(0.01, 0.85 * k)); anjali(m, 0.8); });
+    vis(Hl.leader, lay && !inB(t, 'f2')); if (inB(t, 'g4')) { const r = ph(t, 'g4', 6); Hl.leader.position.y = ST.HALL[1] + 0.9 + 0.05 * Math.abs(Math.sin(t * 3)); if (r > 2.6) BUB.push({ o: Hl.leader, dy: 2.4, txt: 'มติสภา…', c: '#fff' }); }
+    vis(Hl.elder, sang && morph > 0.6); vis(Hl.cand, inB(t, 'l2'));
+    if (inB(t, 'l2')) { const r = ph(t, 'l2', 6.4); const round = Math.min(4, Math.floor(r / 1.3)); if (r > 0.6) BUB.push({ o: Hl.elder, dy: 2.2, txt: round === 0 ? 'ขอเสนอญัตติ…' : 'ท่านใดเห็นด้วย พึงนิ่ง (' + Math.min(3, round) + ')', c: '#fff' }); }
+    const l4 = inB(t, 'l4') ? ph(t, 'l4', 6) : -1; vis(Hl.bowl, l4 >= 0);
+    Hl.tickets.forEach((tk, i) => { const seat = Hl.seats[i]; const q = l4 >= 0 ? U.easeIO(sm(0.8 + i * 0.32, 1.5 + i * 0.32, l4)) : 0; tk.visible = l4 >= 0;
+      const x0 = ST.HALL[0] + seat[0] * 0.8, z0 = seat[1] + 0.3, x1 = ST.HALL[0] + (i - 4.5) * 0.06, z1 = 0.6; tk.position.set(U.lerp(x0, x1, q), 1.3 + Math.sin(q * Math.PI) * 1.4 - q * 0.2, U.lerp(z0, z1, q)); tk.rotation.z = q * 0.4 * (i % 2 ? 1 : -1); });
+    /* f2: Vidudabha visits, maid washes his seat with milk */
+    const f2 = inB(t, 'f2') ? ph(t, 'f2', 6) : -1; vis(Hl.vidu, f2 >= 0); vis(Hl.maid, f2 >= 0 && f2 > 1.8); vis(Hl.bucket, Hl.maid.visible); vis(Hl.milk, Hl.maid.visible);
+    if (f2 >= 0) { const k = U.easeIO(sm(0, 1.8, f2)); setP(Hl.vidu, 'HALL', U.lerp(-0.4, 3.0, k), 0.5, U.lerp(-3.4, 0.6, k)); face(Hl.vidu, k < 1 ? 1 : -0.6, 1); if (k < 1 && k > 0) walk(Hl.vidu, t, 1); else rest(Hl.vidu);
+      setP(Hl.maid, 'HALL', 0.9, 0.5, -3.0); face(Hl.maid, -1, -0.3); setSit(Hl.maid, true); Hl.maid.userData.arms.R.rotation.set(-1.2 + Math.sin(t * 6) * 0.3, 0, 0.3);
+      setP(Hl.bucket, 'HALL', 1.5, 0.7, -2.6); setP(Hl.milk, 'HALL', 0.1, 0.92, -3.4);
+      if (f2 > 2.4) BUB.push({ o: Hl.maid, dy: 1.9, txt: 'ที่นั่งลูกทาสีนั่ง ล้างด้วยนม!', c: '#fff' }); if (f2 > 4.0) BUB.push({ o: Hl.vidu, dy: 2.3, txt: '!!', c: '#ffb3b3', big: true }); } }
   /* camera + bubble projection */
   VE.camAt(CAM, t, camera, 0.12); camera.updateMatrixWorld(true);
   const v = s.anchorV;

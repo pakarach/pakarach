@@ -1,11 +1,11 @@
 /* Part C: stations + setup */
 const ST = {
   TEMPLE: [-500, 0, 0], MAPC: [-1000, 0, 0], KAP: [0, 0, 0], BIRTH: [40, 0, 0], WIN: [80, 0, 0], SUM: [120, 0, 0], RAIN: [160, 0, 0],
-  HOUSE: [200, 0, 0], COURT: [240, 0, 0], ROAD: [280, 0, 0], GATE: [320, 0, 0],
+  HOUSE: [200, 0, 0], COURT: [240, 0, 0], ROAD: [280, 0, 0], GATE: [320, 0, 0], HALL: [360, 0, 0],
 };
 const MP = FK.project(90, 22, 0.42);
 const mapXZ = (lon, lat) => { const q = MP(lon, lat); return [ST.MAPC[0] + q[0], -q[1]]; };
-const PL = { kap: [83.05, 27.57], bkk: [100.5, 13.75] };
+const PL = { kap: [83.05, 27.57], bkk: [100.5, 13.75], kos: [81.0, 26.2], mag: [85.8, 24.8] };
 const PAL = { W: [-4.7, -2.4], S: [0, -7.2], R: [4.7, -2.4] }; /* palace [x,z] at KAP */
 let S = null;
 
@@ -20,7 +20,7 @@ function setupScene(scene) {
 
   /* ---------- ground world ---------- */
   const ground = mk(new T.BoxGeometry(400, 0.4, 120), '#4f7a52'); ground.position.set(160, -0.2, -30); scene.add(ground);
-  const stx = [0, 40, 80, 120, 160, 200, 240, 280, 320];
+  const stx = [0, 40, 80, 120, 160, 200, 240, 280, 320, 360];
   for (let i = 0; i < 170; i++) {
     const x = -25 + rnd() * 370, z = -75 + rnd() * 78; if (stx.some((c) => Math.abs(c - x) < (c === 0 ? 17 : 10)) && z > -16) continue;
     const tr = tree(0.8 + rnd() * 0.9, ['#3f8f5a', '#4f9a4a', '#2f7f5a'][i % 3]); tr.position.set(x, 0, z); scene.add(tr);
@@ -83,6 +83,47 @@ function setupScene(scene) {
   { const [x, z] = mapXZ(PL.bkk[0], PL.bkk[1]); const lb = label('ไทย', { w: 1.6, px: 90, color: P.coral }); lb.position.set(x - 1.2, 1.2, z - 2.6); MG.add(lb); s.map.th = lb;
     const ln = label('เนปาล', { w: 1.8, px: 80, color: '#cfe0ff' }); const [nx, nz] = mapXZ(84.0, 28.6); ln.position.set(nx, 1.2, nz - 0.4); MG.add(ln); s.map.np = ln;
     const li = label('อินเดีย', { w: 2.0, px: 80, color: '#cfe0ff' }); const [ix, iz] = mapXZ(79, 22); li.position.set(ix, 1.2, iz); MG.add(li); s.map.ind = li; }
+
+  /* mahajanapada discs (approximate) */
+  s.map.discs = {};
+  for (const [k, c, r, txt] of [['kos', '#ff9a6a', 0.75, 'โกศล'], ['mag', '#c88aff', 0.7, 'มคธ'], ['kap', P.gold, 0.16, 'ศากยะ']]) {
+    const [x, z] = mapXZ(PL[k][0], PL[k][1]); const d = new T.Mesh(new T.CircleGeometry(1, 40), basic(c, { transparent: true, opacity: 0.55, depthWrite: false })); d.rotation.x = -Math.PI / 2; d.position.set(x, 0.42, z); d.scale.setScalar(r); d.renderOrder = 3; MG.add(d);
+    const ring = new T.Mesh(new T.RingGeometry(0.96, 1.0, 48), basic(c, { transparent: true, opacity: 0.95, depthWrite: false, side: T.DoubleSide })); ring.rotation.x = -Math.PI / 2; ring.position.set(x, 0.43, z); ring.scale.setScalar(r); ring.renderOrder = 4; MG.add(ring);
+    const lb = label(txt, { w: k === 'kap' ? 1.5 : 2.0, px: 90, color: c }); lb.position.set(x, k === 'kap' ? 0.95 : 1.1, z + (k === 'kap' ? -0.35 : 0)); MG.add(lb);
+    s.map.discs[k] = { d, ring, lb, r }; }
+  { const lb = label('ขอบเขตโดยประมาณ', { w: 2.2, px: 60, color: '#cfd8ff' }); const [x, z] = mapXZ(84.0, 23.6); lb.position.set(x, 0.9, z); MG.add(lb); s.map.approx = lb; }
+
+  /* ---------- assembly hall (santhagara) ---------- */
+  const Hl = { nobles: [], monks: [], tickets: [] }; s.hall = Hl;
+  const hp = mk(new T.BoxGeometry(14, 0.5, 11), '#d8c49a'); place(hp, 'HALL', 0, 0.25, -0.5); scene.add(hp);
+  for (let i = 0; i < 7; i++) { const x = -6 + i * 2; const pl = mk(new T.CylinderGeometry(0.22, 0.22, 4.2, 8), '#a8582e'); place(pl, 'HALL', x, 2.6, -5.2); scene.add(pl); }
+  for (const x of [-6.4, 6.4]) for (const z of [-3, -1]) { const pl = mk(new T.CylinderGeometry(0.22, 0.22, 4.2, 8), '#a8582e'); place(pl, 'HALL', x, 2.6, z); scene.add(pl); }
+  { const beam = mk(new T.BoxGeometry(13.4, 0.5, 0.5), '#8a4a2a'); place(beam, 'HALL', 0, 4.9, -5.2); scene.add(beam); const bw = mk(new T.BoxGeometry(14, 4.2, 0.3), '#e8d8b8'); place(bw, 'HALL', 0, 2.6, -5.5); scene.add(bw); }
+  
+  const dais = mk(new T.BoxGeometry(2.4, 0.4, 1.6), P.gold, GOLDE); place(dais, 'HALL', 0, 0.7, -3.6); scene.add(dais);
+  Hl.leader = king(1.05); setSit(Hl.leader, true); place(Hl.leader, 'HALL', 0, 0.9, -3.6); scene.add(Hl.leader);
+  const seatPos = []; for (const sx of [-1, 1]) for (let i = 0; i < 5; i++) seatPos.push([sx * (2.4 + (i % 2) * 1.3), -2.2 + i * 1.15]);
+  Hl.seats = seatPos;
+  seatPos.forEach((q, i) => { const n = chibi({ robe: ['#c94a4a', '#4a7ac9', '#c9a24a', '#4aa38a', '#9a5ac9'][i % 5], sash: '#f4ecd8', hair: '#2a2228', band: P.gold, s: 0.85 }); setSit(n, true); place(n, 'HALL', q[0], 0.5, q[1]); face(n, -q[0], -0.2); scene.add(n); Hl.nobles.push(n);
+    const m = chibi({ robe: ROBE, sash: ROBE2, s: 0.85 }); setSit(m, true); anjali(m, 0.8); place(m, 'HALL', q[0], 0.5, q[1]); face(m, -q[0], -0.2); scene.add(m); Hl.monks.push(m); });
+  Hl.elder = chibi({ robe: ROBE, sash: ROBE2, s: 1.0 }); setSit(Hl.elder, true); place(Hl.elder, 'HALL', 0, 0.9, -3.6); scene.add(Hl.elder);
+  Hl.cand = chibi({ robe: '#ffffff', sash: '#e8e8e8', s: 0.9 }); setSit(Hl.cand, true); anjali(Hl.cand); place(Hl.cand, 'HALL', 0, 0.5, -0.4); Hl.cand.rotation.y = Math.PI; scene.add(Hl.cand);
+  Hl.bowl = mk(new T.SphereGeometry(0.42, 12, 8, 0, 6.283, Math.PI / 2, Math.PI / 2), '#3a2a20'); Hl.bowl.rotation.x = Math.PI; place(Hl.bowl, 'HALL', 0, 0.92, 0.6); scene.add(Hl.bowl);
+  for (let i = 0; i < 10; i++) { const tk = mk(new T.BoxGeometry(0.06, 0.45, 0.06), i < 7 ? P.teal : P.coral, { emissive: new T.Color(i < 7 ? P.teal : P.coral), emissiveIntensity: 0.4 }); scene.add(tk); Hl.tickets.push(tk); }
+  Hl.vidu = chibi({ robe: '#2a3a7a', sash: P.coral, crown: true, hair: '#2a2228', s: 1.0 }); scene.add(Hl.vidu);
+  Hl.maid = lady('#b8a888', 0.85); scene.add(Hl.maid); Hl.bucket = mk(new T.CylinderGeometry(0.25, 0.2, 0.4, 10), '#9a6a3a'); scene.add(Hl.bucket);
+  Hl.milk = new T.Mesh(new T.CircleGeometry(0.22, 12), basic('#ffffff')); Hl.milk.rotation.x = -Math.PI / 2; scene.add(Hl.milk);
+  Hl.drum = mk(new T.CylinderGeometry(0.45, 0.45, 0.6, 12), '#c94a4a'); Hl.drum.rotation.z = Math.PI / 2; place(Hl.drum, 'HALL', 5.2, 0.9, 3.2); scene.add(Hl.drum);
+
+  /* ---------- army + ruins at KAP ---------- */
+  K.army = [];
+  for (let i = 0; i < 14; i++) { const c = chibi({ robe: '#8a2a2a', sash: '#3a3a3a', hair: '#1a1418', s: 0.8 }); const helm = mk(new T.ConeGeometry(0.42, 0.45, 8), '#8a8a9a'); helm.position.y = 0.42; c.userData.head.add(helm); const sp = mk(new T.CylinderGeometry(0.03, 0.03, 2.0, 5), '#6a4a2a'); sp.position.y = 0.2; c.userData.arms.R.add(sp); const tip = mk(new T.ConeGeometry(0.07, 0.25, 5), '#c8c8d0'); tip.position.y = 1.3; c.userData.arms.R.add(tip); tip.position.y = 1.25; scene.add(c); K.army.push(c); }
+  K.vh = horse('#3a3a40'); scene.add(K.vh); K.vk = chibi({ robe: '#2a3a7a', sash: P.coral, crown: true, hair: '#2a2228', s: 0.85 }); scene.add(K.vk);
+  K.dust = [0, 1, 2, 3, 4, 5].map(() => { const d = softSprite('rgba(200,180,150,1)', 0.7); d.material.blending = T.NormalBlending; scene.add(d); return d; });
+  K.ruins = new T.Group(); scene.add(K.ruins);
+  for (const k of ['W', 'S', 'R']) { const [px, pz] = PAL[k]; const W0 = 5.1, D0 = 4.25;
+    for (const q of [[0, -D0 / 2, W0, 0.3], [0, D0 / 2, W0, 0.3], [-W0 / 2, 0, 0.3, D0], [W0 / 2, 0, 0.3, D0], [0, 0, 0.3, D0 * 0.6]]) { const b = mk(new T.BoxGeometry(q[2], 0.45 + rnd() * 0.3, q[3]), '#a8583a'); b.position.set(ST.KAP[0] + px + q[0], 0.25, pz + q[1]); K.ruins.add(b); }
+    for (let i = 0; i < 6; i++) { const br = mk(new T.BoxGeometry(0.4, 0.15, 0.2), '#b8683a'); br.position.set(ST.KAP[0] + px + (rnd() - 0.5) * 6, 0.1, pz + 2.6 + rnd() * 1.4); br.rotation.y = rnd() * 3; K.ruins.add(br); } }
 
   /* ---------- birth courtyard ---------- */
   const B0 = {}; s.birth = B0;

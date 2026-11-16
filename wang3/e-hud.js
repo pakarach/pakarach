@@ -10,12 +10,12 @@ function bubble(g, b) {
   g.fillStyle = b.c === '#fff' ? '#1a1f3a' : '#a01830'; g.font = F(700, px); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(b.txt, x + w / 2, y + h / 2 + 3); g.restore();
 }
 function chapter(g, t) {
-  const n = CHAP.length, w = 108, gap = 6, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
+  const n = CHAP.length, w = 96, gap = 6, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
   let cur = -1; CHAP.forEach((c, i) => { if (t >= at(c[1])) cur = i; });
   CHAP.forEach((c, i) => {
     const x = x0 + i * (w + gap); g.save(); g.globalAlpha = 0.95; g.fillStyle = i < cur ? 'rgba(46,230,197,.35)' : i === cur ? P.teal : 'rgba(255,255,255,.14)'; rr(g, x, y, w, 40, 20); g.fill();
     if (i === cur) { const k = U.clamp((t - at(c[1])) / (end(c[2]) - at(c[1]))); g.fillStyle = 'rgba(15,22,48,.25)'; rr(g, x + w * k, y, w * (1 - k), 40, 20); g.fill(); }
-    g.font = F(600, 22); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
+    g.font = F(600, 21); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
   });
 }
 function tagPill(g, k, t, id) {
@@ -75,33 +75,24 @@ function dayNight(g, nightK) {
 /* 4-month counter (r3) */
 function months(g, t) { const r = ph(t, 'r3', 6), cur = Math.min(4, 1 + Math.floor(sm(0.8, 4.8, r) * 4 * 0.999)); dots(g, t, 'เดือนที่', 4, cur, P.teal); }
 /* season cards (n2) */
-function seasonCards(g, t) {
-  const r = ph(t, 'n2', 6), cur = Math.min(2, Math.floor(r / 2)); const C = [['ฤดูร้อน', 'แรม 1 ค่ำ เดือน 4', '#ffc94a'], ['ฤดูฝน', 'แรม 1 ค่ำ เดือน 8', '#4fb8ff'], ['ฤดูหนาว', 'แรม 1 ค่ำ เดือน 12', '#f4f0e8']];
-  const w = 250, gap = 20, x0 = 540 - (3 * w + 2 * gap) / 2, y = 1500; g.save();
-  C.forEach((c, i) => { const x = x0 + i * (w + gap), on = i === cur; g.globalAlpha = i <= cur ? 1 : 0.35; g.fillStyle = on ? 'rgba(15,22,48,.95)' : 'rgba(15,22,48,.75)'; rr(g, x, y, w, 150, 26); g.fill(); g.strokeStyle = c[2]; g.lineWidth = on ? 6 : 2; g.stroke();
-    txt(g, c[0], x + w / 2, y + 52, 44, c[2], 800); txt(g, c[1], x + w / 2, y + 108, 26, '#fff', 600); });
-  g.restore();
-}
-function moonCal(g, t) {
-  const r = ph(t, 'n3', 5.4), a = U.clamp(r / 0.3); const x = 540, y = 1520; g.save(); g.globalAlpha = a;
-  panel(g, x - 300, y - 110, 600, 220, a);
-  g.fillStyle = '#fff6d8'; g.beginPath(); g.arc(x - 190, y, 56, 0, 6.283); g.fill(); g.fillStyle = 'rgba(15,22,48,1)'; g.beginPath(); g.arc(x - 190 + 16 + sm(0.6, 2.0, r) * 10, y, 54, 0, 6.283); g.fill();
-  txt(g, 'ลอยกระทง', x + 60, y - 42, 40, '#fff', 700); txt(g, '→ วันถัดไป', x + 60, y + 6, 36, P.gold, 800); txt(g, 'เปลี่ยนเครื่องทรงฤดูหนาว', x + 60, y + 54, 30, '#fff', 600);
-  g.restore();
-}
 function recapCard(g, t) {
-  const r = ph(t, 'recap', 9), a = U.clamp(r / 0.3) * U.clamp((9 - r) / 0.3);
+  const r = ph(t, 'recap', 9.6), a = U.clamp(r / 0.3) * U.clamp((9.6 - r) / 0.3);
   g.save(); g.globalAlpha = a; panel(g, 60, 280, 960, 1180, 1);
   txt(g, 'สรุป', 540, 370, 56, '#fff', 800); txt(g, 'วัง 3 ฤดู', 540, 450, 80, P.gold, 800);
-  const rows = [['หนาว · รมยะ 9 ชั้น', 'เพดานต่ำ ผนังวาดเปลวไฟ', '#a8c4ff'], ['ร้อน · สุรมยะ 5 ชั้น', 'ฝนเทียม + ฟ้าร้องเทียม', '#ffb36a'], ['ฝน · สุภะ 7 ชั้น', '4 เดือน ไม่ลงจากวัง', P.teal], ['สุขครบ…แต่หนีแก่ เจ็บ ตายไม่พ้น', 'อายุ 29 จึงออกบวช', P.coral], ['ยุคนี้: พระแก้วมรกต', 'เปลี่ยนเครื่องทรง 3 ฤดู', P.gold]];
-  rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.7) / 0.3); if (k <= 0) return; const y = 590 + i * 150; g.save(); g.globalAlpha = a * k;
-    g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 62, 880, 124, 26); g.fill(); g.fillStyle = s[2]; g.beginPath(); g.arc(170, y, 38, 0, 6.283); g.fill();
+  const rows = [['ศากยะ: รัฐเล็ก ปกครองด้วยสภา', 'เป็นเมืองขึ้นของโกศล', '#ff9a6a'], ['หนาว · รมยะ 9 ชั้น', 'เพดานต่ำ ผนังวาดเปลวไฟ', '#a8c4ff'], ['ร้อน · สุรมยะ 5 ชั้น', 'ฝนเทียม + ฟ้าร้องเทียม', '#ffb36a'], ['ฝน · สุภะ 7 ชั้น', '4 เดือน ไม่ลงจากวัง', P.teal], ['สุขครบ…แต่หนีแก่ เจ็บ ตายไม่พ้น', 'อายุ 29 จึงออกบวช', P.coral], ['วังพัง รัฐหาย เหลือฐานอิฐ', 'แต่วิธีประชุมสงฆ์ ยังใช้ถึงวันนี้', P.gold]];
+  rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.7) / 0.3); if (k <= 0) return; const y = 570 + i * 128; g.save(); g.globalAlpha = a * k;
+    g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 56, 880, 112, 26); g.fill(); g.fillStyle = s[2]; g.beginPath(); g.arc(170, y, 38, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 40); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 170, y + 2); txt(g, s[0], 232, y - 22, 38, '#fff', 700, 'left'); txt(g, s[1], 232, y + 26, 32, '#d8e0ff', 500, 'left'); g.restore(); });
   g.globalAlpha = a * 0.85; g.font = F(400, 24); g.fillStyle = '#fff'; g.textAlign = 'center';
-  g.fillText('ที่มา: พระไตรปิฎก อังคุตตรนิกาย ติกนิบาต สุขุมาลสูตร · ทีฆนิกาย มหาปรินิพพานสูตร', 540, 1365);
-  g.fillText('อรรถกถา–ฎีกา (มหาพุทธวงศ์ มิงกุนสยาดอ) · สำนักพระราชวัง/ศิลปวัฒนธรรม · ภาพจำลองตามคติความเชื่อ', 540, 1403);
+  g.fillText('ที่มา: พระไตรปิฎก (สุขุมาลสูตร · อัคคัญญสูตร · มหาปรินิพพานสูตร · วินัยปิฎก)', 540, 1355);
+  g.fillText('อรรถกถาธรรมบท · ฎีกา (มหาพุทธวงศ์ มิงกุนสยาดอ) · งานวิชาการเรื่องคณสังฆะ/กบิลพัสดุ์', 540, 1390);
+  g.fillText('ภาพจำลองตามคติความเชื่อ', 540, 1425);
   g.restore();
 }
+function tally(g, t) { const r = ph(t, 'l4', 6); let a = 0, b = 0; for (let i = 0; i < 10; i++) if (r > 1.5 + i * 0.32) { if (i < 7) a++; else b++; }
+  const y = 1560, al = U.clamp((r - 0.6) / 0.3); g.save(); g.globalAlpha = al; panel(g, 240, y - 70, 600, 140, al);
+  txt(g, 'เห็นด้วย', 380, y - 30, 34, P.teal, 700); txt(g, String(a), 380, y + 28, 64, P.teal, 800); txt(g, 'ค้าน', 700, y - 30, 34, P.coral, 700); txt(g, String(b), 700, y + 28, 64, P.coral, 800); txt(g, ':', 540, y + 20, 60, '#fff', 800);
+  if (r > 5.0) txt(g, 'ผ่าน ✓', 540, y - 100, 44, P.gold, 800); g.restore(); }
 const PROFS = ['wprof', 'sprof', 'rprof'];
 function hud(g, t, { W, H }) {
   const id = beatAt(t);
@@ -115,8 +106,7 @@ function hud(g, t, { W, H }) {
   if (inB(t, 'm1')) dayNight(g, 0); if (inB(t, 'm2')) dayNight(g, 1);
   if (inB(t, 'r3')) months(g, t);
   if (inB(t, 't5')) { const r = ph(t, 't5', 6), cx = U.lerp(-11, 13, U.easeIO(sm(0.2, 5.8, r))); let n = 0; for (let i = 0; i < 4; i++) if (cx > -6 + i * 5 - 0.5) n = i + 1; dots(g, t, 'เห็น', 4, Math.max(1, n), P.gold); }
-  if (inB(t, 'n2')) seasonCards(g, t);
-  if (inB(t, 'n3')) moonCal(g, t);
+  if (inB(t, 'l4')) tally(g, t);
   if (inB(t, 'recap')) recapCard(g, t);
 }
 
@@ -130,15 +120,17 @@ IRIS.forEach((r) => AUD.push([r.t, 'glide']));
 for (const id of PROFS) [1.4, 2.9, 4.4].forEach((d) => AUD.push([at(id) + d * dur(id) / 7.4, 'bell']));
 AUD.push([at('hook1', 0.2), 'chime'], [at('map1', 2.3), 'pop'], [at('birth', 1.7), 'chime'], [at('build', 0.7), 'soft'], [at('build', 2.0), 'soft'], [at('build', 3.3), 'soft']);
 for (let i = 0; i < 3; i++) AUD.push([at('tiers', 0.7 + i * 0.6), 'pop']);
-AUD.push([at('w2', 0.5), 'soft'], [at('w4', 2.5), 'tok'], [at('s2', 0.3), 'water', { dur: 2 }], [at('s3', 0.4), 'water', { dur: 3 }], [at('s4', 0.2), 'rain', { dur: 4.5 }], [at('s6', 0.2), 'rain', { dur: 5 }]);
-for (let i = 0; i < 6; i++) { const t0 = 1.6 + i * 0.9 + 0.55; if (t0 < 5.2) AUD.push([at('s5') + t0 * dur('s5') / 5.2, 'rumble']); else AUD.push([at('s6') + (t0 - 5) * dur('s6') / 5.6, 'rumble']); }
+AUD.push([at('w2', 0.5), 'soft'], [at('w4', 2.5), 'tok'], [at('s2', 0.3), 'water', { dur: 2 }], [at('s3', 0.4), 'water', { dur: 3 }], [at('s4', 0.2), 'rain', { dur: 4.5 }]);
+for (let i = 0; i < 6; i++) { const t0 = 1.0 + i * 0.75 + 0.55; AUD.push([at('s5') + t0 * dur('s5') / 6, 'rumble']); }
+AUD.push([at('s5', 3.5), 'rain', { dur: 2.4 }]);
 AUD.push([at('s7', 2.6), 'tok'], [at('m1', 1.8), 'tok'], [at('m2', 0.8), 'tok'], [at('r1', 0.2), 'rain', { dur: 4 }], [at('r4', 0.4), 'harp'], [at('r4', 2.6), 'harp']);
 for (let i = 0; i < 4; i++) AUD.push([at('r3') + (0.8 + i) * dur('r3') / 6, 'tok']);
-AUD.push([at('c1', 0.4), 'water', { dur: 1.6 }], [at('c4', 0.6), 'chime'], [at('t2', 0.7), 'soft'], [at('t3', 0.7), 'soft'], [at('t3', 1.9), 'soft']);
+AUD.push([at('c4', 0.6), 'chime'], [at('t2', 0.7), 'soft'], [at('t3', 0.7), 'soft'], [at('t3', 1.9), 'soft']);
 for (let i = 0; i < 3; i++) AUD.push([at('t4') + (0.45 + i * 0.4) * dur('t4') / 6.4, 'pop'], [at('t4') + (3.45 + i * 0.35) * dur('t4') / 6.4, 'shimmer']);
 for (let i = 0; i < 4; i++) AUD.push([at('t5') + (1.4 + i * 1.2) * dur('t5') / 6, 'bell']);
 AUD.push([at('hook2', 0.4), 'clop'], [at('hook2', 1.7), 'clop'], [at('t6', 0.4), 'clop'], [at('t6', 1.7), 'clop'], [at('t6', 3.0), 'clop']);
-AUD.push([at('t7', 0.8), 'soft'], [at('n1', 0.3), 'bell'], [at('n2', 0.2), 'chime'], [at('n2', 2.2), 'chime'], [at('n2', 4.2), 'chime'], [at('n3', 0.6), 'shimmer'], [at('moral', 1.7), 'pop'], [at('moral', 2.3), 'pop'], [at('moral', 2.9), 'pop'], [at('ask', 0.6), 'bell']);
+AUD.push([at('t7', 0.8), 'soft'], [at('g1', 0.7), 'pop'], [at('g1', 1.3), 'pop'], [at('g1', 2.5), 'bell'], [at('g2', 0.3), 'soft'], [at('g4', 1.7), 'tok'], [at('g4', 1.9), 'tok'], [at('g4', 2.1), 'tok'], [at('g5', 1.0), 'soft', {}], [at('f1', 0.4), 'clop'], [at('f1', 2.2), 'clop'], [at('f2', 4.0), 'soft'], [at('f3', 0.4), 'clop'], [at('f3', 2.4), 'roar', { dur: 1.6 }], [at('f5', 0.5), 'soft'], [at('l1', 1.4), 'shimmer'], [at('l2', 1.3), 'bell'], [at('l2', 2.6), 'bell'], [at('l2', 3.9), 'bell'], [at('l4', 5.1), 'chime'], [at('moral2', 0.4), 'shimmer'], [at('moral2', 1.7), 'pop'], [at('moral2', 2.1), 'pop'], [at('moral2', 2.5), 'pop'], [at('ask', 0.6), 'bell']);
+for (let i = 0; i < 10; i++) AUD.push([at('l4') + (1.5 + i * 0.32) * dur('l4') / 6, 'tok']);
 AUD.sort((a, b) => a[0] - b[0]);
 
 caps.forEach((c) => { if (L.LAND) { if (!c.instant) c.y = FK.subtitleY(c); else c.t1 = 0; } });
