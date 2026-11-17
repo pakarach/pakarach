@@ -61,7 +61,7 @@ function recapCard(g, t) {
   g.save(); g.globalAlpha = a; panel(g, 50, 270, 980, 1210, 1);
   txt(g, 'สรุป: ชิงช้าโลกธรรม', 540, 360, 58, P.gold, 800);
   const rows = [['วิสาขา', 'รวยแค่ไหน ก็ต้องเสียคนที่รัก', P.coral], ['มหาสุทัสสนะ', '84,000 เมือง เหลือป่ากุสินารา', P.gold], ['ท้าวสักกะ', 'แพ้แล้วชนะ แต่สุขทิพย์ก็มีวันหมด', P.teal], ['สุปปพุทธะ', 'จนที่สุด แต่มีวันที่สุขที่สุด', '#e0c79a'], ['พระพุทธเจ้า', 'เจอโลกธรรม แต่ใจไม่หวั่นไหว', '#ffe08a']];
-  rows.forEach((row, i) => { const k = U.clamp((r - 0.5 - i * 0.7) / 0.3); if (k <= 0) return; const y = 500 + i * 160; g.save(); g.globalAlpha = a * k;
+  const rstep = Math.max(0.7, dur('recap') * 0.16); rows.forEach((row, i) => { const k = U.clamp((r - 0.5 - i * rstep) / 0.3); if (k <= 0) return; const y = 500 + i * 160; g.save(); g.globalAlpha = a * k;
     g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 90, y - 66, 900, 132, 26); g.fill(); g.fillStyle = row[2]; g.beginPath(); g.arc(160, y, 36, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 38); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 160, y + 2);
     txt(g, row[0], 222, y - 28, 38, row[2], 800, 'left'); txt(g, row[1], 222, y + 26, 38, '#fff', 600, 'left'); g.restore(); });
