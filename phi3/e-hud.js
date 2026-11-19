@@ -100,7 +100,7 @@ function recapCard(g, t) {
     txt(g, s0[0], 230, y - 24, 42, '#fff', 800, 'left'); txt(g, s0[1], 230, y + 30, 30, P.teal, 600, 'left');
     g.save(); g.translate(862, y); g.rotate(-0.12); g.strokeStyle = s0[3]; g.lineWidth = 6; rr(g, -96, -34, 192, 68, 14); g.stroke(); txt(g, s0[2], 0, 2, s0[2].length > 8 ? 28 : 40, s0[3], 800); g.restore(); g.restore(); });
   const k2 = U.clamp((r - 3.8) / 0.3); g.globalAlpha = a * k2;
-  txt(g, 'ผีในพระไตรปิฎก มาเพื่อ “ขอ” ไม่ได้มาเพื่อ “เอา”', 540, 1110, 36, P.gold, 700);
+  txt(g, 'เปรตในพระไตรปิฎก = ภพภูมิตามกรรม มาเพื่อ “ขอ” ไม่ใช่ “เอา”', 540, 1110, 34, P.gold, 700);
   txt(g, 'ญาติเคยใหลตาย หรือเคยวูบ → ตรวจคลื่นไฟฟ้าหัวใจ', 540, 1170, 34, '#fff', 600);
   g.globalAlpha = a * 0.85; g.font = F(400, 22); g.fillStyle = '#fff'; g.textAlign = 'center';
   g.fillText('ที่มา: พระไตรปิฎก (กาลามสูตร · ปาจิตตีย์ · สีวกสูตร · ติโรกุฑฑสูตร) · Bangkok Post/Thai PBS 2560', 540, 1300);
