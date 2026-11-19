@@ -46,7 +46,7 @@ function stamp(g, t, id) {
   const v = VERD[id], k = pop(sm(0.6, 1.0, rk(t, id))); if (k <= 0.01) return;
   g.save(); g.translate(540, 1080); g.rotate(-0.12); g.scale(1.6 - 0.6 * k, 1.6 - 0.6 * k); g.globalAlpha = U.clamp(k * 1.2);
   g.lineWidth = 14; g.strokeStyle = v[1]; g.fillStyle = 'rgba(15,22,48,.78)'; rr(g, -280, -130, 560, 260, 34); g.fill(); g.stroke();
-  txt(g, v[0], 0, -24, v[0].length > 4 ? 120 : 150, v[1], 800); txt(g, v[2], 0, 82, 50, '#fff', 700); g.restore();
+  txt(g, v[0], 0, -24, v[0].length > 8 ? 92 : 140, v[1], 800); txt(g, v[2], 0, 82, 42, '#fff', 700); g.restore();
 }
 function counter(g, label, n, col, unit) {
   g.save(); g.font = F(700, 36); const lw = g.measureText(label).width; g.font = F(800, 84); const nw = g.measureText(n).width; g.font = F(600, 34); const uw = unit ? g.measureText(unit).width + 16 : 0;
@@ -93,12 +93,12 @@ function recapCard(g, t) {
   const r = rk(t, 'recap'), a = U.clamp(r / 0.3) * U.clamp((BASE.recap - r) / 0.3);
   g.save(); g.globalAlpha = a; panel(g, 60, 270, 960, 1200, 1);
   txt(g, 'สรุป: 3 ผีอีสาน', 540, 350, 64, '#fff', 800); txt(g, 'ตรวจด้วยพุทธวิธี', 540, 428, 50, P.gold, 800);
-  const rows = [['พระอุ้มหมา ชีอุ้มแมว', 'ข่าวลือ · ผิดวินัยตั้งแต่ก้าวแรก', 'มั่ว', P.coral], ['ปอบ', 'สัตว์ป่วยตาย · คนถูกกล่าวหาเจ็บจริง', 'มั่ว', P.coral], ['ผีแม่ม่าย', 'ใหลตาย = ไฟฟ้าหัวใจ (บรูกาดา)', 'ตายจริง', P.gold]];
+  const rows = [['พระอุ้มหมา ชีอุ้มแมว', 'ข่าวลือ · ผิดวินัยตั้งแต่ก้าวแรก', 'ไม่มีหลักฐาน', P.coral], ['ปอบ', 'สัตว์ป่วยตาย · คนถูกกล่าวหาเจ็บจริง', 'ไม่มีหลักฐาน', P.coral], ['ผีแม่ม่าย', 'ใหลตาย = ไฟฟ้าหัวใจ (บรูกาดา)', 'ตายจริง', P.gold]];
   rows.forEach((s0, i) => { const k = U.clamp((r - 0.5 - i * 1.0) / 0.3); if (k <= 0) return; const y = 560 + i * 170; g.save(); g.globalAlpha = a * k;
     g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 70, 880, 140, 26); g.fill(); g.fillStyle = s0[3]; g.beginPath(); g.arc(165, y, 40, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 42); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 165, y + 2);
     txt(g, s0[0], 230, y - 24, 42, '#fff', 800, 'left'); txt(g, s0[1], 230, y + 30, 30, P.teal, 600, 'left');
-    g.save(); g.translate(880, y); g.rotate(-0.12); g.strokeStyle = s0[3]; g.lineWidth = 6; rr(g, -78, -34, 156, 68, 14); g.stroke(); txt(g, s0[2], 0, 2, s0[2].length > 4 ? 34 : 42, s0[3], 800); g.restore(); g.restore(); });
+    g.save(); g.translate(862, y); g.rotate(-0.12); g.strokeStyle = s0[3]; g.lineWidth = 6; rr(g, -96, -34, 192, 68, 14); g.stroke(); txt(g, s0[2], 0, 2, s0[2].length > 8 ? 28 : 40, s0[3], 800); g.restore(); g.restore(); });
   const k2 = U.clamp((r - 3.8) / 0.3); g.globalAlpha = a * k2;
   txt(g, 'ผีในพระไตรปิฎก มาเพื่อ “ขอ” ไม่ได้มาเพื่อ “เอา”', 540, 1110, 36, P.gold, 700);
   txt(g, 'ญาติเคยใหลตาย หรือเคยวูบ → ตรวจคลื่นไฟฟ้าหัวใจ', 540, 1170, 34, '#fff', 600);
@@ -162,7 +162,7 @@ AUD.sort((a, b) => a[0] - b[0]);
 
 caps.forEach((c) => { if (L.LAND) { if (!c.instant) c.y = FK.subtitleY(c); else c.t1 = 0; } });
 VE.run({
-  DUR, W: L.W, H: L.H, coverAt0: true, file: L.LAND ? 'phi-isan-3-tua-youtube' : 'phi-isan-3-tua', title: '3 ผีอีสาน มั่วไหม?',
+  DUR, W: L.W, H: L.H, coverAt0: true, file: L.LAND ? 'phi-isan-3-tua-youtube' : 'phi-isan-3-tua', title: '3 ผีอีสาน มีจริงไหม?',
   brand: { name: 'RuNgee รู้งี้', series: 'พุทธวิธี', color: P.teal, icon: 'globe', bg: ['#0f1630', '#1b2a55'], endLine: 'รู้งี้... ติดตามไว้', motif: { notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' } },
   setup({ scene }) { S = setupScene(scene); return S; },
   update, bgAt, hud, caps, trans: IRIS, audio: AUD,
