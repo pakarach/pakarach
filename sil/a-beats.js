@@ -92,5 +92,8 @@ const ONG = {
 /* time of day shown in the HUD clock, per chapter [start beat, hh, mm, minutes advanced over the chapter] */
 const CLOCK = [['c1a', 5, 30, 12], ['c2a', 9, 0, 25], ['c3a', 12, 0, 18], ['c4a', 15, 0, 30], ['c5a', 19, 0, 40], ['p1', 22, 0, 30]];
 /* lamp i passes at: */
-const PASS = { 1: at('c1f', 1.6), 2: at('c2e', 1.6), 3: at('c3d', 2.2), 4: at('c4g', 1.8), 5: at('c5g', 1.8) };
+const PASS = { 1: at('c1f', dur('c1f') * 0.55), 2: at('c2e', dur('c2e') * 0.55), 3: at('c3d', dur('c3d') * 0.62), 4: at('c4g', dur('c4g') * 0.58), 5: at('c5g', dur('c5g') * 0.6) };
+const STEPT = (i) => 0.5 + i * (dur('c0d') - 1.6) / 4;
+const P4T = [0.5, 1.9, 3.3, 4.6, 5.6].map((x) => x * dur('p4') / 7.3);
+const C4T = (k) => dur('c4c') * 0.38 + k * dur('c4c') * 0.13;
 const TEST = { 1: ['c1a', 'c1f'], 2: ['c2a', 'c2e'], 3: ['c3a', 'c3d'], 4: ['c4a', 'c4g'], 5: ['c5a', 'c5g'] };

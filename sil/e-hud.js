@@ -53,9 +53,9 @@ function chipsState(t) {
   const tick = (id, t0, step, n) => (k) => t >= at(id, t0 + k * step) ? 1 : 0;
   if (inB(t, 'c1b')) { const f = tick('c1b', 0.6, 0.75); return [1, [0, 1, 2, 3, 4].map(f)]; }
   if (inB(t, 'c1c')) return [1, [1, rel(t, 'c1c') > 2.4 ? -1 : 0, rel(t, 'c1c') > 2.4 ? -1 : 0, 1, rel(t, 'c1c') > 2.2 ? 1 : 0]];
-  if (inB(t, 'c1d')) return rel(t, 'c1d') < 2.4 ? [1, [1, -1, -1, 1, 1]] : [1, [1, 1, 1, 1, 1]];
+  if (inB(t, 'c1d')) return rel(t, 'c1d') < dur('c1d') * 0.5 ? [1, [1, -1, -1, 1, 1]] : [1, [1, 1, 1, 1, 1]];
   if (inB(t, 'c2c')) { const f = tick('c2c', 0.6, 0.75); return [2, [0, 1, 2, 3, 4].map(f)]; }
-  if (inB(t, 'c4c')) { const f = tick('c4c', 0.8, 0.9); return [4, [0, 1, 2, 3].map(f)]; }
+  if (inB(t, 'c4c')) return [4, [0, 1, 2, 3].map((k) => (rel(t, 'c4c') >= C4T(k) ? 1 : 0))];
   if (inB(t, 'c4d') || inB(t, 'c4e')) return [4, [1, -1, 1, 1]];
   return null;
 }
@@ -80,7 +80,7 @@ function recapCard(g, t) {
   txt(g, 'ศีล 5 = มหาทาน 5', 540, 380, 74, P.gold, 800); txt(g, 'ให้ความไม่มีภัย ไม่มีเวร ไม่เบียดเบียน', 540, 460, 38, '#fff', 600);
   const rows = [['ไม่ฆ่า', 'อายุสั้น'], ['ไม่ลัก', 'ทรัพย์เสื่อม'], ['ไม่ผิดในกาม', 'ก่อเวร มีศัตรู'], ['ไม่โกหก', 'ถูกใส่ร้าย'], ['ไม่เสพของเมา', 'ความเป็นบ้า']];
   txt(g, 'ถ้าละเมิด ผลเบาที่สุดคือ…', 640, 545, 30, 'rgba(255,255,255,.75)', 600);
-  rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.6) / 0.3); if (k <= 0) return; const y = 640 + i * 150; g.save(); g.globalAlpha = a * k;
+  rows.forEach((s, i) => { const k = U.clamp((r - 1.6 - i * (dur('recap') - 3) / 5) / 0.3); if (k <= 0) return; const y = 640 + i * 150; g.save(); g.globalAlpha = a * k;
     g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 58, 880, 116, 26); g.fill(); g.fillStyle = P.teal; g.beginPath(); g.arc(170, y, 40, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 42); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 170, y + 2); txt(g, s[0], 236, y, 44, '#fff', 700, 'left'); txt(g, '→ ' + s[1], 940, y, 40, P.coral, 700, 'right'); g.restore(); });
   g.globalAlpha = a * 0.85; g.font = F(400, 24); g.fillStyle = '#fff'; g.textAlign = 'center';
@@ -109,11 +109,11 @@ const AUD = [[0.1, 'shimmer'], [at('hook1'), 'temple'], [at('c0a', 0.4), 'temple
 IRIS.forEach((r) => AUD.push([r.t, 'glide']));
 { let pl = null; for (const id of ORDER) { if (!SHOT[id]) continue; const L0 = SHOT[id][0][1].look; if (pl && id !== 'hook1' && Math.hypot(pl[0] - L0[0], pl[2] - L0[2]) > 12) AUD.push([at(id), 'glide', { dur: 1.4 }]); pl = L0; } }
 for (const i of [1, 2, 3, 4, 5]) AUD.push([PASS[i], 'bell']);
-for (let k = 0; k < 5; k++) { AUD.push([at('c1b', 0.6 + k * 0.75), 'tok'], [at('c2c', 0.6 + k * 0.75), 'tok']); if (k < 4) AUD.push([at('c4c', 0.8 + k * 0.9), 'tok']); }
+for (let k = 0; k < 5; k++) { AUD.push([at('c1b', 0.6 + k * 0.75), 'tok'], [at('c2c', 0.6 + k * 0.75), 'tok']); if (k < 4) AUD.push([at('c4c', C4T(k)), 'tok']); }
 for (let k = 0; k < 5; k++) AUD.push([at('c5d', 1.0 + k * 0.45 + 0.3), 'tok']);
 for (let k = 0; k < 7; k++) AUD.push([at('c5f', 1.0 + k * 0.22), 'tok']);
-for (let k = 0; k < 4; k++) AUD.push([at('c0d', 0.5 + k * 0.6), 'pop']);
-for (const d of [0.5, 1.3, 2.9, 3.7, 4.5]) AUD.push([at('p4', d), 'pop']);
+for (let k = 0; k < 4; k++) AUD.push([at('c0d', STEPT(k)), 'pop']);
+for (const d of P4T) AUD.push([at('p4', d), 'pop']);
 AUD.push([at('c1e', 1.0), 'soft'], [at('c2d', 1.0), 'soft'], [at('c3a', 1.0), 'pop'], [at('c4d', 0.3), 'pop'], [at('c5g', 1.0), 'clink'], [at('c5g', 1.8), 'chime']);
 AUD.push([at('hook2', 0.5), 'chime'], [at('p3', 0.2), 'chime'], [at('p3', 0.4), 'shimmer'], [at('p6', 3.0), 'shimmer'], [at('p7', 0.3), 'chime'], [at('p7', 0.5), 'shimmer'], [at('recap', 0.2), 'bell']);
 AUD.sort((a, b) => a[0] - b[0]);

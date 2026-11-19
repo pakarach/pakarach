@@ -110,7 +110,7 @@ function update(t, s, { camera, W, H }) {
   } else if (between(t, 'c1a', 'c1f')) {
     if (inB(t, 'c1a') || inB(t, 'c1b') || inB(t, 'c1e')) { setSit(N, true); tonAt('HOME', -1.35, 0.55, -1.7); face(N, 1, 0.35); if (inB(t, 'c1a')) { const k = sm(2.2, 3.0, rel(t, 'c1a')); N.userData.arms.R.rotation.set(-2.4 * k, 0, 0.2); N.userData.head.rotation.y = Math.sin(t * 2) * 0.2; } }
     else if (inB(t, 'c1c')) { const r = rel(t, 'c1c'), k = U.easeIO(sm(0.2, 3.6, r)); tonAt('HOME', U.lerp(4.4, 0.2, k), 0.16, 1.5); face(N, -1, 0); if (k > 0 && k < 1) walk(N, t, 1); }
-    else if (inB(t, 'c1d')) { tonAt('HOME', -0.4, 0.16, -0.6); face(N, 0.2, 1); const r = rel(t, 'c1d'); const k = sm(2.4, 3.0, r); N.userData.arms.L.rotation.set(-1.6 - k * 0.4, 0, -0.7 + k * 0.5); N.userData.arms.R.rotation.set(-1.6 - k * 0.4, 0, 0.7 - k * 0.5); }
+    else if (inB(t, 'c1d')) { tonAt('HOME', -0.4, 0.16, -0.6); face(N, 0.2, 1); const r = rel(t, 'c1d'); const k = sm(dur('c1d') * 0.5, dur('c1d') * 0.5 + 0.6, r); N.userData.arms.L.rotation.set(-1.6 - k * 0.4, 0, -0.7 + k * 0.5); N.userData.arms.R.rotation.set(-1.6 - k * 0.4, 0, 0.7 - k * 0.5); }
     else { const r = rel(t, 'c1f'), k = U.easeIO(sm(0, 1.4, r)); tonAt('HOME', U.lerp(-0.4, 2.0, k), 0.16, U.lerp(-0.6, -3.2, k)); face(N, 0.3, -1); if (k < 1) walk(N, t, 1); else { N.userData.arms.R.rotation.set(0, 0, 2.6 + Math.sin(t * 9) * 0.35); } }
   } else if (between(t, 'c2a', 'c2e') || between(t, 'c4a', 'c4g')) {
     if (inB(t, 'c2e')) { const r = rel(t, 'c2e'), k = U.easeIO(sm(1.0, 2.8, r)); tonAt('OFFICE', U.lerp(0, -3.0, k), 0.16, U.lerp(-1.3, -2.4, k)); face(N, -1, -0.3); if (k > 0 && k < 1) walk(N, t, 1); if (r > 3.0) say(N, 'ขอเบิกปากกา 1 ด้ามครับ'); }
@@ -143,7 +143,7 @@ function update(t, s, { camera, W, H }) {
     s.givers.forEach((c, i) => { const tl = t - at('hook1') + 0.6 - i * 0.7, k = U.easeIO(sm(0, 2.6, tl)); const x0 = 1 + i * 1.6, z0 = 9, x1 = -6.4 + i * 0.7, z1 = 5.6 + (i % 2) * 0.5;
       setP(c, 'TEMPLE', U.lerp(x0, x1, k), 0.12, U.lerp(z0, z1, k)); face(c, x1 - x0, z1 - z0); if (k > 0 && k < 1) walk(c, t + i, 1); else rest(c);
       c.userData.gift.visible = k < 1; if (k < 1) c.userData.arms.R.rotation.set(-0.9, 0, 0.1); c.visible = between(t, 'hook1', 'hook3'); });
-    s.steps.forEach((q) => { const k = inB(t, 'c0d') ? U.easeBack(sm(0.4 + q.i * 0.6, 0.9 + q.i * 0.6, rel(t, 'c0d'))) : (t > end('c0d') && t < end('c0e') ? 1 : 0); q.b.scale.set(1, Math.max(0.001, q.h * k), 1); q.b.visible = k > 0.01;
+    s.steps.forEach((q) => { const k = inB(t, 'c0d') ? U.easeBack(sm(STEPT(q.i), STEPT(q.i) + 0.5, rel(t, 'c0d'))) : (t > end('c0d') && t < end('c0e') ? 1 : 0); q.b.scale.set(1, Math.max(0.001, q.h * k), 1); q.b.visible = k > 0.01;
       q.lb.visible = q.lb2.visible = k > 0.6; q.lb.material.opacity = q.lb2.material.opacity = U.clamp((k - 0.6) / 0.3); setP(q.lb, 'TEMPLE', 6.2 + q.i * 1.55, q.h * k + 0.55, 3.4); setP(q.lb2, 'TEMPLE', 6.2 + q.i * 1.55, q.h * k + 1.15, 3.4); }); }
 
   /* ---------- home ---------- */
@@ -215,8 +215,8 @@ function update(t, s, { camera, W, H }) {
     /* station glows + labels in p4 */
     const P4 = [['HOME', 2.2, 2.4, -4.0], ['CAFE', 3.0, 1.8, 1.6], ['OFFICE', -2.0, 1.6, -0.3], ['OFFICE', 3.2, 0.2, 12.6], ['BAR', -2, 1.2, 12.5]];
     if (!s.p4a) s.p4a = P4.map((q) => { const o = new T.Object3D(); setP(o, q[0], q[1], q[2], q[3]); scene0.add(o); return o; });
-    s.pLabels.forEach((lb, i) => { lb.visible = false; const r = inB(t, 'p4') ? rel(t, 'p4') - [0.5, 1.3, 2.9, 3.7, 4.5][i] : -1; if (r > 0) BUB.push({ o: s.p4a[i], txt: ['ยุงที่รอด', 'คู่ที่ไม่แตก', 'ของที่ไม่หาย', 'ความจริง', 'คนบนถนน'][i], c: '#fff', dy: 1.5, small: true }); });
-    s.giftGlows.forEach((g0, i) => { if (i >= 5) { g0.material.opacity = 0; return; } const q = P4[i]; setP(g0, q[0], q[1], q[2] + 1, q[3]); const r = between(t, 'p4', 'p5') ? t - at('p4') - [0.5, 1.3, 2.9, 3.7, 4.5][i] : -1; g0.material.opacity = 0.75 * U.clamp(r / 0.4) * (0.85 + 0.15 * Math.sin(t * 4 + i)); });
+    s.pLabels.forEach((lb, i) => { lb.visible = false; const r = inB(t, 'p4') ? rel(t, 'p4') - P4T[i] : -1; if (r > 0) BUB.push({ o: s.p4a[i], txt: ['ยุงที่รอด', 'คู่ที่ไม่แตก', 'ของที่ไม่หาย', 'ความจริง', 'คนบนถนน'][i], c: '#fff', dy: 1.5, small: true }); });
+    s.giftGlows.forEach((g0, i) => { if (i >= 5) { g0.material.opacity = 0; return; } const q = P4[i]; setP(g0, q[0], q[1], q[2] + 1, q[3]); const r = between(t, 'p4', 'p5') ? t - at('p4') - P4T[i] : -1; g0.material.opacity = 0.75 * U.clamp(r / 0.4) * (0.85 + 0.15 * Math.sin(t * 4 + i)); });
     /* the spared mosquito flies over the house at night, a car passes safely on the street */
     if (between(t, 'p3', 'p5')) { s.mos.visible = true; s.mos.scale.setScalar(3.2); s.mos.position.set(ST.HOME[0] + 2.2 + Math.cos(t) * 1.2, 4 + Math.sin(t * 3) * 0.3, ST.HOME[2] - 4 + Math.sin(t) * 1.2); s.mos.userData.wings.forEach((w, i) => (w.rotation.x = Math.PI / 2 + Math.sin(t * 60 + i) * 0.6)); } else s.mos.scale.setScalar(1.6);
     if (night) { const u = (t * 0.07) % 1; s.car.position.set(ST.BAR[0] + U.lerp(-24, 24, u) - 8, 0, -13 + 0.9); s.car.rotation.y = 0; } else { setP(s.car, 'BAR', 1.8, 0, 6.2); } }
