@@ -62,7 +62,11 @@ CF.flash = (s) => { const g = softSprite('rgba(255,255,255,1)', 1); g.scale.setS
 /* streak: a glowing comet; fly(o, path, u) places it and its trail along path(u) (world points) */
 CF.streak = (s, c) => { const g = new T.Group(), col = c || 'rgba(170,220,255,1)'; const a = softSprite(col, 0.95); a.scale.setScalar(1.8); const b = softSprite('rgba(255,255,255,1)', 1); b.scale.setScalar(0.75); g.add(a, b); const tr = [];
   for (let i = 0; i < 7; i++) { const q = softSprite(col, 0.55 - i * 0.07); q.scale.setScalar(1.3 - i * 0.12); g.add(q); tr.push(q); } g.userData.trail = tr; g.scale.setScalar(s || 1); return g; };
-function fly(o, path, u, step) { const p = path(u); o.position.copy(p); const k = o.scale.x || 1; o.userData.trail.forEach((q, i) => { const v = path(u - (i + 1) * (step || 0.012)); q.position.set((v.x - p.x) / k, (v.y - p.y) / k, (v.z - p.z) / k); }); }
+/* flyer: Tony as a plain chibi flying arms-forward, with a light trail (no thrusters, no armour) */
+CF.flyer = (s, kind) => { const g = new T.Group(), b = (kind === 'cap' ? CF.tonyC : CF.tony)(1); b.rotation.x = Math.PI / 2; b.position.z = -0.95; const a = b.userData.arms; a.L.rotation.set(-Math.PI * 0.94, 0, -0.18); a.R.rotation.set(-Math.PI * 0.94, 0, 0.18); g.add(b);
+  const tr = []; for (let i = 0; i < 8; i++) { const q = softSprite('rgba(170,220,255,1)', 0.5 - i * 0.05); q.scale.setScalar(0.9 - i * 0.07); g.add(q); tr.push(q); } g.userData.trail = tr; g.userData.flyer = true; g.scale.setScalar(s || 1); return g; };
+function fly(o, path, u, step) { const p = path(u); o.position.copy(p); if (o.userData.flyer) { const n = path(u + 0.03); if (n.distanceToSquared(p) > 1e-6) o.lookAt(n); else o.rotation.set(0, 0, 0); }
+  o.updateMatrixWorld(true); o.userData.trail.forEach((q, i) => { const v = path(u - (i + 1) * (step || 0.012)); if (o.userData.flyer) v.add(new T.Vector3().subVectors(p, path(u + 0.03)).setLength(0.9)); q.position.copy(o.worldToLocal(v)); }); }
 
 /* set presets */
 const decor = (st, list) => list.map(([o, x, y, z, ry]) => { place(o, st, x, y || 0, z); if (ry) o.rotation.y = ry; return o; });
