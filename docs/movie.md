@@ -34,3 +34,9 @@ A dark film studio. Each location of the story is a small set (a slab with walls
 - `MK.finish` bloom reads the WebGL canvas, so it must run before any 2D text is drawn (text does not bloom).
 - Colours passed straight to three (not through `MK.*`) must be converted with `MK.LIN(hex)`.
 - Sandbox frames (software GL) are a little noisier than Dan's GPU render; judge composition and exposure, not grain.
+- The rim light floods slabs blue on interiors: set `L.rim.intensity` per set each frame (cave ~0.3, rooms ~0.5, open air ~0.9-1.3 of the kit's 1.7 scaled down).
+- Lean or fall a figurine by tilting the whole piece (`f.rotation.order = 'YXZ'`, `f.rotation.z = -lean`), not with `MK.pose({ lean })` beyond ~0.15.
+- Before projecting a 3D point to the screen for a name label, call `camera.updateMatrixWorld(true)`; otherwise the label uses last frame's camera.
+- A lamp glow sprite in front of a face hides it: keep practical lamps to the side of or behind figures, glow size <= 0.9 near faces.
+- Only the active set is visible (sets 80 units apart); switch sets through a 0.7 s fade-down, a black overlay, and a 0.9 s fade-up.
+- Reference film file: `ironman/` (sets.js + story.js + mk.sh): data-driven beats table, figure tracks, pose/hop/visibility windows.

@@ -113,7 +113,7 @@
     const body = sh(new T.Mesh(MK.lathe([[0.001, 0.07], [0.3 * b, 0.07], [0.31 * b, 0.12], [0.24 * b, 0.5], [0.2 * b, 0.78], [0.25 * b, 0.98], [0.22 * b, 1.08], [0.09, 1.14], [0.08, 1.2], [0.001, 1.2]]), coat)); g.add(body); P.body = body;
     const head = new T.Group(); head.position.y = 1.4; g.add(head); P.head = head;
     head.add(sh(new T.Mesh(new T.SphereGeometry(0.23, 32, 24), skin)));
-    if (o.hair !== false) { const hm = sh(new T.Mesh(new T.SphereGeometry(0.245, 32, 16, 0, PI * 2, 0, PI * 0.5), hair)); hm.rotation.x = -0.28; hm.position.y = 0.01; head.add(hm); }
+    if (o.hair !== false) { const hm = sh(new T.Mesh(new T.SphereGeometry(0.245, 32, 16, 0, PI * 2, 0, PI * 0.5), hair)); hm.rotation.z = 0.3; hm.position.set(-0.012, 0.01, 0); head.add(hm); }
     if (o.long) { const lh = sh(new T.Mesh(MK.capsule(0.2, 0.55), hair)); lh.position.set(-0.07, -0.42, 0); lh.scale.set(0.85, 1, 1.05); head.add(lh); }
     const eyeM = new T.MeshStandardMaterial({ color: 0x0a0a0c, roughness: 0.15 });
     for (const z of [-0.085, 0.085]) { const e = new T.Mesh(new T.SphereGeometry(0.026, 12, 10), eyeM); e.position.set(0.212, 0.02, z); head.add(e); }
