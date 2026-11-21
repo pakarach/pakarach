@@ -87,8 +87,8 @@ VE.registerSfx('zip', (tt) => VE.audio.noise(tt, 0.45, { type: 'bandpass', f: 50
 const srnd = (seed) => { let rs = seed || 7; return () => ((rs = (rs * 16807) % 2147483647) / 2147483647); };
 CF.busstop = (s) => { const g = new T.Group(); g.add(at3(mk(new T.CylinderGeometry(0.05, 0.05, 2.6, 8), '#8a9098'), 0, 1.3, 0)); g.add(at3(mk(new T.BoxGeometry(0.72, 0.5, 0.06), '#2a6ab0'), 0, 2.45, 0));
   const lb = label('BUS', { px: 110, color: '#ffffff', w: 0.6 }); lb.position.set(0, 2.45, 0.06); g.add(lb); g.scale.setScalar(s || 1); return g; };
-CF.pbench = (s, c) => { const g = new T.Group(), w = c || '#7a5a3a'; g.add(at3(mk(new T.BoxGeometry(2.6, 0.1, 0.7), w), 0, 0.5, 0), at3(mk(new T.BoxGeometry(2.6, 0.45, 0.08), w), 0, 0.95, -0.33));
-  for (const x of [-1.15, 1.15]) g.add(at3(mk(new T.BoxGeometry(0.1, 0.5, 0.6), '#2a2a2e'), x, 0.25, 0)); g.scale.setScalar(s || 1); return g; };
+CF.pbench = (s, c) => { const g = new T.Group(), w = c || '#7a5a3a'; g.add(at3(mk(new T.BoxGeometry(3.6, 0.1, 0.7), w), 0, 0.5, 0), at3(mk(new T.BoxGeometry(3.6, 0.45, 0.08), w), 0, 0.95, -0.33));
+  for (const x of [-1.65, 1.65]) g.add(at3(mk(new T.BoxGeometry(0.1, 0.5, 0.6), '#2a2a2e'), x, 0.25, 0)); g.scale.setScalar(s || 1); return g; };
 CF.bike = (s, c) => { const g = new T.Group(), fc = c || '#d04a3a'; for (const z of [-0.5, 0.5]) { const w = mk(new T.TorusGeometry(0.3, 0.05, 6, 18), '#1e1e24'); w.rotation.y = Math.PI / 2; w.position.set(0, 0.33, z); g.add(w); }
   g.add(at3(mk(new T.BoxGeometry(0.07, 0.07, 1.0), fc), 0, 0.58, 0), at3(mk(new T.BoxGeometry(0.07, 0.42, 0.07), fc), 0, 0.42, -0.1), at3(mk(new T.BoxGeometry(0.22, 0.06, 0.3), '#1e1e24'), 0, 0.66, -0.15), at3(mk(new T.BoxGeometry(0.6, 0.05, 0.05), '#c0c4cc'), 0, 0.86, 0.45), at3(mk(new T.BoxGeometry(0.06, 0.32, 0.06), fc), 0, 0.7, 0.45));
   g.scale.setScalar(s || 1); return g; };
@@ -105,10 +105,10 @@ CF.pingpong = (s) => { const g = new T.Group(); g.add(at3(mk(new T.BoxGeometry(1
   g.add(at3(mk(new T.BoxGeometry(1.62, 0.16, 0.02), '#f4f4f4'), 0, 0.87, 0)); for (const x of [-0.65, 0.65]) for (const z of [-1.2, 1.2]) g.add(at3(mk(new T.BoxGeometry(0.06, 0.74, 0.06), '#2a2a2e'), x, 0.37, z)); g.scale.setScalar(s || 1); return g; };
 CF.ball = (s, c) => { const m = new T.Mesh(new T.SphereGeometry(0.07, 10, 8), basic(c || '#ffffff')); m.scale.setScalar(s || 1); return m; };
 CF.paddle = (s) => { const g = new T.Group(), h = mk(new T.CylinderGeometry(0.17, 0.17, 0.03, 16), '#c0302a'); h.rotation.x = Math.PI / 2; h.position.y = 0.2; g.add(h, at3(mk(new T.BoxGeometry(0.05, 0.18, 0.03), '#8a5a3a'), 0, 0.02, 0)); g.scale.setScalar(s || 1); return g; };
-CF.sboat = (s, c) => { const g = new T.Group(), hc = c || '#f2f0ea'; g.add(at3(mk(new T.BoxGeometry(1.8, 0.8, 4.2), hc), 0, 0.4, 0), at3(mk(new T.BoxGeometry(1.84, 0.14, 4.24), '#2a6ab0'), 0, 0.65, 0), at3(mk(new T.BoxGeometry(1.2, 0.9, 1.2), '#f8f6f0'), 0, 1.25, 0.9), at3(mk(new T.BoxGeometry(1.0, 0.3, 0.05), '#2a3a4a'), 0, 1.45, 1.51));
+CF.sboat = (s, c) => { const g = new T.Group(), hc = c || '#f2f0ea'; g.add(at3(mk(new T.BoxGeometry(1.8, 0.8, 4.2), hc), 0, 0.4, 0), at3(mk(new T.BoxGeometry(1.84, 0.14, 4.24), '#2a6ab0'), 0, 0.65, 0), at3(mk(new T.BoxGeometry(1.2, 0.9, 1.0), '#f8f6f0'), 0, 1.25, 1.55), at3(mk(new T.BoxGeometry(1.0, 0.3, 0.05), '#2a3a4a'), 0, 1.45, 2.06));
   const bw = mk(new T.CylinderGeometry(0.02, 0.92, 1.0, 4), hc); bw.rotation.x = Math.PI / 2; bw.rotation.y = Math.PI / 4; bw.scale.set(1, 1, 0.42); bw.position.set(0, 0.4, 2.6); g.add(bw);
-  g.add(at3(mk(new T.CylinderGeometry(0.06, 0.06, 3, 8), '#6a6a70'), 0, 2.2, -0.4)); const nets = [];
-  for (const sx of [-1, 1]) { const b = mk(new T.CylinderGeometry(0.04, 0.04, 2.6, 6), '#6a6a70'); b.position.set(sx * 1.1, 2.3, -0.4); b.rotation.z = sx * -0.95; g.add(b); const n = mk(new T.ConeGeometry(0.26, 0.6, 8), '#4f5f52'); n.position.set(sx * 2.05, 1.95, -0.4); n.rotation.x = Math.PI; g.add(n); nets.push(n); }
+  g.add(at3(mk(new T.CylinderGeometry(0.06, 0.06, 3, 8), '#6a6a70'), 0, 2.2, 0.75)); const nets = [];
+  for (const sx of [-1, 1]) { const b = mk(new T.CylinderGeometry(0.04, 0.04, 2.6, 6), '#6a6a70'); b.position.set(sx * 1.1, 2.3, 0.75); b.rotation.z = sx * -0.95; g.add(b); const n = mk(new T.SphereGeometry(0.3, 10, 8), '#c8cfb4', { flatShading: true }); n.scale.set(1, 1.4, 1); n.position.set(sx * 2.05, 2.15, 0.75); g.add(n); nets.push(n); }
   g.userData.nets = nets; g.scale.setScalar(s || 1); return g; };
 CF.wchair = (s) => { const g = new T.Group(); for (const sx of [-0.48, 0.48]) { const w = mk(new T.TorusGeometry(0.42, 0.05, 6, 20), '#2a2a2e'); w.rotation.y = Math.PI / 2; w.position.set(sx, 0.45, -0.05); g.add(w); }
   g.add(at3(mk(new T.BoxGeometry(0.85, 0.08, 0.7), '#3a3a40'), 0, 0.55, 0), at3(mk(new T.BoxGeometry(0.85, 0.75, 0.08), '#3a3a40'), 0, 0.95, -0.36)); const bl = mk(new T.BoxGeometry(0.95, 0.3, 0.75), '#8a3a3a'); bl.position.set(0, 0.68, 0.22); g.add(bl); g.userData.blanket = bl; g.scale.setScalar(s || 1); return g; };
@@ -140,3 +140,5 @@ Object.assign(ENVB, {
     const rd = mk(new T.BoxGeometry(90, 0.06, 3.2), '#4a4a52'); place(rd, st, 0, 0.03, 0); out.push(rd); for (let i = 0; i < 24; i++) { const d = new T.Mesh(new T.PlaneGeometry(1.4, 0.14), basic('#f2d24a')); d.rotation.x = -Math.PI / 2; place(d, st, -44 + i * 4, 0.07, 0); out.push(d); }
     if (o.trees) { const rnd = srnd(97); for (let i = 0; i < o.trees; i++) { const tr = tree(1.1 + rnd(), '#4f7a42'); place(tr, st, -20 + i * 4 + rnd() * 2, 0, -4 - rnd() * 5); out.push(tr); } } return out; },
 });
+CF.wave = (s, c) => { const g = new T.Group(); const w = mk(new T.CylinderGeometry(3, 3, 30, 28, 1, false, 0, Math.PI), c || '#2a6aa8', { emissive: new T.Color('#123a6a'), emissiveIntensity: 0.3 }); w.rotation.z = Math.PI / 2; w.rotation.x = -Math.PI / 2; g.add(w);
+  for (let i = 0; i < 26; i++) { const f = softSprite('rgba(240,250,255,1)', 0.8); f.scale.setScalar(1.6 + (i % 3) * 0.5); f.position.set(-14 + i * 1.12, 3.0, Math.sin(i * 1.7) * 0.4); g.add(f); } g.scale.setScalar(s || 1); return g; };

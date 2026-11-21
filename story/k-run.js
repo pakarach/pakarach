@@ -130,7 +130,7 @@ function update(t, s, { camera, W, H: HH }) {
   VE.camAt(CAM, t, camera, 0.12); window.__cam = camera;
   atmoUpdate(t, s, bk, camera, R.sc.motes || 0.8);
   const sk = R.sc.shake; if (sk && r > sk[0] && r < sk[1]) { const q = 1 - (r - sk[0]) / (sk[1] - sk[0]); camera.position.x += Math.sin(t * 55) * (sk[2] || 0.1) * q; camera.position.y += Math.sin(t * 43) * (sk[2] || 0.1) * 0.8 * q; }
-  camera.updateMatrixWorld(true);
+  camera.updateMatrixWorld(true); window.__dbg = { s: s.o, camera };
   const v = s.anchorV;
   for (const b of BUB) { b.o.updateMatrixWorld(true); b.o.getWorldPosition(v); v.y += (b.dy || 2) * (b.o.scale.y || 1); v.project(camera); b.x = (v.x + 1) / 2 * W; b.y = (1 - v.y) / 2 * HH; }
 }

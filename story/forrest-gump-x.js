@@ -21,3 +21,4 @@ CF.kid = (s, c) => vin({ hair: ['#3a2a22', '#c89a5a', '#2b2b33', '#6b4a3a'][c % 
 CF.jog = (s, c) => vin({ hair: ['#3a2a22', '#c89a5a', '#2b2b33', '#8a5a3a', '#1a1410'][c % 5], hairStyle: ['short', 'bob', 'tuft', 'bun', 'short'][c % 5], top: ['#e05a4a', '#4a8ad0', '#f2c24a', '#8a5ab0', '#4aa080'][c % 5], bottom: '#3a3d4d', skin: CK.pal.skin[c % 3], scale: AD * (s || 1) });
 CF.soldier2 = (s, c) => vin({ hair: '#2a2228', bangs: 'short', hat: '#56653c', top: '#5f7046', bottom: '#4a5636', longSleeve: true, skin: CK.pal.skin[c || 0], scale: AD * (s || 1) });
 CF.truckR = (s) => CF.truck(s, '#b04a3a');
+CF.bf = (s) => vin({ hair: '#3a2a1a', bangs: 'part', backLen: 2.2, sideOpen: 0.7, brow: '#2a1a10', mustache: '#3a2a1a', top: '#8a6a3a', inner: '#d8c8a0', bottom: '#3a4a6a', longSleeve: true, scale: AD * 1.04 * (s || 1) });
