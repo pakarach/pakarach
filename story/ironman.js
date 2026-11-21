@@ -65,7 +65,7 @@ const CAST = {
   tr1: ['truck', 1.0], tr2: ['truck', 1.0], wtr: ['truck', 1.0, '#4a4a3a'], mis: ['missile', 1.0], crates: ['crates', 1.0], crates2: ['crates', 0.55], tarp: ['tarp', 1.0], tarp2: ['tarp', 1.05, '#55606e'], wreck: ['tarp', 1.7, '#6a5a50'],
   bench: ['bench', 1.0], cot: ['cot', 1.0], bat: ['battery', 1.0], case: ['case', 1.0], pod: ['podium', 1.0], paper: ['paper', 1.0], burger: ['burger', 1.0], car: ['car', 1.0], arm: ['arm', 1.0], scr: ['screens', 1.0],
   mon: ['monitor', 0.8], desk: ['desk', 1.0], jet1: ['jet', 0.9], jet2: ['jet', 0.9], heli: ['heli', 0.9], reac: ['reactor', 1.0], cons: ['console', 1.0], dev: ['device', 1.0], ray: ['arrow'],
-  boom: ['boom', 1.0], boom2: ['boom', 1.6], fire: ['fire', 1.4], fire2: ['flames', 0.5], puff: ['puff', 1.0], st: ['flyer', 0.85], st2: ['flyer', 0.85, 'cap'], stR: ['streak', 1.8, 'rgba(255,110,70,1)'],
+  boom: ['boom', 1.0], boom2: ['boom', 1.6], fire: ['fire', 1.4], fire2: ['flames', 0.5], puff: ['puff', 1.0], st: ['flyer', 0.85, 'tony'], st2: ['flyer', 0.85, 'tonyC'], stR: ['streak', 1.8, 'rgba(255,110,70,1)'],
   orb: ['orb', 0.8, 'rgba(140,220,255,1)'], orb2: ['orb', 0.8, 'rgba(140,220,255,1)'], spark: ['glow', 0.45, 'rgba(255,220,140,1)'], red: ['glow', 1.6, 'rgba(255,70,50,1)'],
   fl1: ['flash', 0.7], fl2: ['flash', 0.7], fl3: ['flash', 0.7], fl4: ['flash', 0.7],
 };
@@ -155,4 +155,11 @@ const SC = {
   ask: { cam: [0, 0, 1.5, -2.6, 4.0, 0.45, 0.4], A: { tony: { p: [0, -2.9], f: 0, pose: 'think', say: ['?', 0.6, 99, true] } } },
 };
 /* portrait framing: pull every camera back (story-kit cams were tuned for bigger casts) */
-(() => { const K = 1.65; const sc1 = (c) => { c[2] += 0.85; c[4] *= K; c[5] *= K; c[6] *= K; }; for (const id in SC) { const c = SC[id].cam; if (!c) continue; if (typeof c[0] === 'number') sc1(c); else c.forEach(sc1); } })();
+(() => { const K = 2.25; const sc1 = (c) => { c[2] += 1.45; c[4] *= K; c[5] *= K; c[6] *= K; }; for (const id in SC) { const c = SC[id].cam; if (!c) continue; if (typeof c[0] === 'number') sc1(c); else c.forEach(sc1); } })();
+/* faces (vinyl cast): expression per beat */
+(() => { const EX = { d2: { tony: 'worried', s1: 'worried' }, c1: { yin: 'worried' }, c2: { tonyC: 'worried' }, c3: { tonyC: 'worried', yin: 'worried', boss: 'angry', g1: 'angry', g2: 'angry' }, c5: { tonyC: 'angry' },
+  c6: { tonyC: 'worried', yin: 'angry', g1: 'angry', g2: 'angry' }, e3: { rho: 'giggle' }, h1: { tony: 'giggle' }, h2: { tony: 'worried', oba: 'giggle' }, w1: { tony: 'angry' }, w2: { pep: 'giggle' }, w3: { pep: 'worried' },
+  v1: { g1: 'angry', g2: 'angry', g3: 'angry', v1: 'worried', v2: 'cry', v3: 'cry' }, v2: { g1: 'angry', g2: 'angry', g3: 'angry' }, v3: { v1: 'giggle', v2: 'giggle', v3: 'giggle' }, o1: { pep: 'worried' }, o2: { oba: 'angry', boss: 'angry' }, o3: { oba: 'angry', boss: 'angry' },
+  w4: { oba: 'angry', tony: 'worried' }, f1: { pep: 'worried' }, f2: { pep: 'angry' }, p1: { tony: 'worried', pep: 'worried' }, p2: { tony: 'giggle' }, next: { tony: 'giggle' }, ask: { tony: 'worried' } };
+  for (const id in EX) for (const k in EX[id]) if (SC[id] && SC[id].A && SC[id].A[k]) SC[id].A[k].ex = EX[id][k]; })();
+EP.light = 1.35;

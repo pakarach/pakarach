@@ -89,13 +89,15 @@ const H = {
 };
 function applyActor(t, s, st, id, key, a, r) {
   const o = s.o[key]; if (!o) return; if (a.hide) { o.visible = false; return; } o.visible = true;
-  const fig = isFig(o); if (fig) { o.rotation.set(0, 0, 0); rest(o); o.userData.head.rotation.set(0, 0, 0); o.userData.head.visible = true; o.userData.arms.L.scale.setScalar(1); o.userData.arms.R.scale.setScalar(1); o.userData.eyes.forEach((e) => (e.scale.y = 1)); setSit(o, !!a.sit); }
+  const fig = isFig(o), V = fig && o.userData.vinyl; if (V) { o.userData.setExpr(a.ex || (a.pose === 'cry' ? 'cry' : a.lie || a.fall || a.fallen ? 'sleepy' : 'happy')); o.userData.tick(t); }
+  if (fig) { o.rotation.set(0, 0, 0); rest(o); o.userData.head.rotation.set(0, 0, 0); o.userData.head.visible = true; o.userData.arms.L.scale.setScalar(1); o.userData.arms.R.scale.setScalar(1); o.userData.eyes.forEach((e) => (e.scale.y = 1)); if (!V) setSit(o, !!a.sit); }
   else o.rotation.set(0, 0, 0);
   const p = a.p || [0, 0, 0]; let x = p[0], z = p[1], y = p[2] || 0, moving = false, dir = null;
   if (a.to) { const k = U.easeIO(sm(a.to[2], a.to[3], r)); const ty = a.to[4] != null ? a.to[4] : y; dir = [a.to[0] - x, a.to[1] - z]; moving = k > 0 && k < 1; x = U.lerp(x, a.to[0], k); z = U.lerp(z, a.to[1], k); y = U.lerp(y, ty, k); }
   if (a.bob) y += Math.sin(t * 2 + key.length) * a.bob;
   if (a.on) { const tgt = s.o[a.on[0]]; let v; if (a.on[1] === 'R' || a.on[1] === 'L') v = H.hand(tgt, a.on[1]); else { v = H.pos(tgt, a.on[1] === 'head' ? 1.5 : 0.8); } o.position.set(v.x + (a.on[2] || 0), v.y + (a.on[3] || 0), v.z + (a.on[4] || 0)); }
   else place(o, st, x, y, z);
+  if (V && a.sit) o.position.y -= 0.25 * o.userData.s0;
   const s0 = a.s != null ? a.s : o.userData.s0; if (a.pop != null) pop(o, s0, at(id) + a.pop, t); else o.scale.setScalar(s0);
   if (a.out != null) { const k = 1 - sm(a.out, a.out + 0.4, r); o.scale.multiplyScalar(Math.max(0.001, k)); if (k <= 0.01) o.visible = false; }
   const f = a.f; if (typeof f === 'number') o.rotation.y = f * Math.PI / 180; else if (Array.isArray(f)) face(o, f[0], f[1]); else if (typeof f === 'string' && s.o[f]) { const q = s.o[f].position; face(o, q.x - o.position.x, q.z - o.position.z); } else if (moving && dir) face(o, dir[0], dir[1]);
@@ -115,11 +117,11 @@ function applyActor(t, s, st, id, key, a, r) {
   if (o.userData.fires) o.userData.fires.forEach((ff) => fireTick(ff, t + ff.position.x));
   if (o.userData.wings) o.userData.wings.forEach((w, i) => (w.rotation.z = (i ? -1 : 1) * Math.sin(t * (a.flap || 6)) * 0.5));
   if (o.userData.legs && moving) o.userData.legs.forEach((l, i) => (l.rotation.x = Math.sin(t * 14 + i * 1.6) * 0.5));
-  if (a.say) { const list = Array.isArray(a.say[0]) ? a.say : [a.say]; for (const q of list) if (r >= (q[1] || 0) && r < (q[2] != null ? q[2] : 999)) say(o, q[0], { dy: a.dy || (fig ? (a.sit ? 1.9 : 2.1) : 2.0), big: !!q[3] }); }
+  if (a.say) { const list = Array.isArray(a.say[0]) ? a.say : [a.say]; for (const q of list) if (r >= (q[1] || 0) && r < (q[2] != null ? q[2] : 999)) say(o, q[0], { dy: a.dy || (V ? (a.sit ? 2.7 : 2.95) : fig ? (a.sit ? 1.9 : 2.1) : 2.0), big: !!q[3] }); }
 }
 function update(t, s, { camera, W, H: HH }) {
   BUB.length = 0; const id = beatAt(t), R = RES[id], r = rel(t, id), bk = bgKey(t);
-  const lt = LT[bk] || LT.day; s.hemi.intensity = lt[0]; s.sun.intensity = lt[1]; s.sun.color.set(lt[2]);
+  const lt = LT[bk] || LT.day; s.hemi.intensity = lt[0] * (EP.light || 1); s.sun.intensity = lt[1] * (EP.light ? 1 + (EP.light - 1) / 2 : 1); s.sun.color.set(lt[2]);
   s.fog.color.set(bgAt(t)[1]); s.fog.near = 40; s.fog.far = 125;
   for (const k in s.o) s.o[k].visible = false;
   const keys = Object.keys(R.A).sort((a, b) => (R.A[a].on ? 1 : 0) - (R.A[b].on ? 1 : 0));
