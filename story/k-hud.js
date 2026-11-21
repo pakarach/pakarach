@@ -23,12 +23,12 @@ function panel(g, x, y, w, h, a) { g.save(); g.globalAlpha = a; g.fillStyle = 'r
 function factCard(g, t) {
   const r = rel(t, 'facts'), a = U.clamp(r / 0.3) * U.clamp((dur('facts') - r) / 0.3), n = EP.facts.length, gap = Math.min(2.2, (dur('facts') - 2) / n);
   g.save(); g.globalAlpha = a; panel(g, 60, 280, 960, 1180, 1);
-  txt(g, 'รู้งี้…', 540, 370, 56, '#fff', 800); txt(g, 'จากต้นฉบับ', 540, 450, 72, P.gold, 800);
+  const fh = EP.factHead || ['รู้งี้…', 'จากต้นฉบับ']; txt(g, fh[0], 540, 370, 56, '#fff', 800); txt(g, fh[1], 540, 450, 72, P.gold, 800);
   EP.facts.forEach((row, i) => { const k = U.clamp((r - 0.6 - i * gap) / 0.3); if (k <= 0) return; const y = 590 + i * 148; g.save(); g.globalAlpha = a * k;
     g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 62, 880, 124, 26); g.fill(); g.fillStyle = P.teal; g.beginPath(); g.arc(165, y, 34, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 38); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 165, y + 2); txt(g, row[0], 222, y - 22, 36, '#fff', 700, 'left'); txt(g, row[1], 222, y + 24, 32, P.gold, 600, 'left'); g.restore(); });
   g.globalAlpha = a * 0.85; g.font = F(400, 24); g.fillStyle = '#fff'; g.textAlign = 'center';
-  g.fillText(EP.src, 540, 1360); g.fillText('บางตอนมีหลายสำนวน · ภาพจำลอง', 540, 1398);
+  g.fillText(EP.src, 540, 1360); g.fillText(EP.factFoot || 'บางตอนมีหลายสำนวน · ภาพจำลอง', 540, 1398);
   g.restore();
 }
 function coverLand(g) {
@@ -59,7 +59,7 @@ AUD.sort((a, b) => a[0] - b[0]);
 caps.forEach((c) => { if (L.LAND) { if (!c.instant) c.y = FK.subtitleY(c); else c.t1 = 0; } });
 VE.run({
   DUR, W: L.W, H: L.H, coverAt0: true, capFont: 'Trirong', file: L.LAND ? EP.file + '-youtube' : EP.file, title: EP.title,
-  brand: { name: 'RuNgee รู้งี้', series: 'ตำนานเล่าใหม่', color: P.teal, icon: 'globe', bg: ['#0f1630', '#1b2a55'], endLine: 'รู้งี้... ติดตามไว้', motif: { notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' } },
+  brand: { name: 'RuNgee รู้งี้', series: EP.series || 'ตำนานเล่าใหม่', color: P.teal, icon: 'globe', bg: ['#0f1630', '#1b2a55'], endLine: 'รู้งี้... ติดตามไว้', motif: { notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' } },
   setup({ scene }) { S = setupScene(scene); window.__S = S; return S; },
   update, bgAt, hud, caps, trans: IRIS, audio: AUD,
   bed: [FK.chillBed({ DUR, calm: (t) => !!(SC[beatAt(t)] && SC[beatAt(t)].calm) || inB(t, 'facts'), vol: window.DATA && DATA.vo ? 0.6 : 1, voice: FK.voice(window.DATA && DATA.vo, B) })],
