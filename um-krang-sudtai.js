@@ -178,8 +178,8 @@
         g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y0); g.stroke();
         for (let yr = 0; yr <= 8; yr++) { g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.arc(X(yr), y0, 5, 0, 7); g.fill(); plain(String(yr), X(yr), y0 + 36, 32, 'rgba(255,255,255,.75)', 600, 'center'); }
         
-        const prog = U.clamp((p - 0.3) / 0.25) * 5; g.strokeStyle = '#ffd9a0'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0, y0); g.lineTo(X(prog), y0); g.stroke();
-        [[5, 'อุ้ม', -1, 0.55], [7, 'นิทาน', -1, 0.7], [7.5, 'จับมือ', 1, 0.8]].forEach(([yr, lab, side, f]) => {
+        const prog = U.easeOut(U.clamp((p - 0.3) / 0.1)) * 5; g.strokeStyle = '#ffd9a0'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0, y0); g.lineTo(X(prog), y0); g.stroke();
+        [[5, 'อุ้ม', -1, 0.4], [7, 'นิทาน', -1, 0.56], [7.5, 'จับมือ', 1, 0.68]].forEach(([yr, lab, side, f]) => {
           const a = U.clamp((p - f) / 0.06); if (a <= 0) return; const r = (yr === 5 ? 20 : 15) * U.easeBack(a);
           g.globalAlpha = a0 * a; g.fillStyle = yr === 5 ? '#ffd9a0' : '#c9b6ff'; g.beginPath(); g.arc(X(yr), y0, r, 0, 7); g.fill();
           const ly = side < 0 ? y0 - 62 : y0 + 88; plain(lab + ' ' + (yr === 7.5 ? '7½' : yr), Math.min(X(yr), x1 - 10), ly, yr === 5 ? 46 : 38, yr === 5 ? '#ffd9a0' : '#e6dcff', 700, 'center');
@@ -201,7 +201,7 @@
       { t0: at('s3') + 0.3, t1: SP('s3', 0.55), y: 300, lines: [[70, ['ปากบ่นว่าหนัก…', '#fff']]], foot: '5 ขวบ หนักราว 18 กก. มากกว่าแรกเกิด 5–6 เท่า (เกณฑ์ WHO)' },
       { t0: SP('s3', 0.55) + 0.05, t1: end('s3') - 0.3, y: 300, lines: [[62, ['แต่ไม่เคยวางลง', '#ffd9a0']], [62, ['สักครั้ง', '#ffd9a0']]] },
       { t0: at('s4') + 0.3, t1: SP('s4', 0.3), y: 300, lines: [[66, ['ไม่มีใครบอกเราว่า…', '#fff']]] },
-      { t0: SP('s4', 0.3) + 0.05, t1: end('s4') - 0.2, y: 280, lines: [[58, ['เด็กขออุ้มครั้งสุดท้าย', '#fff']], [76, ['เฉลี่ยตอน ', '#fff'], [(t) => Math.max(1, Math.round(5 * U.clamp((t - SP('s4', 0.3)) / 1.4))) + ' ขวบ', '#ffd9a0']]], foot: 'ผลสำรวจพ่อแม่ 1,000 คน สหราชอาณาจักร (My Nametags, 2026)' },
+      { t0: SP('s4', 0.3) + 0.05, t1: end('s4') - 0.2, y: 280, lines: [[58, ['เด็กขออุ้มครั้งสุดท้าย', '#fff']], [76, ['เฉลี่ยตอน ', '#fff'], ['5 ขวบ', '#ffd9a0']]], foot: 'ผลสำรวจพ่อแม่ 1,000 คน สหราชอาณาจักร (My Nametags, 2026)' },
       { t0: at('s5') + 0.3, t1: TM('s5', 0, 0.2) - 0.05, y: 300, lines: [[66, ['เช้าวันหนึ่ง…', '#fff']]] },
       { t0: TM('s5', 0, 0.2) + 1.9, t1: SP('s5', 0.7), y: 300, lines: [[62, ['แขนที่เคยบ่นว่าเมื่อย…', '#fff']]] },
       { t0: SP('s5', 0.7) + 0.05, t1: end('s5') - 0.3, y: 300, lines: [[62, ['วันนี้ว่างจนแปลกๆ', '#ffd9a0']]] },
@@ -216,7 +216,7 @@
       [at('s1') + 0.4, 'steps', { n: 6 }], [P('s1', 0.5), 'giggle'], [P('s1', 0.7), 'cricket'],
       [TM('s2', 0, 0.12), 'boing'], [TM('s2', 1, 0.32), 'breath'], [P('s2', 0.56), 'lift'], [P('s2', 0.68), 'giggle'],
       [at('s3') + 0.3, 'cricket'], [P('s3', 0.12), 'lift'], [P('s3', 0.3), 'breath'],
-      [at('s4') + 0.4, 'steps', { n: 8 }], [P('s4', 0.55), 'ding'], [P('s4', 0.7), 'tick'], [P('s4', 0.8), 'tick'],
+      [at('s4') + 0.4, 'steps', { n: 8 }], [P('s4', 0.4), 'ding'], [P('s4', 0.56), 'tick'], [P('s4', 0.68), 'tick'],
       [at('s5') + 0.5, 'bird'], [TM('s5', 0, 0.2) + 1.0, 'steps', { n: 5 }],
       [at('s6') + 0.3, 'shimmer'],
       [P('s7', 0.05), 'steps', { n: 3 }], [P('s7', 0.26), 'lift'], [P('s7', 0.32), 'giggle'], [SP('s7', 0.5), 'soft'],
