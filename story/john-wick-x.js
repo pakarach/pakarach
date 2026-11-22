@@ -1,7 +1,7 @@
 /* John Wick 1-4 cast — original vinyl chibis: no actor likeness (no long hair + beard look, no black three-piece suit), no film costume designs. Loaded after k-vinyl.js. */
 const JW = { hair: '#241c18', suit: '#2f3d5c', pants: '#232a3c', shirt: '#dfe3ea' };
-CF.john = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, top: JW.suit, inner: JW.shirt, bottom: JW.pants, longSleeve: true, shoes: '#1e1e22', scale: AD * (s || 1) });
-CF.johnH = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, top: '#7f8a96', bottom: '#3a3f4a', longSleeve: true, shoes: '#5a5048', scale: AD * (s || 1) }); // at home
+CF.john = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, mustache: JW.hair, top: JW.suit, inner: JW.shirt, bottom: JW.pants, longSleeve: true, shoes: '#1e1e22', scale: AD * (s || 1) });
+CF.johnH = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, mustache: JW.hair, top: '#7f8a96', bottom: '#3a3f4a', longSleeve: true, shoes: '#5a5048', scale: AD * (s || 1) }); // at home
 CF.iosef = (s) => vin({ hair: '#e0c070', bangs: 'side', ears: true, brow: '#b8984a', top: '#b03a2e', inner: '#1e1e22', bottom: '#2a2a30', longSleeve: true, scale: AD * (s || 1) });
 CF.viggo = (s) => vin({ hair: '#e6e6ea', bangs: 'short', backLen: 1.6, ears: true, brow: '#c8c8cc', top: '#5a5e66', inner: '#ffffff', bottom: '#3a3d44', longSleeve: true, scale: AD * 1.05 * (s || 1) });
 CF.abram = (s) => vin({ hair: '#8a8a90', bangs: 'short', backLen: 1.6, ears: true, brow: '#6a6a70', top: '#3a3036', inner: '#c8c0b0', bottom: '#2a2428', longSleeve: true, scale: AD * 1.05 * (s || 1) });
