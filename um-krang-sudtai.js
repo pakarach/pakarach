@@ -6,7 +6,7 @@
    Build: node build.js um-krang-sudtai.js review-um-krang-sudtai.html --kit clay --title "อุ้มครั้งสุดท้าย" --data reel=docs/family/safe.json */
 (function () {
   const T = THREE, U = VE.u, PI = Math.PI, DATA = window.DATA || {};
-  const BEATS = [['cover', 3.0], ['s1', 4.5], ['s2', 5.5], ['s3', 6], ['s4', 7], ['s5', 7], ['s6', 6], ['s7', 7.5], ['end', 1.6]];
+  const BEATS = [['cover', 3.0], ['s1', 4.5], ['s2', 6], ['s3', 6.5], ['s4', 7], ['s5', 8], ['s6', 6], ['s7', 7.5], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => U.clamp((t - at(id)) / dur(id)), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
@@ -16,7 +16,7 @@
   const ORDER = BEATS.map((b) => b[0]).filter((k) => k !== 'end');
   const beatAt = (t) => { for (const k of ORDER) if (t < end(k)) return k; return 's7'; };
   const FW = (cx, cz, width, top, tilt) => { tilt = tilt || 0.12; const k = 1080 / width, d = 960 / k / Math.tan(14.5 * PI / 180), yc = top - 130 / k; return { pos: [cx, yc + d * Math.sin(tilt), cz + d * Math.cos(tilt)], look: [cx, yc, cz], fov: 29 }; };
-  const K = (t, f) => Object.assign({ t }, f);
+  const K = (t, f) => Object.assign({ t }, f), HZ = (window.DATA && window.DATA.hz) || 1;
   const MORNING = (b) => b === 's5' || b === 's7';
 
   /* ---- shots ---- */
@@ -91,31 +91,30 @@
       const S = (k, o) => (st[k] = Object.assign({ x: 0, y: 0, z: 0, ry: 0, ex: 'happy' }, o));
       const walkX = (x0, x1, id) => U.lerp(x0, x1, ph(id, t));
       if (bt === 'cover' || bt === 's6') {
-        const x = bt === 'cover' ? walkX(-1.2, -1.7, 'cover') : walkX(-1.3, -1.65, 's6');
-        S('dad', { x, ry: -0.35, walk: true, ex: 'happy', carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
+        const x = bt === 'cover' ? walkX(-1.2, -1.7, 'cover') : walkX(-1.3, -1.65, 's6'); /* tired walk */
+        S('dad', { x, ry: -0.35, walk: true, ex: 'sick', carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
       } else if (bt === 's1') {
-        const x = walkX(-1.8, -2.5, 's1'); S('mom', { x, ry: -0.35, walk: true, ex: 'happy', carryArms: true }); S('wawa', { carry: { by: 'mom', k: 1 }, ex: ph('s1', t) > 0.4 && Math.sin(t * 3) > 0 ? 'giggle' : 'happy' });
+        const x = walkX(-1.6, -2.2, 's1'); S('dad', { x, ry: -0.35, walk: true, ex: 'giggle', carryArms: true }); S('wawa', { carry: { by: 'dad', k: 1 }, ex: ph('s1', t) > 0.3 && Math.sin(t * 3) > 0 ? 'giggle' : 'happy' });
       } else if (bt === 's2') {
-        const p = ph('s2', t), kl = U.easeIO(U.clamp((t - TM('s2', 0, 0.5) - 0.2) / 0.7));
-        S('dad', { x: 0.75, ry: -0.25, ex: kl > 0.5 ? 'giggle' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25 });
-        S('nana', { x: -0.55, z: 0.35, ry: 0.4, ex: p < 0.25 ? 'happy' : kl > 0 ? 'giggle' : 'worried', armsUp: kl < 0.6 && p > 0.22, carry: kl > 0 ? { by: 'dad', k: kl } : null });
+        const p = ph('s2', t), kl = U.easeIO(U.clamp((p - 0.56) / 0.12));
+        S('dad', { x: 0.75, ry: -0.25, ex: kl > 0.5 ? 'giggle' : p > 0.3 ? 'sick' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25 });
+        S('nana', { x: -0.55, z: 0.35, ry: 0.4, ex: kl > 0 ? 'giggle' : p > 0.1 ? 'happy' : 'happy', armsUp: kl < 0.6 && p > 0.12, carry: kl > 0 ? { by: 'dad', k: kl } : null });
       } else if (bt === 's3') {
-        const p = ph('s3', t), kl = U.easeIO(U.clamp((p - 0.3) / 0.12));
-        S('dad', { x: 2.05, ry: -0.3, ex: p > 0.62 && p < 0.9 ? 'worried' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.3, backHand: p > 0.62 && p < 0.92 });
-        S('mama', { x: 0.75, z: 0.35, ry: 0.35, ex: p < 0.3 ? 'sleepy' : 'sleepy', yawn: p < 0.3, carry: kl > 0 ? { by: 'dad', sleep: true, k: kl } : null });
+        const p = ph('s3', t), kl = U.easeIO(U.clamp((p - 0.12) / 0.12));
+        S('dad', { x: 2.05, ry: -0.3, ex: p > 0.3 && p < 0.62 ? 'sick' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.3, backHand: p > 0.3 && p < 0.62 });
+        S('mama', { x: 0.75, z: 0.35, ry: 0.35, ex: 'sleepy', carry: kl > 0 ? { by: 'dad', sleep: true, k: kl } : null });
       } else if (bt === 's4') {
         const x = walkX(1.2, 0, 's4');
         S('dad', { x: x + 1.6, ry: -0.35, walk: true, carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
         S('mom', { x: x - 1.3, ry: -0.35, walk: true, carryArms: true }); S('wawa', { carry: { by: 'mom', k: 1 }, ex: 'sleepy' });
         S('nana', { x: x + 0.55, z: 1.4, ry: -0.35, walk: true, ex: 'sleepy' });
       } else if (bt === 's5') {
-        const p = ph('s5', t), q = TM('s5', 0, 0.45), kr = U.clamp((t - q - 0.9) / 2.2), down = U.easeIO(U.clamp((t - q - 1.4) / 2.0));
+        const p = ph('s5', t), q = TM('s5', 0, 0.2), kr = U.clamp((t - q - 1.0) / 2.4), down = U.easeIO(U.clamp((t - q - 1.6) / 2.2));
         S('dad', { x: 0.2, ry: 0.45, crouch: 0.35, ex: t < q + 0.6 ? 'happy' : 'worried', armsOut: 1 - down * 0.85 });
-        if (t > q + 2.6 + down) st.dad.ex = 'happy';
         S('mama', { x: U.lerp(1.95, 6.5, kr), z: 0.25, ry: kr > 0 ? 1.0 : -0.35, walk: kr > 0, ex: 'giggle' });
       } else if (bt === 's7') {
-        const p = ph('s7', t), kw = U.easeIO(U.clamp(p / 0.22)), kl = U.easeIO(U.clamp((p - 0.36) / 0.1));
-        S('dad', { x: 0.7, ry: -0.25 + (kl > 0.9 ? 0.1 * Math.sin(t * 1.6) : 0), ex: kl > 0.5 ? 'giggle' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25, hug: kl > 0.9 });
+        const p = ph('s7', t), kw = U.easeIO(U.clamp(p / 0.2)), kl = U.easeIO(U.clamp((p - 0.26) / 0.08));
+        S('dad', { x: 0.7, ry: -0.25 + (kl > 0.9 ? 0.1 * Math.sin(t * 1.4) : 0), ex: kl > 0.5 ? 'giggle' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25, hug: kl > 0.9 });
         S('nana', { x: U.lerp(-3.2, -0.6, kw), z: 0.35, ry: 0.5, walk: kw > 0 && kw < 1, armsUp: kw > 0.9 && kl < 0.6, ex: kl > 0.5 ? 'giggle' : 'happy', carry: kl > 0 ? { by: 'dad', k: kl } : null });
       }
       /* apply: adults first, then carried kids */
@@ -126,17 +125,17 @@
         let x = q.x, y = q.y, z = q.z, ry = q.ry, rz = 0;
         if (q.carry) {
           const ad = C[q.carry.by], aq = st[q.carry.by], kid = ud.base;
-          const off = q.carry.by === 'mom' ? [0.8, 1.12, 0.48] : kid < 0.85 ? [0.92, 1.08, 0.5] : [0.95, 0.92, 0.5];
+          const off = q.carry.by === 'mom' ? [0.8, 1.18, 0.62] : kid < 0.7 ? [0.85, 1.45, 0.62] : kid < 0.85 ? [0.95, 1.15, 0.66] : [0.98, 0.98, 0.68];
           const c = Math.cos(ad.rotation.y), sn = Math.sin(ad.rotation.y), cx = ad.position.x + off[0] * c + off[2] * sn, cz = ad.position.z - off[0] * sn + off[2] * c, cy = ad.position.y + off[1];
-          const kk = q.carry.k; x = U.lerp(q.x, cx, kk); y = U.lerp(q.y, cy, kk); z = U.lerp(q.z, cz, kk); ry = U.lerp(q.ry, ad.rotation.y, kk); rz = q.carry.sleep ? 0.14 * kk : 0.06 * kk;
+          const kk = q.carry.k; x = U.lerp(q.x, cx, kk); y = U.lerp(q.y, cy, kk); z = U.lerp(q.z, cz, kk); ry = U.lerp(q.ry, ad.rotation.y + PI, kk); rz = q.carry.sleep ? 0.14 * kk : 0.06 * kk;
         }
         if (q.walk) y += 0.05 * Math.abs(Math.sin(t * 6.5 + (k === 'nana' ? 1 : 0)));
         if (q.crouch) y -= q.crouch;
         g.position.set(x, y, z); g.rotation.set(0, ry, rz);
         ud.setExpr(q.ex); ud.tick(t, { breath: q.ex === 'sleepy' ? 0.25 : 0.4 });
         const A1 = ud.arm1, A2 = ud['arm-1'], hd = ud.head; hd.rotation.x = 0; hd.rotation.y = 0; A1.rotation.x = A2.rotation.x = -0.12;
-        if (q.carry) { const kk = q.carry.k; hd.rotation.z = (q.carry.sleep ? 0.34 : 0.18) * kk; hd.rotation.x = q.carry.sleep ? 0.1 : 0; if (kk > 0.6) { A2.rotation.set(0.75, 0, q.carry.sleep ? -1.5 : -1.9); A1.rotation.set(-0.4, 0, 0.3); } }
-        if (q.carryArms) { A1.rotation.set(-0.55, 0, 0.5); A2.rotation.set(-1.1, 0, 0.8); }
+        if (q.carry) { const kk = q.carry.k; hd.rotation.y = (PI - 0.35) * kk; hd.rotation.z = HZ * (q.carry.sleep ? 0.3 : 0.15) * kk; if (kk > 0.6) { A1.rotation.set(1.15, 0, -0.35); A2.rotation.set(1.15, 0, 0.35); } }
+        if (q.carryArms) { A1.rotation.set(-0.75, 0, 0.2); A2.rotation.set(-1.15, 0, 0.95); }
         if (q.backHand) A2.rotation.set(0.75, 0, -0.35);
         if (q.armsUp) { A1.rotation.set(0.9, 0, 2.4 + 0.12 * Math.sin(t * 7)); A2.rotation.set(0.9, 0, -2.4 - 0.12 * Math.sin(t * 7 + 1)); }
         if (q.armsOut != null) { const o = q.armsOut; A1.rotation.set(-1.25 * o - 0.12 * (1 - o), 0, 0.55 * o + 0.4 * (1 - o)); A2.rotation.set(-1.25 * o - 0.12 * (1 - o), 0, -0.55 * o - 0.4 * (1 - o)); }
@@ -167,20 +166,20 @@
       };
       const tag = (str, o, dy, a) => { if (a <= 0 || !o.visible) return; const [x, y] = wp(o.userData.head, dy); g.save(); g.globalAlpha = a; g.font = '700 38px Kanit,sans-serif'; const w = g.measureText(str).width + 36, xx = U.clamp(x, 120 + w / 2, 940 - w / 2); g.fillStyle = 'rgba(255,217,160,.92)'; g.beginPath(); g.roundRect(xx - w / 2, y - 28, w, 56, 28); g.fill(); plain(str, xx, y + 1, 38, '#2a2438', 700, 'center'); g.restore(); };
       const fadeIn = (t0, t1) => U.clamp((t - t0) / 0.3) * U.clamp((t1 - t) / 0.3);
-      if (b === 's1') tag('≈ 3 กก.', S.C.wawa, -0.75, fadeIn(P('s1', 0.35), end('s1') - 0.2));
-      if (b === 's2') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ!', x, y - 70, fadeIn(TM('s2', 0, 0.22), TM('s2', 0, 0.22) + 1.6), x); tag('≈ 12 กก.', S.C.nana, -0.6, fadeIn(P('s2', 0.62), end('s2') - 0.2)); }
-      if (b === 's3') { const [x, y] = wp(S.C.dad.userData.head, 1.2); bubble('หนักขึ้นอีกแล้วนะเรา', x, y - 60, fadeIn(P('s3', 0.64), P('s3', 0.92)), x); }
-      if (b === 's5') { const [x, y] = wp(S.C.mama.userData.head, 0.75); bubble('หนูเดินเองได้!', x, y - 70, fadeIn(TM('s5', 0, 0.45), TM('s5', 0, 0.45) + 2.0), x); }
-      if (b === 's7') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ', x, y - 70, fadeIn(P('s7', 0.2), P('s7', 0.4)), x); }
+      if (b === 's1') tag('≈ 3 กก.', S.C.wawa, -0.6, fadeIn(P('s1', 0.3), end('s1') - 0.2));
+      if (b === 's2') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ!', x, y - 70, fadeIn(TM('s2', 0, 0.12), TM('s2', 1, 0.3) - 0.1), x); const [dx, dy] = wp(S.C.dad.userData.head, 0); bubble('อีกแล้วเหรอลูก…', dx - 280, dy - 150, fadeIn(TM('s2', 1, 0.3), P('s2', 0.58)), dx - 120); tag('≈ 12 กก.', S.C.nana, -0.6, fadeIn(P('s2', 0.72), end('s2') - 0.2)); }
+      if (b === 's3') { const [x, y] = wp(S.C.dad.userData.head, 0); bubble('โอ๊ย… หนักขึ้นทุกวัน', x - 280, y - 150, fadeIn(P('s3', 0.3), P('s3', 0.6)), x - 120); }
+      if (b === 's5') { const [x, y] = wp(S.C.mama.userData.head, 0.75); bubble('หนูโตแล้ว เดินเองได้!', x, y - 70, fadeIn(TM('s5', 0, 0.2), TM('s5', 0, 0.2) + 1.8), x); }
+      if (b === 's7') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ', x, y - 70, fadeIn(P('s7', 0.16), P('s7', 0.3)), x); }
       /* s4: timeline 0–8 years */
       if (b === 's4') {
-        const p = ph('s4', t), a0 = U.clamp((p - 0.06) / 0.08), y0 = 650 + OY, x0 = 150 + LD, x1 = 930 - LD, X = (yr) => x0 + (x1 - x0) * yr / 8;
+        const p = ph('s4', t), a0 = U.clamp((p - 0.26) / 0.08), y0 = 650 + OY, x0 = 150 + LD, x1 = 930 - LD, X = (yr) => x0 + (x1 - x0) * yr / 8;
         g.save(); g.globalAlpha = a0; g.fillStyle = 'rgba(14,16,40,.72)'; g.beginPath(); g.roundRect(x0 - 50, y0 - 105, x1 - x0 + 100, 215, 30); g.fill();
         g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y0); g.stroke();
         for (let yr = 0; yr <= 8; yr++) { g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.arc(X(yr), y0, 5, 0, 7); g.fill(); plain(String(yr), X(yr), y0 + 36, 32, 'rgba(255,255,255,.75)', 600, 'center'); }
         
-        const prog = U.clamp((p - 0.1) / 0.3) * 5; g.strokeStyle = '#ffd9a0'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0, y0); g.lineTo(X(prog), y0); g.stroke();
-        [[5, 'อุ้ม', -1, 0.4], [7, 'นิทาน', -1, 0.6], [7.5, 'จับมือ', 1, 0.72]].forEach(([yr, lab, side, f]) => {
+        const prog = U.clamp((p - 0.3) / 0.25) * 5; g.strokeStyle = '#ffd9a0'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0, y0); g.lineTo(X(prog), y0); g.stroke();
+        [[5, 'อุ้ม', -1, 0.55], [7, 'นิทาน', -1, 0.7], [7.5, 'จับมือ', 1, 0.8]].forEach(([yr, lab, side, f]) => {
           const a = U.clamp((p - f) / 0.06); if (a <= 0) return; const r = (yr === 5 ? 20 : 15) * U.easeBack(a);
           g.globalAlpha = a0 * a; g.fillStyle = yr === 5 ? '#ffd9a0' : '#c9b6ff'; g.beginPath(); g.arc(X(yr), y0, r, 0, 7); g.fill();
           const ly = side < 0 ? y0 - 62 : y0 + 88; plain(lab + ' ' + (yr === 7.5 ? '7½' : yr), Math.min(X(yr), x1 - 10), ly, yr === 5 ? 46 : 38, yr === 5 ? '#ffd9a0' : '#e6dcff', 700, 'center');
@@ -195,28 +194,32 @@
       }
     },
     caps: [
-      { t0: 0, t1: at('s1') - 0.2, y: 300, instant: true, lines: [[84, ['อุ้มครั้งสุดท้าย', '#ffd9a0']], [62, ['ก่อนลูกโต…', '#fff']], [52, ['และพ่อยังไม่รู้ตัวเลย', '#fff', 600]]] },
-      { t0: at('s1') + 0.3, t1: end('s1') - 0.3, y: 300, lines: [[70, ['แรกเกิด', '#ffd9a0']], [62, ['อุ้มกันทั้งวัน', '#fff']]] },
-      { t0: at('s2') + 0.3, t1: end('s2') - 0.3, y: 300, lines: [[70, ['2 ขวบ', '#ffd9a0']], [58, ['ขออุ้มวันละหลายรอบ', '#fff']]] },
-      { t0: at('s3') + 0.3, t1: P('s3', 0.6), y: 300, lines: [[64, ['พอ 5 ขวบ หนักราว 18 กิโล', '#fff']], [52, ['มากกว่าแรกเกิด 5–6 เท่า', '#ffd9a0']]], foot: 'น้ำหนักเฉลี่ยตามเกณฑ์การเจริญเติบโต WHO' },
-      { t0: at('s4') + 0.3, t1: end('s4') - 0.2, y: 280, lines: [[58, ['เด็กขอให้อุ้มครั้งสุดท้าย', '#fff']], [76, ['เฉลี่ยตอน ', '#fff'], [(t) => Math.max(1, Math.round(5 * U.clamp((t - at('s4') - 0.6) / 1.6))) + ' ขวบ', '#ffd9a0']]], foot: 'ผลสำรวจพ่อแม่ 1,000 คน สหราชอาณาจักร (My Nametags, 2026)' },
-      { t0: at('s5') + 0.3, t1: TM('s5', 0, 0.45) - 0.05, y: 300, lines: [[66, ['แล้ววันหนึ่ง…', '#fff']], [58, ['ลูกก็บอกว่า', '#ffd9a0']]] },
-      { t0: TM('s5', 0, 0.45) + 2.1, t1: end('s5') - 0.3, y: 300, lines: [[62, ['แขนเรายังกางรออยู่เลย', '#fff']]] },
-      { t0: at('s6') + 0.4, t1: SP('s6', 0.5), y: 300, lines: [[70, ['ครั้งนั้น…', '#fff']], [70, ['คือครั้งสุดท้าย', '#ffd9a0']]] },
-      { t0: SP('s6', 0.5) + 0.05, t1: end('s6') - 0.3, y: 300, lines: [[64, ['ไม่มีใครบอกเราล่วงหน้า', '#fff']]] },
-      { t0: at('s7') + 0.3, t1: SP('s7', 0.55), y: 300, lines: [[66, ['ถ้าวันนี้ลูกขออุ้ม…', '#fff']]] },
-      { t0: SP('s7', 0.55) + 0.05, t1: end('s7'), y: 300, lines: [[66, ['อุ้มให้นานขึ้น', '#ffd9a0']], [66, ['อีกนิดนะ', '#ffd9a0']]] },
+      { t0: 0, t1: at('s1') - 0.2, y: 300, instant: true, lines: [[74, ['บ่นทุกคืนว่าหนัก…', '#fff']], [80, ['จนคืนที่ไม่มีให้อุ้ม', '#ffd9a0']]] },
+      { t0: at('s1') + 0.3, t1: end('s1') - 0.3, y: 300, lines: [[66, ['ตอนแรกเกิด', '#ffd9a0']], [56, ['อุ้มได้ทั้งวัน ไม่เคยบ่น', '#fff']]] },
+      { t0: at('s2') + 0.3, t1: SP('s2', 0.62), y: 300, lines: [[66, ['2 ขวบ', '#ffd9a0']], [56, ['ขออุ้มวันละสิบรอบ', '#fff']]] },
+      { t0: SP('s2', 0.62) + 0.05, t1: end('s2') - 0.3, y: 300, lines: [[62, ['เริ่มบ่นว่าเมื่อยแขน', '#fff']]] },
+      { t0: at('s3') + 0.3, t1: SP('s3', 0.55), y: 300, lines: [[70, ['ปากบ่นว่าหนัก…', '#fff']]], foot: '5 ขวบ หนักราว 18 กก. มากกว่าแรกเกิด 5–6 เท่า (เกณฑ์ WHO)' },
+      { t0: SP('s3', 0.55) + 0.05, t1: end('s3') - 0.3, y: 300, lines: [[62, ['แต่ไม่เคยวางลง', '#ffd9a0']], [62, ['สักครั้ง', '#ffd9a0']]] },
+      { t0: at('s4') + 0.3, t1: SP('s4', 0.3), y: 300, lines: [[66, ['ไม่มีใครบอกเราว่า…', '#fff']]] },
+      { t0: SP('s4', 0.3) + 0.05, t1: end('s4') - 0.2, y: 280, lines: [[58, ['เด็กขออุ้มครั้งสุดท้าย', '#fff']], [76, ['เฉลี่ยตอน ', '#fff'], [(t) => Math.max(1, Math.round(5 * U.clamp((t - SP('s4', 0.3)) / 1.4))) + ' ขวบ', '#ffd9a0']]], foot: 'ผลสำรวจพ่อแม่ 1,000 คน สหราชอาณาจักร (My Nametags, 2026)' },
+      { t0: at('s5') + 0.3, t1: TM('s5', 0, 0.2) - 0.05, y: 300, lines: [[66, ['เช้าวันหนึ่ง…', '#fff']]] },
+      { t0: TM('s5', 0, 0.2) + 1.9, t1: SP('s5', 0.7), y: 300, lines: [[62, ['แขนที่เคยบ่นว่าเมื่อย…', '#fff']]] },
+      { t0: SP('s5', 0.7) + 0.05, t1: end('s5') - 0.3, y: 300, lines: [[62, ['วันนี้ว่างจนแปลกๆ', '#ffd9a0']]] },
+      { t0: at('s6') + 0.4, t1: SP('s6', 0.5), y: 300, lines: [[62, ['คืนนั้นที่เราบ่นว่าหนัก…', '#fff']]] },
+      { t0: SP('s6', 0.5) + 0.05, t1: end('s6') - 0.3, y: 300, lines: [[64, ['คือครั้งสุดท้าย', '#ffd9a0']], [64, ['ที่ได้อุ้ม', '#ffd9a0']]] },
+      { t0: at('s7') + 0.3, t1: SP('s7', 0.5), y: 300, lines: [[66, ['ครั้งนี้…ไม่บ่นแล้ว', '#fff']]] },
+      { t0: SP('s7', 0.5) + 0.05, t1: end('s7'), y: 300, lines: [[60, ['หนักแค่ไหน', '#fff']], [66, ['สักวันเราจะคิดถึง', '#ffd9a0']]] },
     ],
     trans,
     audio: [
       [0.3, 'steps', { n: 5 }], [1.2, 'cricket'],
       [at('s1') + 0.4, 'steps', { n: 6 }], [P('s1', 0.5), 'giggle'], [P('s1', 0.7), 'cricket'],
-      [TM('s2', 0, 0.22), 'boing'], [TM('s2', 0, 0.5) + 0.2, 'lift'], [TM('s2', 0, 0.5) + 1.0, 'giggle'],
-      [at('s3') + 0.5, 'cricket'], [P('s3', 0.3), 'lift'], [P('s3', 0.64), 'breath'],
-      [at('s4') + 0.4, 'steps', { n: 8 }], [P('s4', 0.4), 'ding'], [P('s4', 0.6), 'tick'], [P('s4', 0.72), 'tick'],
-      [at('s5') + 0.5, 'bird'], [TM('s5', 0, 0.45) + 0.9, 'steps', { n: 5 }],
+      [TM('s2', 0, 0.12), 'boing'], [TM('s2', 1, 0.32), 'breath'], [P('s2', 0.56), 'lift'], [P('s2', 0.68), 'giggle'],
+      [at('s3') + 0.3, 'cricket'], [P('s3', 0.12), 'lift'], [P('s3', 0.3), 'breath'],
+      [at('s4') + 0.4, 'steps', { n: 8 }], [P('s4', 0.55), 'ding'], [P('s4', 0.7), 'tick'], [P('s4', 0.8), 'tick'],
+      [at('s5') + 0.5, 'bird'], [TM('s5', 0, 0.2) + 1.0, 'steps', { n: 5 }],
       [at('s6') + 0.3, 'shimmer'],
-      [P('s7', 0.05), 'steps', { n: 3 }], [P('s7', 0.37), 'lift'], [P('s7', 0.42), 'giggle'], [SP('s7', 0.55), 'soft'],
+      [P('s7', 0.05), 'steps', { n: 3 }], [P('s7', 0.26), 'lift'], [P('s7', 0.32), 'giggle'], [SP('s7', 0.5), 'soft'],
     ],
     bed: [VE.voiceBed(VE.voice(DATA.vo, B)), CK.musicBed(0.7, at('s7') + 0.3, CK.MUSIC.SAD), CK.musicBed(at('s7') - 0.3, DUR - 1.4, CK.MUSIC.HOPE)],
   });
