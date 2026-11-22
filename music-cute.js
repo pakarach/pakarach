@@ -24,6 +24,7 @@
             tone(at, VE.midiHz(m), o.len || 0.09, { vol: o.mv * fade, att: 0.003, rel: o.rel || 0.26 });
             if (o.bell || i === 0) tone(at, VE.midiHz(m + 12), 0.06, { vol: o.mv * 0.3 * fade, att: 0.002, rel: 0.3 });
           }
+          if (o.pad && i === 0) { const bl = step * 8, pf = Math.min(1, (t1 - tt) / 1.2, (tt - t0 + 0.6) / 1.2); for (const n of ch.slice(0, 3)) tone(at, VE.midiHz(n), bl * 0.9, { type: 'triangle', vol: o.pad * pf, att: bl * 0.35, rel: bl * 0.4 }); }
           if (o.bv && (i === 0 || i === 4)) tone(at, VE.midiHz(ch[i === 4 ? 2 : 0] - 12), 0.12, { type: 'triangle', vol: o.bv * fade, rel: 0.1 });
           if (o.shk && i % 2 === 1) noise(at, 0.045, { type: 'highpass', f: 7000, vol: o.shk * fade });
         }
@@ -34,6 +35,9 @@
     CUTE: { bpm: 112, prog: ['C', 'Am', 'F', 'G'], pat: [0, -1, 2, 1, 3, -1, 2, -1, 3, -1, 2, 3, 1, -1, 0, -1], mv: 0.05, bv: 0.06, shk: 0.02 },
     OOPS: { bpm: 96, prog: ['Am', 'F', 'Dm', 'E'], pat: [0, -1, -1, 2, 1, -1, -1, -1, 2, -1, -1, 1, 0, -1, -1, -1], mv: 0.045, bv: 0.04, rel: 0.35 },
     NIGHT: { bpm: 70, prog: ['Am', 'Dm', 'Am', 'E'], pat: [0, -1, -1, -1, 2, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1], mv: 0.04, bv: 0.025, len: 0.18, rel: 0.5 },
+    /* moody story clips (Nov 2026): slow minor music box over a soft triangle pad; HOPE = the same voice turning major for the ending */
+    SAD: { bpm: 64, prog: ['Am', 'F', 'C', 'G'], pat: [0, -1, 1, -1, 2, -1, 1, -1, 3, -1, 2, -1, 1, -1, -1, -1], mv: 0.045, bv: 0.03, len: 0.3, rel: 1.1, pad: 0.016 },
+    HOPE: { bpm: 64, prog: ['F', 'G', 'C', 'C'], pat: [0, -1, 1, -1, 2, -1, 3, -1, 3, -1, 2, -1, 1, -1, 0, -1], mv: 0.045, bv: 0.03, len: 0.3, rel: 1.2, pad: 0.016, bell: true },
     WARM: { bpm: 92, prog: ['F', 'G', 'C', 'C'], pat: [0, -1, 2, 1, 3, -1, 2, -1, 3, -1, 2, 3, 1, -1, 0, -1], mv: 0.05, bv: 0.05, shk: 0.014, bell: true, rel: 0.4 },
   };
 })();

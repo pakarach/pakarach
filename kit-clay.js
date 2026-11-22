@@ -15,6 +15,16 @@
     const r2 = new T.DirectionalLight(0xfff0c0, 0.35); r2.position.set(5, 4, -8); scene.add(r2);
     return key;
   };
+  /* night lights for moody story clips (Nov 2026): dim blue hemi + cool moon key + soft warm front fill.
+     Add your own warm PointLights (lamp, hallway, screen) for the glow. Returns { hemi, key, fill }; key/fill intensities can be animated. */
+  CK.nightLights = (T, scene, o) => {
+    o = o || {};
+    const hemi = new T.HemisphereLight(0x9aa8ff, 0x3a2a48, o.hemi == null ? 0.5 : o.hemi); scene.add(hemi);
+    const key = new T.DirectionalLight(0xb8c4ff, o.key == null ? 0.32 : o.key); key.position.set(-5, 8, 6); scene.add(key);
+    const fill = new T.DirectionalLight(0xffc89a, o.fill == null ? 0.26 : o.fill); fill.position.set(3, 2.5, 9); scene.add(fill);
+    const rim = new T.DirectionalLight(0x8fa0ff, 0.35); rim.position.set(2, 6, -9); scene.add(rim);
+    return { hemi, key, fill, rim };
+  };
 
   /* ---------- face decal (drawn on a 512px canvas, mapped onto the front of the head) ---------- */
   const LW = 760, CX = 380, EY = 262, EX = 148, MY = 350, PW = 1.7, TH0 = 1.0, THL = 1.3;
