@@ -134,8 +134,7 @@
           const kk = q.carry.k; x = U.lerp(q.x, cx, kk); y = U.lerp(q.y, cy, kk); z = U.lerp(q.z, cz, kk); ry = U.lerp(q.ry, ad.rotation.y + PI, kk); rz = q.carry.sleep ? 0.14 * kk : 0.06 * kk;
         }
         if (q.walk) y += 0.05 * Math.abs(Math.sin(t * 6.5 + (k === 'nana' ? 1 : 0)));
-        if (q.crouch) y -= q.crouch;
-        g.position.set(x, y, z); g.rotation.set(0, ry, rz);
+        g.position.set(x, y, z); g.rotation.set(q.crouch ? q.crouch * 0.55 : 0, ry, rz);
         ud.setExpr(q.ex); ud.tick(t, { breath: q.ex === 'sleepy' ? 0.25 : 0.4 });
         const A1 = ud.arm1, A2 = ud['arm-1'], hd = ud.head; hd.rotation.x = 0; hd.rotation.y = 0; A1.rotation.x = A2.rotation.x = -0.12; A1.rotation.y = A2.rotation.y = 0; A1.scale.set(1, 1, 1); A2.scale.set(1, 1, 1); ud.hand1.scale.set(1, 1.08, 0.88); ud['hand-1'].scale.set(1, 1.08, 0.88);
         if (q.carry) { const kk = q.carry.k; hd.rotation.y = (PI - 0.35) * kk; hd.rotation.z = HZ * (q.carry.sleep ? 0.3 : 0.15) * kk; if (kk > 0.6) { A1.rotation.set(1.15, 0, -0.35); A2.rotation.set(1.15, 0, 0.35); } }
