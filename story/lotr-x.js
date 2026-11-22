@@ -1,0 +1,49 @@
+/* The Hobbit 1-3 + The Lord of the Rings 1-3 cast — original vinyl chibis told apart by clothes colour, hair and one prop.
+   No actor likeness (no beards, no signature hairstyles), no film costumes, armour, creature or ring-inscription designs. Loaded after k-vinyl.js. */
+const HB = 0.76, DW = 0.96, MN = 1.04; // hobbit (small, kid build) / dwarf / tall folk, times AD
+const barefoot = (o) => Object.assign({ shoes: CK.pal.skin[0] }, o);
+CF.bilbo = (s) => vin(barefoot({ hair: '#7a5232', bangs: 'short', backLen: 1.7, ears: true, brow: '#5a3a22', top: '#a8443a', inner: '#f0e6d0', bottom: '#8a6a3a', scale: AD * HB * (s || 1) }));
+CF.bilboO = (s) => vin(barefoot({ hair: '#e8e4dc', bangs: 'short', backLen: 1.7, ears: true, brow: '#c8c4bc', top: '#a8443a', inner: '#f0e6d0', bottom: '#8a6a3a', scale: AD * HB * (s || 1) }));
+CF.frodo = (s) => vin(barefoot({ hair: '#3a2a1e', bangs: 'side', backLen: 1.75, ears: true, brow: '#2a1a10', top: '#5a6a3a', inner: '#efe6d2', bottom: '#6a5a3a', scale: AD * HB * (s || 1) }));
+CF.sam = (s) => vin(barefoot({ hair: '#b08050', bangs: 'short', backLen: 1.6, ears: true, brow: '#8a5a30', top: '#d0a43a', inner: '#f4ead6', bottom: '#7a5a3a', scale: AD * HB * 1.03 * (s || 1) }));
+CF.merry = (s) => vin(barefoot({ hair: '#8a5a3a', bangs: 'part', backLen: 1.6, ears: true, brow: '#6a3a1a', top: '#3e7a8a', bottom: '#5a4a3a', scale: AD * HB * (s || 1) }));
+CF.pippin = (s) => vin(barefoot({ hair: '#c8884a', bangs: 'side', backLen: 1.6, ears: true, brow: '#a06a2a', top: '#c0603a', bottom: '#5a4a3a', scale: AD * HB * (s || 1) }));
+CF.gand = (s) => wizHat(vin({ hair: '#dcdce0', bangs: 'part', backLen: 2.5, sideOpen: 0.7, ears: true, brow: '#c8c8cc', top: '#868690', bottom: '#74747e', longSleeve: true, shoes: '#4a4038', scale: AD * MN * (s || 1) }), '#7a7a86');
+CF.gandW = (s) => vin({ hair: '#f4f4f2', bangs: 'part', backLen: 2.5, sideOpen: 0.7, ears: true, brow: '#e0e0e0', top: '#f6f6f2', inner: '#e0e0dc', bottom: '#ececE6', longSleeve: true, shoes: '#c8c8c0', scale: AD * MN * (s || 1) });
+CF.saru = (s) => vin({ hair: '#f0f0f0', bangs: 'part', backLen: 2.5, sideOpen: 0.7, ears: true, brow: '#d0d0d0', top: '#c8ccd8', inner: '#2a2a32', bottom: '#b0b4c0', longSleeve: true, scale: AD * MN * (s || 1) });
+CF.thorin = (s) => vin({ hair: '#1e1a18', bangs: 'part', backLen: 2.4, sideOpen: 0.7, ears: true, brow: '#1e1a18', top: '#2a3a5e', inner: '#6a5a44', bottom: '#2a2a32', longSleeve: true, shoes: '#2a2220', scale: AD * DW * (s || 1) });
+const DWC = [['#8a4a2a', '#c87a3a', '#6a5a3a'], ['#3a6a4a', '#5a3a2a', '#4a4a3a'], ['#6a3a6a', '#a8a8a8', '#4a3a3a'], ['#9a7a3a', '#3a2a1e', '#5a4a2a'], ['#3a4a7a', '#d0a060', '#3a3a4a'], ['#a03a3a', '#7a5a3a', '#4a3a30']];
+CF.dwarf = (s, c) => { const k = DWC[(c || 0) % DWC.length]; return vin({ hair: k[1], bangs: ['short', 'side', 'part'][(c || 0) % 3], backLen: 1.8, ears: true, brow: k[1], hat: (c || 0) % 2 ? k[2] : undefined, top: k[0], bottom: k[2], longSleeve: true, shoes: '#3a2a20', scale: AD * DW * (s || 1) }); };
+CF.gollum = (s) => vin({ bald: true, ears: true, skin: '#cfc6ae', top: '#6a5a48', bottom: '#6a5a48', shoes: '#cfc6ae', scale: AD * 0.68 * (s || 1) });
+CF.smeagol = (s) => vin(barefoot({ hair: '#7a5a3a', bangs: 'short', ears: true, brow: '#5a3a1a', top: '#8a7a4a', bottom: '#5a4a32', scale: AD * HB * (s || 1) }));
+CF.deagol = (s) => vin(barefoot({ hair: '#5a4a3a', bangs: 'side', ears: true, brow: '#3a2a1a', top: '#5a7a4a', bottom: '#5a4a32', scale: AD * HB * (s || 1) }));
+CF.troll = (s, c) => vin({ bald: true, ears: true, skin: ['#8a8a74', '#7a846a', '#94886e'][(c || 0) % 3], top: '#6a5232', bottom: '#4a3a22', shoes: '#4a3a22', scale: AD * 1.85 * (s || 1) });
+CF.trollS = (s) => vin({ bald: true, ears: true, skin: '#9a9a96', top: '#8a8a86', bottom: '#7a7a76', shoes: '#7a7a76', brow: '#7a7a76', scale: AD * 1.85 * (s || 1) });
+CF.orc = (s, c) => vin({ hood: ['#2a2622', '#30282a', '#262a24'][(c || 0) % 3], skin: ['#6a7a5a', '#7a6a5a', '#5a6a5e'][(c || 0) % 3], brow: '#1a1a14', top: '#3a3430', bottom: '#2a2420', longSleeve: true, shoes: '#1e1a18', scale: AD * (s || 1) });
+CF.uruk = (s, c) => vin({ hood: '#1a1a1e', skin: ['#4a4038', '#3e3a36'][(c || 0) % 2], brow: '#0e0e0e', top: '#26262a', bottom: '#1a1a1e', longSleeve: true, shoes: '#141414', scale: AD * 1.08 * (s || 1) });
+CF.azog = (s) => vin({ bald: true, ears: true, skin: '#8a8a82', brow: '#4a4a44', top: '#7a2a24', bottom: '#3a3430', longSleeve: true, scale: AD * 1.22 * (s || 1) });
+CF.bolg = (s) => vin({ bald: true, ears: true, skin: '#6a6a5e', brow: '#3a3a34', top: '#4a2a3a', bottom: '#2a2a2a', longSleeve: true, scale: AD * 1.3 * (s || 1) });
+CF.gking = (s) => vin({ bald: true, ears: true, skin: '#b0a070', brow: '#7a6a3a', top: '#8a6a3a', bottom: '#6a4a2a', scale: AD * 1.7 * (s || 1) });
+CF.naz = (s) => vin({ hood: '#121216', skin: '#121216', brow: '#121216', top: '#16161a', bottom: '#121216', longSleeve: true, shoes: '#121216', scale: AD * MN * (s || 1) });
+CF.elrond = (s) => vin({ hair: '#2a2020', bangs: 'part', backLen: 2.5, sideOpen: 0.7, ears: true, brow: '#2a2020', top: '#6a3a5a', inner: '#d8c8a0', bottom: '#5a3050', longSleeve: true, scale: AD * MN * (s || 1) });
+CF.legolas = (s) => vin({ hair: '#f0dca0', bangs: 'part', backLen: 2.6, sideOpen: 0.7, ears: true, brow: '#c8b070', top: '#5a7a4a', inner: '#c8c0a0', bottom: '#4a5a3a', longSleeve: true, shoes: '#5a4a32', scale: AD * MN * (s || 1) });
+CF.tauriel = (s) => vin({ hair: '#b8442a', bangs: 'part', backLen: 2.6, sideOpen: 0.7, lashes: true, brow: '#8a2a1a', top: '#4a6a3a', bottom: '#3a4a2e', longSleeve: true, shoes: '#5a4a32', scale: AD * (s || 1) });
+CF.thran = (s) => { const c = vin({ hair: '#f4ecd0', bangs: 'part', backLen: 2.6, sideOpen: 0.7, ears: true, brow: '#d8c890', top: '#c8b88a', inner: '#f4ecd0', bottom: '#a89868', longSleeve: true, scale: AD * MN * (s || 1) }); const cr = CF.crownP(0.9); cr.position.set(0, 0.52, -0.05); c.userData.head.add(cr); return c; };
+CF.elf = (s, c) => vin({ hair: ['#e8d8a0', '#3a2a22', '#c8a060'][(c || 0) % 3], bangs: 'part', backLen: 2.3, sideOpen: 0.7, ears: true, top: '#a08a4a', inner: '#e8dcb0', bottom: '#6a5a3a', longSleeve: true, scale: AD * (s || 1) });
+CF.bard = (s) => vin({ hair: '#3a2a20', bangs: 'part', backLen: 2.2, sideOpen: 0.7, ears: true, brow: '#2a1a10', top: '#4a4038', inner: '#8a7a5a', bottom: '#2e2a26', longSleeve: true, shoes: '#2a2220', scale: AD * MN * (s || 1) });
+CF.bkid = (s) => vin({ hair: '#3a2a20', bangs: 'short', ears: true, brow: '#2a1a10', top: '#6a5a4a', bottom: '#3a3430', scale: AD * 0.7 * (s || 1) });
+CF.master = (s) => vin({ hair: '#8a6a4a', bangs: 'part', backLen: 1.6, ears: true, brow: '#6a4a2a', top: '#7a3a6a', inner: '#e8c060', bottom: '#4a2a40', longSleeve: true, scale: AD * 1.12 * (s || 1) });
+CF.man = (s, c) => vin({ hair: ['#3a2a22', '#6a4a3a', '#1a1410', '#8a6a4a'][(c || 0) % 4], bangs: ['short', 'side', 'part', 'short'][(c || 0) % 4], ears: true, top: ['#5a4a3a', '#4a5a6a', '#6a5a3a', '#3a4a3a'][(c || 0) % 4], bottom: '#3a3430', longSleeve: true, skin: CK.pal.skin[(c || 0) % 3], scale: AD * (s || 1) });
+CF.hob = (s, c) => vin(barefoot({ hair: ['#7a5232', '#c8884a', '#3a2a1e', '#a07a4a'][(c || 0) % 4], hairStyle: ['short', 'bob', 'tuft', 'bun'][(c || 0) % 4], top: ['#e0a03a', '#7ab070', '#d0705a', '#8aa0d0'][(c || 0) % 4], bottom: '#6a5a3a', scale: AD * HB * (s || 1) }));
+CF.aragorn = (s) => vin({ hair: '#3a2a20', bangs: 'part', backLen: 2.2, sideOpen: 0.7, ears: true, brow: '#2a1a10', top: '#34483a', inner: '#5a4a3a', bottom: '#2e2a26', longSleeve: true, shoes: '#3a2a20', scale: AD * MN * (s || 1) });
+CF.arK = (s) => vin({ hair: '#3a2a20', bangs: 'part', backLen: 2.2, sideOpen: 0.7, ears: true, brow: '#2a1a10', top: '#eae6dc', inner: '#c8a040', bottom: '#dcd8cc', longSleeve: true, shoes: '#6a5a4a', scale: AD * MN * (s || 1) }); // crowned king (white)
+CF.gimli = (s) => vin({ hair: '#a8442a', bangs: 'short', backLen: 1.9, ears: true, brow: '#8a2a1a', top: '#6a4a2a', inner: '#8a8a8a', bottom: '#4a3a2a', longSleeve: true, shoes: '#2a2018', scale: AD * DW * (s || 1) });
+CF.boromir = (s) => vin({ hair: '#7a5a3a', bangs: 'side', backLen: 1.9, ears: true, brow: '#5a3a1a', top: '#7a2a2a', inner: '#c8b89a', bottom: '#3a3a40', longSleeve: true, shoes: '#2a2220', scale: AD * MN * (s || 1) });
+CF.arwen = (s) => vin({ hair: '#1a1418', bangs: 'part', backLen: 2.6, sideOpen: 0.7, lashes: true, brow: '#1a1418', top: '#6a4a8a', bottom: '#5a3a7a', longSleeve: true, scale: AD * (s || 1) });
+CF.theoO = (s) => vin({ hair: '#f0f0f0', bangs: 'part', backLen: 2.2, sideOpen: 0.7, ears: true, brow: '#e0e0e0', skin: '#c8c4b8', top: '#5a5a50', bottom: '#4a4a42', longSleeve: true, scale: AD * MN * (s || 1) });
+CF.theo = (s) => vin({ hair: '#c8a060', bangs: 'part', backLen: 2.2, sideOpen: 0.7, ears: true, brow: '#a07a40', top: '#3a5a3a', inner: '#d8b04a', bottom: '#2e3a2e', longSleeve: true, scale: AD * MN * (s || 1) });
+CF.eowyn = (s) => vin({ hair: '#e8d090', bangs: 'part', backLen: 2.6, sideOpen: 0.7, lashes: true, brow: '#c8a860', top: '#8a8e96', inner: '#e8e0d0', bottom: '#5a5e66', longSleeve: true, scale: AD * (s || 1) });
+CF.faramir = (s) => vin({ hair: '#8a6a4a', bangs: 'side', backLen: 1.9, ears: true, brow: '#6a4a2a', top: '#4a5a3a', bottom: '#3a3a30', longSleeve: true, scale: AD * MN * (s || 1) });
+CF.rider = (s, c) => vin({ hair: ['#c8a060', '#6a4a3a', '#3a2a22'][(c || 0) % 3], bangs: 'short', backLen: 1.9, ears: true, top: '#3a5a3a', inner: '#c8a040', bottom: '#2e3a2e', longSleeve: true, skin: CK.pal.skin[(c || 0) % 3], scale: AD * (s || 1) });
+CF.gondor = (s, c) => vin({ hair: ['#2a2220', '#6a4a3a'][(c || 0) % 2], bangs: 'short', ears: true, hat: '#a8acb4', top: '#2a2a30', inner: '#c8c8cc', bottom: '#2a2a30', longSleeve: true, skin: CK.pal.skin[(c || 0) % 3], scale: AD * (s || 1) });
+CF.witch = (s) => CF.naz(1.12 * (s || 1));
