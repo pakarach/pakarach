@@ -6,6 +6,9 @@
   const BEATS = [['cover', 2.6], ['s1', 6], ['s2', 7], ['s3', 5.5], ['s4', 7.5], ['s5', 7], ['s6', 8], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => U.clamp((t - at(id)) / dur(id)), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
+  const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
+  const TM = (id, i, frac) => MK[id] ? at(id) + B.lead + 0.06 + MK[id][i] - 0.12 : P(id, frac);
+  const SP = (id, frac) => SPL[id] != null ? at(id) + B.lead + 0.06 + SPL[id] - 0.15 : P(id, frac);
   const ORDER = BEATS.map((b) => b[0]).filter((k) => k !== 'end');
   const beatAt = (t) => { for (const k of ORDER) if (t < end(k)) return k; return 's6'; };
   const FW = (cx, cz, width, top, tilt) => { tilt = tilt || 0.12; const k = 1080 / width, d = 960 / k / Math.tan(14.5 * PI / 180), yc = top - 130 / k; return { pos: [cx, yc + d * Math.sin(tilt), cz + d * Math.cos(tilt)], look: [cx, yc, cz], fov: 29 }; };
@@ -45,12 +48,12 @@
   };
   const CAM = [];
   for (const id of ['cover', 's1', 's2', 's3', 's4']) { CAM.push(K(at(id), SH[id][0]), K(end(id) - 0.001, SH[id][1])); }
-  CAM.push(K(at('s5'), SH.s5a), K(P('s5', 0.38), SH.s5a), K(P('s5', 0.8), SH.s5b), K(end('s5') - 0.001, SH.s5b));
+  CAM.push(K(at('s5'), SH.s5a), K(SP('s5', 0.4) - 0.001, SH.s5a), K(SP('s5', 0.4), SH.s5b), K(end('s5') - 0.001, Object.assign({}, SH.s5b, { pos: [SH.s5b.pos[0] - 0.1, SH.s5b.pos[1] - 0.15, SH.s5b.pos[2] - 0.6] })));
   CAM.push(K(at('s6'), SH.s6[0]), K(end('s6'), SH.s6[1]));
-  const trans = ['s1', 's2', 's3', 's4', 's5', 's6'].map((id) => ({ t: at(id) - 0.45, dur: 0.9, type: 'iris', color: '#0e1028' }));
+  const trans = ['s1', 's2', 's3', 's4', 's5', 's6'].map((id) => ({ t: at(id) - 0.45, dur: 0.9, type: 'iris', color: '#0e1028' })).concat([{ t: SP('s5', 0.4) - 0.3, dur: 0.6, type: 'iris', color: '#0e1028' }]);
 
   /* dad's walk in s5: desk → stool */
-  const PATH = [[DADDESK.x - 0.05, DADDESK.z], [2.5, -2.95], [1.1, -1.4], [STOOL.x + 0.2, STOOL.z + 0.25]];
+  const PATH = [[2.6, -0.2], [1.6, -0.6], [STOOL.x + 0.2, STOOL.z + 0.25]];
   const walkAt = (u) => { const n = PATH.length - 1, f = U.clamp(u) * n, i = Math.min(n - 1, Math.floor(f)), k = f - i; const a = PATH[i], b = PATH[i + 1]; return [U.lerp(a[0], b[0], k), U.lerp(a[1], b[1], k), Math.atan2(b[0] - a[0], b[1] - a[1])]; };
 
   let CAMR = null; const V3 = new T.Vector3();
@@ -170,12 +173,12 @@
       } else if (bt === 's5') {
         const p = ph('s5', t); vis.dad = vis.nana = true; lamp = 0.85; hall = 0.25;
         pos.nana = 'lie'; ex.nana = 'sleepy'; books.chest = true; pos.mama = 'lie'; ex.mama = 'sleepy';
-        const kc = U.easeIO(U.clamp((p - 0.08) / 0.12)); lidA = U.lerp(-0.32, -PI / 2 + 0.06, kc); screen = 1 - kc;
-        if (p < 0.24) { pos.dad = seatDad(); ex.dad = p < 0.12 ? 'happy' : 'worried'; pose.dad = p < 0.08 ? 'type' : 'rest'; }
-        else { const u = U.clamp((p - 0.26) / 0.52), w = walkAt(u), up = U.easeIO(U.clamp((p - 0.24) / 0.05)); const ry = u >= 1 ? -0.7 : U.clamp(w[2], -1.1, 1.1); pos.dad = [w[0], U.lerp(sitY(C.dad, 0.72), 0, up), w[1], ry, 0]; pose.dadWalk = u > 0 && u < 1; ex.dad = u >= 1 ? 'happy' : 'worried'; pose.dad = 'rest'; }
+        const sp = SP('s5', 0.4), kc = U.easeIO(U.clamp((t - at('s5') - 0.35) / 0.5)); lidA = U.lerp(-0.32, -PI / 2 + 0.06, kc); screen = 1 - kc;
+        if (t < sp) { const up = U.easeIO(U.clamp((t - at('s5') - 1.0) / 0.4)); pos.dad = [DADDESK.x, U.lerp(sitY(C.dad, 0.72), 0, up), DADDESK.z, 0, 0]; ex.dad = 'worried'; pose.dad = t < at('s5') + 0.4 ? 'type' : 'rest'; vis.nana = false; }
+        else { const u = U.clamp((t - sp - 0.2) / 1.8), w = walkAt(u); const ry = u >= 1 ? -0.7 : U.clamp(w[2], -1.1, 1.1); pos.dad = [w[0], 0, w[1], ry, 0]; pose.dadWalk = u > 0 && u < 1; ex.dad = u >= 1 ? 'happy' : 'worried'; pose.dad = 'rest'; }
       } else {
         const p = ph('s6', t); vis.dad = vis.nana = true; hall = 0.25;
-        lamp = U.lerp(0.95, 1.55, U.easeIO(U.clamp((p - 0.55) / 0.3)));
+        lamp = U.lerp(0.95, 1.55, U.easeIO(U.clamp((t - SP('s6', 0.56)) / 2.0)));
         pos.nana = 'lie'; ex.nana = 'sleepy'; pos.mama = 'lie'; ex.mama = 'sleepy';
         const ks = U.easeIO(U.clamp(p / 0.12));
         pos.dad = [U.lerp(STOOL.x + 0.2, STOOL.x, ks), U.lerp(0, sitY(C.dad, 0.72), ks), U.lerp(STOOL.z + 0.25, STOOL.z, ks), -0.6, 0]; ex.dad = 'happy';
@@ -225,8 +228,8 @@
       };
       const fadeIn = (t0, t1) => U.clamp((t - t0) / 0.3) * U.clamp((t1 - t) / 0.3);
       if (b === 's2') {
-        const [nx, ny] = wp(S.C.nana.userData.head, 0.75 * 0.8); bubble('พ่อ อ่านเล่มนี้หน่อย', nx, ny - 70, fadeIn(P('s2', 0.22), P('s2', 0.52)), nx);
-        const [dx, dy] = wp(S.C.dad.userData.head, 0.8 * 1.4); bubble('พรุ่งนี้นะ', dx, dy - 60, fadeIn(P('s2', 0.54), P('s2', 0.86)), dx);
+        const [nx, ny] = wp(S.C.nana.userData.head, 0.75 * 0.8); bubble('พ่อ อ่านเล่มนี้หน่อย', nx, ny - 70, fadeIn(TM('s2', 0, 0.22), TM('s2', 1, 0.52) - 0.6), nx);
+        const [dx, dy] = wp(S.C.dad.userData.head, 0.8 * 1.4); bubble('พรุ่งนี้นะ', dx, dy - 60, fadeIn(TM('s2', 1, 0.54), end('s2') - 0.4), dx);
       }
       if (b === 's3') { const [dx, dy] = wp(S.C.dad.userData.head, 0.8 * 1.4); bubble('พรุ่งนี้นะ', dx, dy - 60, fadeIn(P('s3', 0.06), P('s3', 0.42)), dx); }
     },
@@ -234,24 +237,24 @@
       { t0: 0, t1: at('s1') - 0.2, y: 300, instant: true, lines: [[78, ['คืนไหน ที่ลูก', '#fff']], [78, ['จะไม่ถือนิทานมาอีก?', '#ffd9a0']]] },
       { t0: at('s1') + 0.4, t1: end('s1') - 0.3, y: 300, lines: [[70, ['เล่มเดิม…อีกแล้ว', '#fff']], [46, ['แต่ลูกหัวเราะเหมือนได้ฟังครั้งแรก', '#ffe6c8', 600]]] },
       { t0: at('s2') + 0.4, t1: end('s2') - 0.3, y: 300, lines: [[66, ['คืนต่อมา…', '#fff']]] },
-      { t0: P('s3', 0.42), t1: end('s3') - 0.3, y: 300, lines: [[62, ['แล้วก็ “พรุ่งนี้นะ”', '#fff']], [62, ['อีกคืน', '#ffd9a0']]] },
-      { t0: at('s4') + 0.4, t1: P('s4', 0.5), y: 300, lines: [[62, ['พี่มามะ', '#ffd9a0']], [58, ['เคยถือเล่มนี้มาทุกคืน', '#fff']]] },
-      { t0: P('s4', 0.5) + 0.05, t1: end('s4') - 0.3, y: 300, lines: [[62, ['จนวันหนึ่ง…', '#fff']], [62, ['ก็ไม่ถือมาอีก', '#ffd9a0']]] },
-      { t0: at('s5') + 0.4, t1: P('s5', 0.5), y: 300, lines: [[70, ['คืนที่เราว่าง…', '#fff']]] },
-      { t0: P('s5', 0.62), t1: end('s5') - 0.3, y: 300, lines: [[70, ['ลูกหลับไปแล้ว', '#ffd9a0']]] },
-      { t0: at('s6') + 0.5, t1: P('s6', 0.56), y: 300, lines: [[60, ['ลูกไม่ได้ขอนิทาน', '#fff']], [64, ['ลูกขอเวลาของเรา', '#ffd9a0']]] },
-      { t0: P('s6', 0.6), t1: end('s6'), y: 300, lines: [[76, ['คืนนี้…ยังทัน', '#ffd9a0']]] },
+      { t0: at('s3') + 0.3, t1: end('s3') - 0.3, y: 300, lines: [[62, ['แล้วก็ “พรุ่งนี้นะ”', '#fff']], [62, ['อีกคืน', '#ffd9a0']]] },
+      { t0: at('s4') + 0.3, t1: SP('s4', 0.5), y: 300, lines: [[62, ['พี่มามะ', '#ffd9a0']], [58, ['เคยถือเล่มนี้มาทุกคืน', '#fff']]] },
+      { t0: SP('s4', 0.5) + 0.05, t1: end('s4') - 0.3, y: 300, lines: [[62, ['จนวันหนึ่ง…', '#fff']], [62, ['ก็ไม่ถือมาอีก', '#ffd9a0']]] },
+      { t0: at('s5') + 0.3, t1: SP('s5', 0.4) - 0.1, y: 300, lines: [[70, ['คืนที่เราว่าง…', '#fff']]] },
+      { t0: SP('s5', 0.4) + 0.05, t1: end('s5') - 0.3, y: 300, lines: [[70, ['ลูกหลับไปแล้ว', '#ffd9a0']]] },
+      { t0: at('s6') + 0.3, t1: SP('s6', 0.56) - 0.05, y: 300, lines: [[60, ['ลูกไม่ได้ขอนิทาน', '#fff']], [64, ['ลูกขอเวลาของเรา', '#ffd9a0']]] },
+      { t0: SP('s6', 0.56) + 0.05, t1: end('s6'), y: 300, lines: [[76, ['คืนนี้…ยังทัน', '#ffd9a0']]] },
     ],
     trans,
     audio: [
       [0.4, 'steps', { n: 2 }],
       [at('s1') + 0.8, 'page'], [at('s1') + 3.4, 'page'], [P('s1', 0.45), 'giggle'],
-      [at('s2') + 0.3, 'type', { n: 10 }], [P('s2', 0.06), 'steps', { n: 4 }], [P('s2', 0.56), 'type', { n: 6 }],
+      [at('s2') + 0.3, 'type', { n: 10 }], [P('s2', 0.06), 'steps', { n: 4 }], [TM('s2', 1, 0.54) + 0.8, 'type', { n: 5 }],
       [at('s3') + 0.2, 'type', { n: 8 }], [P('s3', 0.5), 'page'], [P('s3', 0.85), 'page'],
       [at('s4') + 1.0, 'page'], [P('s4', 0.62), 'page'],
-      [at('s5') + 0.2, 'type', { n: 4 }], [P('s5', 0.18), 'shut'], [P('s5', 0.3), 'steps', { n: 7 }],
-      [P('s6', 0.18), 'page'], [P('s6', 0.45), 'page'], [P('s6', 0.6), 'soft'],
+      [at('s5') + 0.1, 'type', { n: 2 }], [at('s5') + 0.85, 'shut'], [SP('s5', 0.4) + 0.2, 'steps', { n: 4 }],
+      [P('s6', 0.18), 'page'], [P('s6', 0.45), 'page'], [SP('s6', 0.56), 'soft'],
     ],
-    bed: [VE.voiceBed(VE.voice(DATA.vo, B)), CK.musicBed(0.7, P('s6', 0.58), CK.MUSIC.SAD), CK.musicBed(P('s6', 0.5), DUR - 1.4, CK.MUSIC.HOPE)],
+    bed: [VE.voiceBed(VE.voice(DATA.vo, B)), CK.musicBed(0.7, SP('s6', 0.56) + 0.3, CK.MUSIC.SAD), CK.musicBed(SP('s6', 0.56) - 0.3, DUR - 1.4, CK.MUSIC.HOPE)],
   });
 })();
