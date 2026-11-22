@@ -1,6 +1,6 @@
 /* John Wick 1-4 cast — original vinyl chibis: no actor likeness (no long hair + beard look, no black three-piece suit), no film costume designs. Loaded after k-vinyl.js. */
-const JW = { hair: '#241c18', suit: '#2f3d5c', pants: '#232a3c', shirt: '#dfe3ea' };
-CF.john = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, mustache: JW.hair, top: JW.suit, inner: JW.shirt, bottom: JW.pants, longSleeve: true, shoes: '#1e1e22', scale: AD * (s || 1) });
+const JW = { hair: '#241c18', suit: '#3a3d42', pants: '#232a3c', shirt: '#dfe3ea' };
+CF.johnB = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 2.7, ears: true, brow: JW.hair, mustache: JW.hair, top: JW.suit, inner: JW.shirt, bottom: JW.pants, longSleeve: true, shoes: '#1e1e22', scale: AD * (s || 1) });
 CF.johnH = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, mustache: JW.hair, top: '#7f8a96', bottom: '#3a3f4a', longSleeve: true, shoes: '#5a5048', scale: AD * (s || 1) }); // at home
 CF.iosef = (s) => vin({ hair: '#e0c070', bangs: 'side', ears: true, brow: '#b8984a', top: '#b03a2e', inner: '#1e1e22', bottom: '#2a2a30', longSleeve: true, scale: AD * (s || 1) });
 CF.viggo = (s) => vin({ hair: '#e6e6ea', bangs: 'short', backLen: 1.6, ears: true, brow: '#c8c8cc', top: '#5a5e66', inner: '#ffffff', bottom: '#3a3d44', longSleeve: true, scale: AD * 1.05 * (s || 1) });
@@ -31,3 +31,11 @@ CF.pit = (s) => CF.dog(0.75 * (s || 1), { c: '#8a7a70', w: '#f0ebe4', e: '#7a6a6
 CF.malin = (s, vest) => CF.dog(0.95 * (s || 1), { c: '#c09050', w: '#d8b070', e: '#2a2220', m: '#2a2220', prick: true, vest: vest ? '#2a2e36' : null });
 CF.collar = (s) => { const g = new T.Group(); const r = mk(new T.TorusGeometry(0.2, 0.045, 6, 16), '#d04a5a'); r.rotation.x = Math.PI / 2; g.add(r); g.add(at3(mk(new T.CylinderGeometry(0.06, 0.06, 0.02, 10), P.gold, GOLDM), 0, -0.02, 0.24)); g.scale.setScalar(s || 1); return g; };
 CF.heartR = (s) => { const g = new T.Group(), m = '#ff5a7a', o = { emissive: new T.Color('#ff2a5a'), emissiveIntensity: 0.35 }; for (const x of [-0.17, 0.17]) g.add(at3(mk(new T.SphereGeometry(0.22, 14, 10), m, o), x, 0.08, 0)); const c = mk(new T.ConeGeometry(0.33, 0.46, 14), m, o); c.rotation.z = Math.PI; c.position.y = -0.2; g.add(c); g.scale.setScalar(s || 1); return g; };
+
+// v3: shoulder-length hair tied loosely + dark red tie
+CF.john = (s) => { const c = CF.johnB(s), h = c.userData.head;
+  const tie = mk(new T.SphereGeometry(0.11, 8, 6), JW.hair); tie.position.set(0, -0.32, -0.42); h.add(tie);
+  const tl = mk(new T.ConeGeometry(0.09, 0.32, 6), JW.hair); tl.rotation.x = Math.PI; tl.position.set(0, -0.5, -0.44); h.add(tl);
+  const nt = mk(new T.BoxGeometry(0.09, 0.42, 0.03), '#7a1a24'); nt.position.set(0, 0.72, 0.36); nt.rotation.x = -0.12; c.add(nt);
+  const kn = mk(new T.BoxGeometry(0.11, 0.08, 0.04), '#7a1a24'); kn.position.set(0, 0.95, 0.35); c.add(kn);
+  return c; };
