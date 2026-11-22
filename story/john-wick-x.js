@@ -1,0 +1,33 @@
+/* John Wick 1-4 cast — original vinyl chibis: no actor likeness (no long hair + beard look, no black three-piece suit), no film costume designs. Loaded after k-vinyl.js. */
+const JW = { hair: '#241c18', suit: '#2f3d5c', pants: '#232a3c', shirt: '#dfe3ea' };
+CF.john = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, top: JW.suit, inner: JW.shirt, bottom: JW.pants, longSleeve: true, shoes: '#1e1e22', scale: AD * (s || 1) });
+CF.johnH = (s) => vin({ hair: JW.hair, bangs: 'short', backLen: 1.7, ears: true, brow: JW.hair, top: '#7f8a96', bottom: '#3a3f4a', longSleeve: true, shoes: '#5a5048', scale: AD * (s || 1) }); // at home
+CF.iosef = (s) => vin({ hair: '#e0c070', bangs: 'side', ears: true, brow: '#b8984a', top: '#b03a2e', inner: '#1e1e22', bottom: '#2a2a30', longSleeve: true, scale: AD * (s || 1) });
+CF.viggo = (s) => vin({ hair: '#e6e6ea', bangs: 'short', backLen: 1.6, ears: true, brow: '#c8c8cc', top: '#5a5e66', inner: '#ffffff', bottom: '#3a3d44', longSleeve: true, scale: AD * 1.05 * (s || 1) });
+CF.abram = (s) => vin({ hair: '#8a8a90', bangs: 'short', backLen: 1.6, ears: true, brow: '#6a6a70', top: '#3a3036', inner: '#c8c0b0', bottom: '#2a2428', longSleeve: true, scale: AD * 1.05 * (s || 1) });
+CF.aure = (s) => vin({ hair: '#1e1610', bangs: 'short', ears: true, brow: '#1e1610', top: '#3d6aa0', inner: '#e8e8e0', bottom: '#3d6aa0', skin: CK.pal.skin[1], scale: AD * (s || 1) });
+CF.winston = (s) => vin({ hair: '#b8b8bc', bangs: 'part', backLen: 1.6, ears: true, brow: '#9a9aa0', top: '#7a5a3a', inner: '#f0e8d8', bottom: '#4a3a2a', longSleeve: true, scale: AD * 1.03 * (s || 1) });
+CF.marcus = (s) => vin({ hair: '#8a8a8a', bangs: 'short', hat: '#4a5038', brow: '#6a6a6a', top: '#5a6040', bottom: '#3a3a30', longSleeve: true, scale: AD * (s || 1) });
+CF.perk = (s) => vin({ hair: '#1a1418', bangs: 'part', backLen: 2.3, sideOpen: 0.7, lashes: true, brow: '#1a1418', top: '#26262c', bottom: '#1e1e24', longSleeve: true, scale: AD * 0.97 * (s || 1) });
+CF.goon = (s, c) => vin({ hair: ['#2a2228', '#6a4a3a', '#1a1410', '#8a6a4a'][(c || 0) % 4], bangs: ['short', 'side', 'short', 'part'][(c || 0) % 4], ears: true, top: ['#2a2a30', '#3a3a44', '#4a3434', '#30383a'][(c || 0) % 4], bottom: '#22242a', longSleeve: true, skin: CK.pal.skin[(c || 0) % 3], scale: AD * (s || 1) });
+CF.armor = (s, c) => vin({ hood: '#2e3238', brow: '#141414', top: '#3a3f48', bottom: '#2a2e36', longSleeve: true, skin: CK.pal.skin[(c || 0) % 3], scale: AD * (s || 1) });
+CF.santino = (s) => vin({ hair: '#2a1a14', bangs: 'part', backLen: 1.6, ears: true, brow: '#2a1a14', top: '#6a2232', inner: '#f2e6e6', bottom: '#3a1a22', longSleeve: true, scale: AD * (s || 1) });
+CF.gianna = (s) => vin({ hair: '#2a1a14', bangs: 'part', bun: true, lashes: true, brow: '#2a1a14', top: '#d8b04a', bottom: '#d8b04a', longSleeve: true, scale: AD * 0.96 * (s || 1) });
+CF.cassian = (s) => vin({ hair: '#1a1410', bangs: 'short', backLen: 1.5, ears: true, brow: '#1a1410', top: '#3e5a4a', inner: '#d8e0d8', bottom: '#2a3a30', longSleeve: true, skin: CK.pal.skin[2], scale: AD * 1.04 * (s || 1) });
+CF.bking = (s) => vin({ hair: '#3a3a3a', bangs: 'short', hat: '#5a3a6a', brow: '#2a2a2a', top: '#6a4a7a', bottom: '#3a2a40', longSleeve: true, skin: CK.pal.skin[2], scale: AD * 1.06 * (s || 1) });
+CF.sofia = (s) => vin({ hair: '#2a1a14', bangs: 'part', backLen: 2.1, sideOpen: 0.7, lashes: true, brow: '#2a1a14', top: '#b06a3a', bottom: '#4a3a2a', longSleeve: true, skin: CK.pal.skin[1], scale: AD * 0.96 * (s || 1) });
+CF.elder = (s) => vin({ hood: '#f2ecdf', brow: '#3a2a20', top: '#f2ecdf', bottom: '#e6dcc8', longSleeve: true, skin: CK.pal.skin[1], scale: AD * (s || 1) });
+CF.adj = (s) => vin({ hair: '#1a1418', bangs: 'short', backLen: 1.6, ears: true, brow: '#1a1418', top: '#4a4e58', inner: '#1e1e22', bottom: '#2a2c34', longSleeve: true, scale: AD * (s || 1) });
+CF.zero = (s) => vin({ hair: '#1a1418', bangs: 'side', ears: true, brow: '#1a1418', top: '#f4f4f0', bottom: '#1e1e22', longSleeve: true, skin: CK.pal.skin[1], scale: AD * (s || 1) });
+CF.ninja = (s, c) => vin({ hood: '#2a2a30', brow: '#141414', top: '#2a2a30', bottom: '#1e1e24', longSleeve: true, skin: CK.pal.skin[(c || 0) % 3], scale: AD * (s || 1) });
+CF.big = (s) => vin({ hair: '#3a2a22', bangs: 'short', ears: true, brow: '#2a1a14', top: '#5a4a3a', bottom: '#3a3a40', longSleeve: true, scale: AD * 1.3 * (s || 1) });
+CF.marquis = (s) => vin({ hair: '#c8a878', bangs: 'part', backLen: 1.6, ears: true, brow: '#a88a5a', top: '#e8dcc0', inner: '#8a2a3a', bottom: '#d8ccb0', longSleeve: true, scale: AD * (s || 1) });
+CF.caine = (s) => vin({ hair: '#1a1418', bangs: 'short', backLen: 1.6, ears: true, glasses: true, brow: '#1a1418', top: '#4a4a52', inner: '#e8e8ee', bottom: '#2e2e34', longSleeve: true, skin: CK.pal.skin[1], scale: AD * (s || 1) });
+CF.nobody = (s) => vin({ hair: '#1a1410', bangs: 'short', ears: true, brow: '#1a1410', top: '#a07a4a', inner: '#f0e8d8', bottom: '#3a3a40', longSleeve: true, skin: CK.pal.skin[2], scale: AD * (s || 1) });
+CF.killa = (s) => vin({ hair: '#1a1418', bangs: 'short', ears: true, brow: '#1a1418', top: '#c0a050', inner: '#1e1e22', bottom: '#2a2a30', longSleeve: true, scale: AD * 1.25 * (s || 1) });
+CF.chidi = (s) => vin({ hair: '#1a1410', bangs: 'short', ears: true, brow: '#1a1410', top: '#2a2a2e', inner: '#a03a3a', bottom: '#1e1e22', longSleeve: true, skin: CK.pal.skin[2], scale: AD * 1.05 * (s || 1) });
+CF.daisy = (s) => CF.dog(0.62 * (s || 1), { c: '#c8894a', w: '#f6f0e6', e: '#8a4a22', saddle: '#2a2220', collar: '#d04a5a' });
+CF.pit = (s) => CF.dog(0.75 * (s || 1), { c: '#8a7a70', w: '#f0ebe4', e: '#7a6a62', collar: '#3a6ad0' });
+CF.malin = (s, vest) => CF.dog(0.95 * (s || 1), { c: '#c09050', w: '#d8b070', e: '#2a2220', m: '#2a2220', prick: true, vest: vest ? '#2a2e36' : null });
+CF.collar = (s) => { const g = new T.Group(); const r = mk(new T.TorusGeometry(0.2, 0.045, 6, 16), '#d04a5a'); r.rotation.x = Math.PI / 2; g.add(r); g.add(at3(mk(new T.CylinderGeometry(0.06, 0.06, 0.02, 10), P.gold, GOLDM), 0, -0.02, 0.24)); g.scale.setScalar(s || 1); return g; };
+CF.heartR = (s) => { const g = new T.Group(), m = '#ff5a7a', o = { emissive: new T.Color('#ff2a5a'), emissiveIntensity: 0.35 }; for (const x of [-0.17, 0.17]) g.add(at3(mk(new T.SphereGeometry(0.22, 14, 10), m, o), x, 0.08, 0)); const c = mk(new T.ConeGeometry(0.33, 0.46, 14), m, o); c.rotation.z = Math.PI; c.position.y = -0.2; g.add(c); g.scale.setScalar(s || 1); return g; };
