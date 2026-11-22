@@ -3,16 +3,19 @@ const ZK = 1.45;
 const fr = (st, lx, ly, lz, d, h, sx) => { const c = ST[st]; const look = [c[0] + lx, c[1] + ly, c[2] + lz]; return { look, pos: [look[0] + (sx || 0) * ZK, look[1] + h * ZK, look[2] + d * ZK] }; };
 const sm = (a, b, x) => U.clamp((x - a) / (b - a));
 const BG = { day: ['#4a7ab0', '#cfe6f4'], palace: ['#3a2a5a', '#e8a86a'], hall: ['#2a1408', '#b07a3a'], dusk: ['#1a1030', '#6a3a5a'], night: ['#0a0c1e', '#2a2a5a'], forest: ['#2a5a6a', '#bfe0c8'], lanka: ['#140c2a', '#5a3a6a'],
-  storm: ['#0c0a1a', '#3a3050'], sea: ['#2a5a9a', '#bfe0f4'], fire: ['#2a0a08', '#a03a1a'], dawn: ['#3a3a7a', '#ffc89a'], grove: ['#0e1a2a', '#3a5a5a'], heaven: ['#5a7ad0', '#fff0d0'], sky: ['#3a7ad0', '#d8ecff'], war: ['#2a1418', '#8a4a3a'] };
+  storm: ['#0c0a1a', '#3a3050'], sea: ['#2a5a9a', '#bfe0f4'], fire: ['#2a0a08', '#a03a1a'], dawn: ['#3a3a7a', '#ffc89a'], grove: ['#0e1a2a', '#3a5a5a'], heaven: ['#5a7ad0', '#fff0d0'], sky: ['#3a7ad0', '#d8ecff'], war: ['#2a1418', '#8a4a3a'],
+  space: ['#02030c', '#0a0e26'], dust: ['#7a5a3a', '#e0bc88'], ice: ['#6a8ab0', '#eef4fa'] };
 Object.assign(ATMO, {
   day: ['#fff4c0', 0.08, 0.12, 50, 0, '#fff0d0', 0.8, '#ffd080', 0.06, 1], palace: ['#ffe0a0', 0.08, 0.12, 60, 0, '#ffe0b0', 0.8, '#ffb060', 0.08, 0.8], hall: ['#ffd090', 0.08, 0.1, 60, 0, '#ffd0a0', 0.9, '#ff9a4a', 0.1, 0.5],
   dusk: ['#d0a0ff', 0.1, 0.1, 70, 1, '#c890ff', 0.9, '#5a2a8a', 0.16, 0], night: ['#bfd8ff', 0.1, 0.1, 70, 1, '#9fb0ff', 0.9, '#2a2a8a', 0.14, 0], forest: ['#e8ffc0', 0.08, 0.1, 60, 0, '#fff0c0', 0.8, '#a0d070', 0.06, 1],
   storm: ['#c8d0ff', 0.08, -0.6, 110, 0, '#a0b0ff', 1.1, '#2a2a6a', 0.18, 0], sea: ['#ffffff', 0.08, 0.1, 40, 0, '#fff0d0', 0.8, '#70b0ff', 0.06, 1], fire: ['#ff9a3a', 0.15, 0.9, 140, 0, '#ffb070', 1.0, '#c0401a', 0.14, 0],
   dawn: ['#ffd0a0', 0.08, 0.1, 60, 1, '#ffc090', 0.9, '#ff8a6a', 0.1, 0.7], grove: ['#c0ffd0', 0.1, 0.1, 80, 1, '#a0c0ff', 0.9, '#2a5a6a', 0.14, 0], heaven: ['#ffe6a0', 0.1, 0.15, 90, 0, '#ffe8b0', 1.0, '#ffb84a', 0.08, 1],
   sky: ['#ffffff', 0.1, -0.4, 80, 0, '#fff0d0', 0.8, '#80c0ff', 0.06, 0.6], war: ['#ff8a5a', 0.12, 0.5, 120, 0, '#ffb080', 1.0, '#a03a2a', 0.14, 0],
+  space: ['#cfe0ff', 0.06, 0.02, 20, 1, '#a0b8ff', 1.1, '#1a2a6a', 0.1, 0], dust: ['#e0b880', 0.16, -0.25, 140, 0, '#ffd8a0', 0.9, '#a0703a', 0.14, 0.4], ice: ['#ffffff', 0.1, -0.3, 90, 0, '#e0f0ff', 0.9, '#8ab0d8', 0.08, 0.6],
 });
 const LT = { day: [0.8, 0.9, '#fff8e8'], palace: [0.7, 0.85, '#ffe0b0'], hall: [0.55, 0.8, '#ffd0a0'], dusk: [0.45, 0.55, '#c8a0ff'], night: [0.42, 0.5, '#9fb0ff'], forest: [0.75, 0.85, '#fff4d8'], lanka: [0.5, 0.65, '#d0b0ff'],
-  storm: [0.45, 0.55, '#b0b8ff'], sea: [0.8, 0.9, '#fff8e8'], fire: [0.5, 0.75, '#ffb070'], dawn: [0.6, 0.75, '#ffc8a0'], grove: [0.45, 0.6, '#b0d0ff'], heaven: [0.85, 0.9, '#fff0d0'], sky: [0.85, 0.9, '#ffffff'], war: [0.55, 0.75, '#ffb090'] };
+  storm: [0.45, 0.55, '#b0b8ff'], sea: [0.8, 0.9, '#fff8e8'], fire: [0.5, 0.75, '#ffb070'], dawn: [0.6, 0.75, '#ffc8a0'], grove: [0.45, 0.6, '#b0d0ff'], heaven: [0.85, 0.9, '#fff0d0'], sky: [0.85, 0.9, '#ffffff'], war: [0.55, 0.75, '#ffb090'],
+  space: [0.5, 1.1, '#ffffff'], dust: [0.72, 0.75, '#ffd8a8'], ice: [0.7, 0.72, '#e6f0ff'] };
 
 /* resolve scene specs (inheritance) */
 const RES = (() => {
