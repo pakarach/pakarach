@@ -100,8 +100,8 @@
       } else if (bt === 's1') {
         const x = walkX(-1.6, -2.2, 's1'); S('dad', { x, ry: -0.35, walk: true, ex: 'giggle', carryArms: true }); S('wawa', { carry: { by: 'dad', k: 1 }, ex: ph('s1', t) > 0.3 && Math.sin(t * 3) > 0 ? 'giggle' : 'happy' });
       } else if (bt === 's2') {
-        const p = ph('s2', t), kl = U.easeIO(U.clamp((p - 0.56) / 0.12));
-        S('dad', { x: 0.75, ry: -0.25, ex: kl > 0.5 ? 'giggle' : p > 0.3 ? 'sick' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25 });
+        const p = ph('s2', t), tc = TM('s2', 1, 0.32), kl = U.easeIO(U.clamp((t - tc - 1.1) / 0.7));
+        S('dad', { x: 0.75, ry: -0.25, ex: kl > 0.5 ? 'giggle' : t > tc - 0.2 ? 'sick' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25 });
         S('nana', { x: -0.55, z: 0.35, ry: 0.4, ex: kl > 0 ? 'giggle' : p > 0.1 ? 'happy' : 'happy', armsUp: kl < 0.6 && p > 0.12, carry: kl > 0 ? { by: 'dad', k: kl } : null });
       } else if (bt === 's3') {
         const p = ph('s3', t), kl = U.easeIO(U.clamp((p - 0.12) / 0.12));
@@ -178,20 +178,21 @@
       const tag = (str, o, dy, a) => { if (a <= 0 || !o.visible) return; const [x, y] = wp(o.userData.head, dy); g.save(); g.globalAlpha = a; g.font = '700 38px Kanit,sans-serif'; const w = g.measureText(str).width + 36, xx = U.clamp(x, 120 + w / 2, 940 - w / 2); g.fillStyle = 'rgba(255,217,160,.92)'; g.beginPath(); g.roundRect(xx - w / 2, y - 28, w, 56, 28); g.fill(); plain(str, xx, y + 1, 38, '#2a2438', 700, 'center'); g.restore(); };
       const fadeIn = (t0, t1) => U.clamp((t - t0) / 0.3) * U.clamp((t1 - t) / 0.3);
       if (b === 's1') tag('≈ 3 กก.', S.C.wawa, -0.6, fadeIn(P('s1', 0.3), end('s1') - 0.2));
-      if (b === 's2') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ!', x, y - 70, fadeIn(TM('s2', 0, 0.12), TM('s2', 1, 0.3) - 0.1), x); const [dx, dy] = wp(S.C.dad.userData.head, 0); bubble('อีกแล้วเหรอลูก…', dx - 280, dy - 150, fadeIn(TM('s2', 1, 0.3), P('s2', 0.58)), dx - 120); tag('≈ 12 กก.', S.C.nana, -0.6, fadeIn(P('s2', 0.72), end('s2') - 0.2)); }
+      if (b === 's2') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ!', x, y - 70, fadeIn(TM('s2', 0, 0.12), TM('s2', 1, 0.3) - 0.1), x); const [dx, dy] = wp(S.C.dad.userData.head, 0); bubble('อีกแล้วเหรอลูก…', dx - 280, dy - 150, fadeIn(TM('s2', 1, 0.3), TM('s2', 1, 0.3) + 1.6), dx - 120); tag('≈ 12 กก.', S.C.nana, -0.6, fadeIn(TM('s2', 1, 0.32) + 1.9, end('s2') - 0.2)); }
       if (b === 's3') { const [x, y] = wp(S.C.dad.userData.head, 0); bubble('โอ๊ย… หนักขึ้นทุกวัน', x - 280, y - 150, fadeIn(P('s3', 0.3), P('s3', 0.6)), x - 120); }
       if (b === 's5') { const [x, y] = wp(S.C.mama.userData.head, 0.75); bubble('หนูโตแล้ว เดินเองได้!', x, y - 70, fadeIn(TM('s5', 0, 0.2), TM('s5', 0, 0.2) + 1.8), x); }
       if (b === 's7') { const [x, y] = wp(S.C.nana.userData.head, 0.75); bubble('อุ้มๆ', x, y - 70, fadeIn(P('s7', 0.16), P('s7', 0.3)), x); }
       /* s4: timeline 0–8 years */
       if (b === 's4') {
-        const p = ph('s4', t), a0 = U.clamp((p - 0.26) / 0.08), y0 = 650 + OY, x0 = 150 + LD, x1 = 930 - LD, X = (yr) => x0 + (x1 - x0) * yr / 8;
+        const p = ph('s4', t), a0 = U.clamp((t - SP('s4', 0.3)) / 0.4), y0 = 650 + OY, x0 = 150 + LD, x1 = 930 - LD, X = (yr) => x0 + (x1 - x0) * yr / 8;
         g.save(); g.globalAlpha = a0; g.fillStyle = 'rgba(14,16,40,.72)'; g.beginPath(); g.roundRect(x0 - 50, y0 - 105, x1 - x0 + 100, 215, 30); g.fill();
         g.strokeStyle = 'rgba(255,255,255,.55)'; g.lineWidth = 5; g.lineCap = 'round'; g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y0); g.stroke();
         for (let yr = 0; yr <= 8; yr++) { g.fillStyle = 'rgba(255,255,255,.6)'; g.beginPath(); g.arc(X(yr), y0, 5, 0, 7); g.fill(); plain(String(yr), X(yr), y0 + 36, 32, 'rgba(255,255,255,.75)', 600, 'center'); }
         
-        const prog = U.easeOut(U.clamp((p - 0.3) / 0.1)) * 5; g.strokeStyle = '#ffd9a0'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0, y0); g.lineTo(X(prog), y0); g.stroke();
-        [[5, 'อุ้ม', -1, 0.4], [7, 'นิทาน', -1, 0.56], [7.5, 'จับมือ', 1, 0.68]].forEach(([yr, lab, side, f]) => {
-          const a = U.clamp((p - f) / 0.06); if (a <= 0) return; const r = (yr === 5 ? 20 : 15) * U.easeBack(a);
+        const prog = U.easeOut(U.clamp((t - TM('s4', 0, 0.4) + 1.1) / 1.0)) * 5; g.strokeStyle = '#ffd9a0'; g.lineWidth = 8; g.beginPath(); g.moveTo(x0, y0); g.lineTo(X(prog), y0); g.stroke();
+        const T5 = TM('s4', 0, 0.4);
+        [[5, 'อุ้ม', -1, 0], [7, 'นิทาน', -1, 0.9], [7.5, 'จับมือ', 1, 1.5]].forEach(([yr, lab, side, f]) => {
+          const a = U.clamp((t - T5 - f) / 0.4); if (a <= 0) return; const r = (yr === 5 ? 20 : 15) * U.easeBack(a);
           g.globalAlpha = a0 * a; g.fillStyle = yr === 5 ? '#ffd9a0' : '#c9b6ff'; g.beginPath(); g.arc(X(yr), y0, r, 0, 7); g.fill();
           const ly = side < 0 ? y0 - 62 : y0 + 88; plain(lab + ' ' + (yr === 7.5 ? '7½' : yr), Math.min(X(yr), x1 - 10), ly, yr === 5 ? 46 : 38, yr === 5 ? '#ffd9a0' : '#e6dcff', 700, 'center');
         });
@@ -214,7 +215,7 @@
       { t0: at('s4') + 0.3, t1: SP('s4', 0.3), y: 300, lines: [[66, ['ไม่มีใครบอกเราว่า…', '#fff']]] },
       { t0: SP('s4', 0.3) + 0.05, t1: end('s4') - 0.2, y: 280, lines: [[58, ['เด็กขออุ้มครั้งสุดท้าย', '#fff']], [76, ['เฉลี่ยตอน ', '#fff'], ['5 ขวบ', '#ffd9a0']]], foot: 'ผลสำรวจพ่อแม่ 1,000 คน สหราชอาณาจักร (My Nametags, 2026)' },
       { t0: at('s5') + 0.3, t1: TM('s5', 0, 0.2) - 0.05, y: 300, lines: [[66, ['เช้าวันหนึ่ง…', '#fff']]] },
-      { t0: TM('s5', 0, 0.2) + 1.9, t1: SP('s5', 0.7), y: 300, lines: [[62, ['แขนที่เคยบ่นว่าเมื่อย…', '#fff']]] },
+      { t0: TM('s5', 0, 0.2) + 2.3, t1: SP('s5', 0.7), y: 300, lines: [[62, ['แขนที่เคยบ่นว่าเมื่อย…', '#fff']]] },
       { t0: SP('s5', 0.7) + 0.05, t1: end('s5') - 0.3, y: 300, lines: [[62, ['วันนี้ว่างจนแปลกๆ', '#ffd9a0']]] },
       { t0: at('s6') + 0.4, t1: SP('s6', 0.5), y: 300, lines: [[62, ['คืนนั้นที่เราบ่นว่าหนัก…', '#fff']]] },
       { t0: SP('s6', 0.5) + 0.05, t1: end('s6') - 0.3, y: 300, lines: [[64, ['คือครั้งสุดท้าย', '#ffd9a0']], [64, ['ที่ได้อุ้ม', '#ffd9a0']]] },
@@ -225,9 +226,9 @@
     audio: [
       [0.3, 'steps', { n: 5 }], [1.2, 'cricket'],
       [at('s1') + 0.4, 'steps', { n: 6 }], [P('s1', 0.5), 'giggle'], [P('s1', 0.7), 'cricket'],
-      [TM('s2', 0, 0.12), 'boing'], [TM('s2', 1, 0.32), 'breath'], [P('s2', 0.56), 'lift'], [P('s2', 0.68), 'giggle'],
+      [TM('s2', 0, 0.12), 'boing'], [TM('s2', 1, 0.32), 'breath'], [TM('s2', 1, 0.32) + 1.1, 'lift'], [TM('s2', 1, 0.32) + 1.8, 'giggle'],
       [at('s3') + 0.3, 'cricket'], [P('s3', 0.12), 'lift'], [P('s3', 0.3), 'breath'],
-      [at('s4') + 0.4, 'steps', { n: 8 }], [P('s4', 0.4), 'ding'], [P('s4', 0.56), 'tick'], [P('s4', 0.68), 'tick'],
+      [at('s4') + 0.4, 'steps', { n: 8 }], [TM('s4', 0, 0.4), 'ding'], [TM('s4', 0, 0.4) + 0.9, 'tick'], [TM('s4', 0, 0.4) + 1.5, 'tick'],
       [at('s5') + 0.5, 'bird'], [TM('s5', 0, 0.2) + 1.0, 'steps', { n: 5 }],
       [at('s6') + 0.3, 'shimmer'],
       [P('s7', 0.05), 'steps', { n: 3 }], [P('s7', 0.26), 'lift'], [P('s7', 0.32), 'giggle'], [SP('s7', 0.5), 'soft'],
