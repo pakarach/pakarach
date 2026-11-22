@@ -6,7 +6,7 @@
    Build: node build.js um-krang-sudtai.js review-um-krang-sudtai.html --kit clay --title "อุ้มครั้งสุดท้าย" --data reel=docs/family/safe.json */
 (function () {
   const T = THREE, U = VE.u, PI = Math.PI, DATA = window.DATA || {};
-  const BEATS = [['cover', 2.6], ['s1', 6], ['s2', 6.5], ['s3', 6.5], ['s4', 7], ['s5', 7], ['s6', 6], ['s7', 7.5], ['end', 1.6]];
+  const BEATS = [['cover', 3.0], ['s1', 4.5], ['s2', 5.5], ['s3', 6], ['s4', 7], ['s5', 7], ['s6', 6], ['s7', 7.5], ['end', 1.6]];
   const B = VE.beats(BEATS, DATA.vo), at = B.at, end = B.end, DUR = B.DUR, dur = B.dur;
   const ph = (id, t) => U.clamp((t - at(id)) / dur(id)), inB = (id, t) => t >= at(id) && t < end(id), P = (id, f) => at(id) + dur(id) * f;
   const MK = (DATA.vo && DATA.vo.marks) || {}, SPL = (DATA.vo && DATA.vo.split) || {};
@@ -21,14 +21,14 @@
 
   /* ---- shots ---- */
   const CAM = [
-    K(at('cover'), FW(-1.35, 0, 4.6, 2.55, 0.1)), K(end('cover') - 0.001, FW(-1.0, 0, 4.4, 2.55, 0.1)),
-    K(at('s1'), FW(-2.2, 0, 4.2, 2.4, 0.1)), K(end('s1') - 0.001, FW(-1.4, 0, 4.0, 2.4, 0.1)),
-    K(at('s2'), FW(0.15, 0, 5.0, 2.55, 0.1)), K(end('s2') - 0.001, FW(0.25, 0, 4.6, 2.55, 0.1)),
-    K(at('s3'), FW(1.55, 0, 5.0, 2.55, 0.1)), K(end('s3') - 0.001, FW(1.65, 0, 4.6, 2.55, 0.1)),
-    K(at('s4'), FW(1.5, 0.3, 7.4, 3.45, 0.14)), K(end('s4') - 0.001, FW(1.8, 0.3, 7.0, 3.4, 0.14)),
+    K(at('cover'), FW(-0.85, 0, 4.8, 2.55, 0.1)), K(end('cover') - 0.001, FW(-1.25, 0, 4.4, 2.55, 0.1)),
+    K(at('s1'), FW(-1.45, 0, 4.4, 2.45, 0.1)), K(end('s1') - 0.001, FW(-2.1, 0, 4.1, 2.45, 0.1)),
+    K(at('s2'), FW(0.55, 0, 5.4, 2.55, 0.1)), K(end('s2') - 0.001, FW(0.75, 0, 5.0, 2.55, 0.1)),
+    K(at('s3'), FW(1.95, 0, 5.4, 2.55, 0.1)), K(end('s3') - 0.001, FW(2.2, 0, 5.0, 2.55, 0.1)),
+    K(at('s4'), FW(1.4, 0.3, 7.6, 3.45, 0.14)), K(end('s4') - 0.001, FW(0.9, 0.3, 7.2, 3.4, 0.14)),
     K(at('s5'), FW(1.3, 0, 5.4, 2.5, 0.1)), K(end('s5') - 0.001, FW(1.3, 0, 5.0, 2.5, 0.1)),
-    K(at('s6'), FW(-1.25, 0, 4.4, 2.55, 0.1)), K(end('s6') - 0.001, FW(-1.1, 0, 4.0, 2.55, 0.1)),
-    K(at('s7'), FW(0.35, 0, 5.0, 2.55, 0.1)), K(end('s7'), FW(0.45, 0, 4.2, 2.55, 0.1)),
+    K(at('s6'), FW(-0.9, 0, 4.6, 2.55, 0.1)), K(end('s6') - 0.001, FW(-1.2, 0, 4.2, 2.55, 0.1)),
+    K(at('s7'), FW(0.6, 0, 5.4, 2.55, 0.1)), K(end('s7'), FW(0.95, 0, 4.7, 2.55, 0.1)),
   ];
   const trans = ['s1', 's2', 's3', 's4', 's5', 's6', 's7'].map((id) => ({ t: at(id) - 0.45, dur: 0.9, type: 'iris', color: '#0e1028' }));
 
@@ -59,12 +59,12 @@
       const wall = new T.Mesh(new T.BoxGeometry(60, 1.7, 0.35), M('#8c7fa6')); wall.position.set(0, 0.85, -3.35); scene.add(wall);
       const cope = new T.Mesh(new T.BoxGeometry(60, 0.14, 0.5), M('#a99cc2')); cope.position.set(0, 1.74, -3.35); scene.add(cope);
       for (let i = 0; i < 14; i++) { const tr = new T.Mesh(new T.SphereGeometry(1.4 + (i % 3) * 0.4, 16, 12), M(i % 2 ? '#2e4a52' : '#35525a')); tr.position.set(-20 + i * 3.1, 2.6 + (i % 2) * 0.6, -5.5 - (i % 3) * 0.6); scene.add(tr); }
-      const house = new T.Group(); house.position.set(7.2, 0, -5.6); scene.add(house);
+      const house = new T.Group(); house.position.set(-7.6, 0, -5.6); scene.add(house);
       const hb = new T.Mesh(new T.BoxGeometry(4.6, 3.4, 2.4), M('#d9c3a5')); hb.position.y = 1.7; house.add(hb);
       const roof = new T.Mesh(new T.ConeGeometry(3.6, 1.6, 4), M('#a0525e')); roof.position.y = 4.2; roof.rotation.y = PI / 4; roof.scale.z = 0.75; house.add(roof);
       const hwin = new T.Mesh(new T.PlaneGeometry(1.2, 1.0), new T.MeshBasicMaterial({ color: '#ffc77a' })); hwin.position.set(-0.9, 2.1, 1.22); house.add(hwin);
       const hwin2 = hwin.clone(); hwin2.position.x = 0.9; house.add(hwin2);
-      const gate = new T.Mesh(new T.BoxGeometry(1.8, 1.5, 0.08), M('#4a4560')); gate.position.set(5.6, 0.8, -3.15); scene.add(gate);
+      const gate = new T.Mesh(new T.BoxGeometry(1.8, 1.5, 0.08), M('#4a4560')); gate.position.set(-6.0, 0.8, -3.15); scene.add(gate);
       /* street lamp */
       const lampG = new T.Group(); lampG.position.set(-6.2, 0, -2.4); scene.add(lampG);
       const pole = new T.Mesh(new T.CylinderGeometry(0.07, 0.09, 4.7, 10), M('#3e3a50')); pole.position.y = 2.35; lampG.add(pole);
@@ -77,8 +77,8 @@
       for (const [x0, x1] of [[-12, 0], [0, 12]]) for (let i = 0; i <= 20; i++) { const u = i / 20, x = U.lerp(x0, x1, u), y = 4.1 - Math.sin(u * PI) * 0.6; const b = new T.Mesh(new T.SphereGeometry(0.08, 10, 8), E(BC[i % 5], 1.0)); b.position.set(x, y, -4.2); scene.add(b); bulbs.push(b); }
       for (const x of [-12, 0, 12]) { const p = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 4.6, 8), M('#3e3a50')); p.position.set(x, 2.3, -4.2); scene.add(p); }
       /* night market glow (far left) */
-      for (let i = 0; i < 4; i++) { const st = new T.Group(); st.position.set(-16 + i * 2.6, 0, -7 - (i % 2)); scene.add(st); const c = new T.Mesh(new T.BoxGeometry(2.2, 0.15, 1.6), E(['#ff6f6f', '#ffd166', '#6fc3ff', '#ff9ec0'][i], 0.6)); c.position.y = 2.4; st.add(c); const tb = new T.Mesh(new T.BoxGeometry(2.0, 1.0, 1.2), M('#e8d9c0')); tb.position.y = 0.5; st.add(tb); }
-      const mktL = new T.PointLight(0xffa060, 1.0, 12); mktL.position.set(-12, 3, -6); scene.add(mktL);
+      for (let i = 0; i < 4; i++) { const st = new T.Group(); st.position.set(9 + i * 2.6, 0, -7 - (i % 2)); scene.add(st); const c = new T.Mesh(new T.BoxGeometry(2.2, 0.15, 1.6), E(['#ff6f6f', '#ffd166', '#6fc3ff', '#ff9ec0'][i], 0.6)); c.position.y = 2.4; st.add(c); const tb = new T.Mesh(new T.BoxGeometry(2.0, 1.0, 1.2), M('#e8d9c0')); tb.position.y = 0.5; st.add(tb); }
+      const mktL = new T.PointLight(0xffa060, 1.0, 12); mktL.position.set(12, 3, -6); scene.add(mktL);
       /* fireflies / dust */
       const motes = []; for (let i = 0; i < 16; i++) { const m = new T.Mesh(new T.SphereGeometry(0.03, 6, 5), new T.MeshBasicMaterial({ color: '#ffe6a8', transparent: true, opacity: 0.7 })); scene.add(m); motes.push(m); }
       /* family */
@@ -91,10 +91,10 @@
       const S = (k, o) => (st[k] = Object.assign({ x: 0, y: 0, z: 0, ry: 0, ex: 'happy' }, o));
       const walkX = (x0, x1, id) => U.lerp(x0, x1, ph(id, t));
       if (bt === 'cover' || bt === 's6') {
-        const x = bt === 'cover' ? walkX(-1.9, -1.35, 'cover') : walkX(-1.75, -1.4, 's6');
-        S('dad', { x, ry: 0.35, walk: true, ex: 'happy', carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
+        const x = bt === 'cover' ? walkX(-1.2, -1.7, 'cover') : walkX(-1.3, -1.65, 's6');
+        S('dad', { x, ry: -0.35, walk: true, ex: 'happy', carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
       } else if (bt === 's1') {
-        const x = walkX(-2.6, -1.8, 's1'); S('mom', { x, ry: 0.35, walk: true, ex: 'happy', carryArms: true }); S('wawa', { carry: { by: 'mom', k: 1 }, ex: ph('s1', t) > 0.4 && Math.sin(t * 3) > 0 ? 'giggle' : 'happy' });
+        const x = walkX(-1.8, -2.5, 's1'); S('mom', { x, ry: -0.35, walk: true, ex: 'happy', carryArms: true }); S('wawa', { carry: { by: 'mom', k: 1 }, ex: ph('s1', t) > 0.4 && Math.sin(t * 3) > 0 ? 'giggle' : 'happy' });
       } else if (bt === 's2') {
         const p = ph('s2', t), kl = U.easeIO(U.clamp((t - TM('s2', 0, 0.5) - 0.2) / 0.7));
         S('dad', { x: 0.75, ry: -0.25, ex: kl > 0.5 ? 'giggle' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.25 });
@@ -104,10 +104,10 @@
         S('dad', { x: 2.05, ry: -0.3, ex: p > 0.62 && p < 0.9 ? 'worried' : 'happy', carryArms: kl > 0.05, crouch: Math.sin(kl * PI) * 0.3, backHand: p > 0.62 && p < 0.92 });
         S('mama', { x: 0.75, z: 0.35, ry: 0.35, ex: p < 0.3 ? 'sleepy' : 'sleepy', yawn: p < 0.3, carry: kl > 0 ? { by: 'dad', sleep: true, k: kl } : null });
       } else if (bt === 's4') {
-        const x = walkX(0, 1.2, 's4');
-        S('dad', { x: x + 1.8, ry: 0.4, walk: true, carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
-        S('mom', { x: x - 1.0, ry: 0.4, walk: true, carryArms: true }); S('wawa', { carry: { by: 'mom', k: 1 }, ex: 'sleepy' });
-        S('nana', { x: x + 0.95, z: 1.3, ry: 0.4, walk: true, ex: 'sleepy' });
+        const x = walkX(1.2, 0, 's4');
+        S('dad', { x: x + 1.6, ry: -0.35, walk: true, carryArms: true }); S('mama', { carry: { by: 'dad', sleep: true, k: 1 }, ex: 'sleepy' });
+        S('mom', { x: x - 1.3, ry: -0.35, walk: true, carryArms: true }); S('wawa', { carry: { by: 'mom', k: 1 }, ex: 'sleepy' });
+        S('nana', { x: x + 0.55, z: 1.4, ry: -0.35, walk: true, ex: 'sleepy' });
       } else if (bt === 's5') {
         const p = ph('s5', t), q = TM('s5', 0, 0.45), kr = U.clamp((t - q - 0.9) / 2.2), down = U.easeIO(U.clamp((t - q - 1.4) / 2.0));
         S('dad', { x: 0.2, ry: 0.45, crouch: 0.35, ex: t < q + 0.6 ? 'happy' : 'worried', armsOut: 1 - down * 0.85 });
@@ -126,7 +126,7 @@
         let x = q.x, y = q.y, z = q.z, ry = q.ry, rz = 0;
         if (q.carry) {
           const ad = C[q.carry.by], aq = st[q.carry.by], kid = ud.base;
-          const off = q.carry.by === 'mom' ? [0.66, 0.72, 0.42] : kid < 0.85 ? [0.78, 0.66, 0.45] : [0.8, 0.5, 0.48];
+          const off = q.carry.by === 'mom' ? [0.8, 1.12, 0.48] : kid < 0.85 ? [0.92, 1.08, 0.5] : [0.95, 0.92, 0.5];
           const c = Math.cos(ad.rotation.y), sn = Math.sin(ad.rotation.y), cx = ad.position.x + off[0] * c + off[2] * sn, cz = ad.position.z - off[0] * sn + off[2] * c, cy = ad.position.y + off[1];
           const kk = q.carry.k; x = U.lerp(q.x, cx, kk); y = U.lerp(q.y, cy, kk); z = U.lerp(q.z, cz, kk); ry = U.lerp(q.ry, ad.rotation.y, kk); rz = q.carry.sleep ? 0.14 * kk : 0.06 * kk;
         }
@@ -135,8 +135,8 @@
         g.position.set(x, y, z); g.rotation.set(0, ry, rz);
         ud.setExpr(q.ex); ud.tick(t, { breath: q.ex === 'sleepy' ? 0.25 : 0.4 });
         const A1 = ud.arm1, A2 = ud['arm-1'], hd = ud.head; hd.rotation.x = 0; hd.rotation.y = 0; A1.rotation.x = A2.rotation.x = -0.12;
-        if (q.carry && q.carry.sleep) { hd.rotation.z = 0.32 * q.carry.k; hd.rotation.x = 0.12; }
-        if (q.carryArms) { A1.rotation.set(-0.9, 0, -0.05); A2.rotation.set(-1.2, 0, 0.7); }
+        if (q.carry) { const kk = q.carry.k; hd.rotation.z = (q.carry.sleep ? 0.34 : 0.18) * kk; hd.rotation.x = q.carry.sleep ? 0.1 : 0; if (kk > 0.6) { A2.rotation.set(0.75, 0, q.carry.sleep ? -1.5 : -1.9); A1.rotation.set(-0.4, 0, 0.3); } }
+        if (q.carryArms) { A1.rotation.set(-0.55, 0, 0.5); A2.rotation.set(-1.1, 0, 0.8); }
         if (q.backHand) A2.rotation.set(0.75, 0, -0.35);
         if (q.armsUp) { A1.rotation.set(0.9, 0, 2.4 + 0.12 * Math.sin(t * 7)); A2.rotation.set(0.9, 0, -2.4 - 0.12 * Math.sin(t * 7 + 1)); }
         if (q.armsOut != null) { const o = q.armsOut; A1.rotation.set(-1.25 * o - 0.12 * (1 - o), 0, 0.55 * o + 0.4 * (1 - o)); A2.rotation.set(-1.25 * o - 0.12 * (1 - o), 0, -0.55 * o - 0.4 * (1 - o)); }
@@ -195,7 +195,7 @@
       }
     },
     caps: [
-      { t0: 0, t1: at('s1') - 0.2, y: 300, instant: true, lines: [[74, ['ลูกขอให้อุ้มครั้งสุดท้าย', '#fff']], [80, ['ตอนกี่ขวบ?', '#ffd9a0']]] },
+      { t0: 0, t1: at('s1') - 0.2, y: 300, instant: true, lines: [[84, ['อุ้มครั้งสุดท้าย', '#ffd9a0']], [62, ['ก่อนลูกโต…', '#fff']], [52, ['และพ่อยังไม่รู้ตัวเลย', '#fff', 600]]] },
       { t0: at('s1') + 0.3, t1: end('s1') - 0.3, y: 300, lines: [[70, ['แรกเกิด', '#ffd9a0']], [62, ['อุ้มกันทั้งวัน', '#fff']]] },
       { t0: at('s2') + 0.3, t1: end('s2') - 0.3, y: 300, lines: [[70, ['2 ขวบ', '#ffd9a0']], [58, ['ขออุ้มวันละหลายรอบ', '#fff']]] },
       { t0: at('s3') + 0.3, t1: P('s3', 0.6), y: 300, lines: [[64, ['พอ 5 ขวบ หนักราว 18 กิโล', '#fff']], [52, ['มากกว่าแรกเกิด 5–6 เท่า', '#ffd9a0']]], foot: 'น้ำหนักเฉลี่ยตามเกณฑ์การเจริญเติบโต WHO' },
