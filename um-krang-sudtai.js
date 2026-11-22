@@ -36,6 +36,10 @@
   const proj = (v) => { V3.copy(v).project(CAMR); return [(V3.x + 1) * 540, (1 - V3.y) * 960, V3.z]; };
   const wp = (o, dy) => { o.getWorldPosition(V3); V3.y += dy || 0; return proj(V3); };
 
+  /* stretch an arm (shoulder pivot) so its hand reaches a world point; arm base length: adult 0.56, kid 0.42 (local units) */
+  const QA = new T.Quaternion(), DN = new T.Vector3(0, -1, 0), VL = new T.Vector3(), VW = new T.Vector3();
+  const reach = (g, key, world) => { const ud = g.userData, arm = ud[key], L0 = g.userData.base >= 1.2 ? 0.56 : 0.42; VL.copy(world); g.worldToLocal(VL); VL.sub(arm.position); const len = VL.length(); QA.setFromUnitVectors(DN, VL.normalize()); arm.quaternion.copy(QA); const k = U.clamp(len / L0, 0.7, 2.6); arm.scale.set(1, k, 1); const h = ud[key === 'arm1' ? 'hand1' : 'hand-1']; h.scale.set(1, 1.08 / k, 0.88); };
+  const lw = (g, x, y, z) => g.localToWorld(VW.set(x, y, z)).clone();
   const au = () => VE.audio;
   VE.registerSfx('steps', (t, o) => { const n = (o && o.n) || 4; for (let i = 0; i < n; i++) au().tone(t + i * 0.42, 95, 0.05, { f2: 60, vol: 0.1 }); });
   VE.registerSfx('cricket', (t) => { for (let i = 0; i < 3; i++) au().tone(t + i * 0.09, 4200, 0.04, { vol: 0.02, rel: 0.02 }); });
@@ -133,7 +137,7 @@
         if (q.crouch) y -= q.crouch;
         g.position.set(x, y, z); g.rotation.set(0, ry, rz);
         ud.setExpr(q.ex); ud.tick(t, { breath: q.ex === 'sleepy' ? 0.25 : 0.4 });
-        const A1 = ud.arm1, A2 = ud['arm-1'], hd = ud.head; hd.rotation.x = 0; hd.rotation.y = 0; A1.rotation.x = A2.rotation.x = -0.12;
+        const A1 = ud.arm1, A2 = ud['arm-1'], hd = ud.head; hd.rotation.x = 0; hd.rotation.y = 0; A1.rotation.x = A2.rotation.x = -0.12; A1.rotation.y = A2.rotation.y = 0; A1.scale.set(1, 1, 1); A2.scale.set(1, 1, 1); ud.hand1.scale.set(1, 1.08, 0.88); ud['hand-1'].scale.set(1, 1.08, 0.88);
         if (q.carry) { const kk = q.carry.k; hd.rotation.y = (PI - 0.35) * kk; hd.rotation.z = HZ * (q.carry.sleep ? 0.3 : 0.15) * kk; if (kk > 0.6) { A1.rotation.set(1.15, 0, -0.35); A2.rotation.set(1.15, 0, 0.35); } }
         if (q.carryArms) { A1.rotation.set(-0.75, 0, 0.2); A2.rotation.set(-1.15, 0, 0.95); }
         if (q.backHand) A2.rotation.set(0.75, 0, -0.35);
@@ -142,6 +146,14 @@
         if (q.walk && !q.carryArms && !q.carry) { A1.rotation.x = -0.12 + 0.35 * Math.sin(t * 6.5); A2.rotation.x = -0.12 - 0.35 * Math.sin(t * 6.5); }
         if (q.yawn) { A1.rotation.set(0.9, 0, 2.2); }
         if (q.hug) hd.rotation.z = -0.15;
+      }
+      /* carry arms: adult hands under the bottom + across the back, kid arms around the adult's neck */
+      for (const k of ['mama', 'nana', 'wawa']) {
+        const q = st[k]; if (!q || !q.carry || q.carry.k < 0.55) continue; const kid = C[k], ad = C[q.carry.by], aq = st[q.carry.by];
+        ad.updateMatrixWorld(true); kid.updateMatrixWorld(true);
+        reach(ad, 'arm1', lw(kid, 0.05, 0.22, -0.2));
+        if (!aq.backHand) reach(ad, 'arm-1', lw(kid, -0.05, 0.78, -0.52));
+        const dz = q.carry.sleep ? -0.1 : 0; reach(kid, 'arm1', lw(ad, 0.3, 1.45 + dz, 0.35)); reach(kid, 'arm-1', lw(ad, 0.78, 1.78 + dz, 0.05));
       }
       /* light: night vs morning */
       const L = s.L;
