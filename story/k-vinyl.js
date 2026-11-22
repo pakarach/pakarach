@@ -346,3 +346,99 @@ Object.assign(ENVB, {
 /* stairs config as hoisted functions so episode data can call stairY() while it is being defined */
 function stairCfg() { return { z0: 2, run: 0.62, rise: 0.34, n: 48, w: 6 }; }
 function stairY(z) { const S = stairCfg(); return z > S.z0 ? 0 : Math.min(S.n, Math.floor((S.z0 - z) / S.run) + 1) * S.rise; }
+
+/* ---- added for The Matrix 1-4 (Nov 2026): sim-world grid, pods, sci-fi war props + presets, reusable. Generic shapes only: no film code-rain, ship, machine, logo or costume designs. ---- */
+const gridLines = (w, d, step, col, op) => { const g = new T.Group(), m = basic(col, { transparent: true, opacity: op == null ? 0.6 : op, depthWrite: false });
+  for (let x = -w / 2; x <= w / 2 + 1e-6; x += step) g.add(at3(new T.Mesh(new T.BoxGeometry(0.04, 0.01, d), m), x, 0, 0));
+  for (let z = -d / 2; z <= d / 2 + 1e-6; z += step) g.add(at3(new T.Mesh(new T.BoxGeometry(w, 0.01, 0.04), m), 0, 0, z)); return g; };
+/* pill: c body colour, glow rgba */
+CF.pill = (s, c, gc) => { const g = new T.Group(), col = c || '#e0303a', o = { emissive: new T.Color(col), emissiveIntensity: 0.35 }; const b = mk(new T.CylinderGeometry(0.09, 0.09, 0.16, 12), col, o); b.rotation.z = Math.PI / 2; g.add(b);
+  for (const x of [-0.08, 0.08]) g.add(at3(mk(new T.SphereGeometry(0.09, 12, 8), col, o), x, 0, 0)); const gl = softSprite(gc || 'rgba(255,90,90,1)', 0.55); gl.scale.setScalar(0.8); g.add(gl); g.scale.setScalar(s || 1); return g; };
+/* upright glass pod (stand a figure at the same spot); userData.glow */
+CF.pod = (s, c) => { const g = new T.Group(); const sh = new T.Mesh(new T.CylinderGeometry(0.95, 0.95, 2.7, 20, 1, true), glass(c || '#ffb89a', 0.22)); sh.position.y = 1.55; g.add(sh);
+  for (const y of [0.15, 2.95]) g.add(at3(mk(new T.CylinderGeometry(1.02, 1.02, 0.3, 20), '#3a2e34'), 0, y, 0)); const gl = softSprite('rgba(255,150,120,1)', 0.35); gl.scale.setScalar(3.2); gl.position.set(0, 1.4, -0.5); g.add(gl); g.userData.glow = gl;
+  for (let i = 0; i < 5; i++) g.add(at3(mk(new T.CylinderGeometry(0.05, 0.05, 2.6, 6), '#2a2226'), -0.6 + i * 0.3, 4.4, -0.3)); g.scale.setScalar(s || 1); return g; };
+/* tall tower of glowing pods (power-plant fields) */
+CF.podTower = (s) => { const g = new T.Group(); g.add(at3(mk(new T.CylinderGeometry(0.7, 0.9, 17, 10), '#2a2430'), 0, 8.5, 0)); const ms = ['#a8483e', '#b8644a', '#8a3a36'].map((c) => basic(c, { transparent: true, opacity: 0.8 }));
+  for (let r = 0; r < 9; r++) for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3 + r * 0.5; const p = new T.Mesh(new T.SphereGeometry(0.42, 10, 8), ms[(r + i) % 3]); p.scale.set(1, 1.4, 1); p.position.set(Math.sin(a) * 1.05, 1 + r * 1.75, Math.cos(a) * 1.05); g.add(p); }
+  g.scale.setScalar(s || 1); return g; };
+/* phone booth; userData.glow (opacity 0..1 when the line opens) */
+CF.booth = (s, c) => { const g = new T.Group(), col = c || '#3a5a8a'; for (const x of [-0.55, 0.55]) for (const z of [-0.55, 0.55]) g.add(at3(mk(new T.BoxGeometry(0.1, 2.6, 0.1), col), x, 1.3, z));
+  g.add(at3(mk(new T.BoxGeometry(1.25, 0.25, 1.25), col), 0, 2.72, 0), at3(new T.Mesh(new T.BoxGeometry(1.1, 2.4, 1.1), glass('#cfe8ff', 0.16)), 0, 1.3, 0), at3(mk(new T.BoxGeometry(0.32, 0.46, 0.12), '#1e1e24'), 0, 1.55, -0.46));
+  const gl = softSprite('rgba(140,235,255,1)', 0.9); gl.scale.setScalar(3.2); gl.position.y = 1.4; gl.material.opacity = 0; g.add(gl); g.userData.glow = gl; g.scale.setScalar(s || 1); return g; };
+/* slow bullet with a ripple ring */
+CF.bullet = (s) => { const g = new T.Group(); const b = mk(new T.SphereGeometry(0.07, 10, 8), P.gold, GOLDM); b.scale.set(1, 1, 2.4); g.add(b);
+  const rg = new T.Mesh(new T.TorusGeometry(0.16, 0.012, 6, 20), basic('#ffffff', { transparent: true, opacity: 0.45 })); rg.position.z = -0.2; g.add(rg); const gl = softSprite('rgba(255,230,160,1)', 0.5); gl.scale.setScalar(0.45); g.add(gl); g.scale.setScalar(s || 1); return g; };
+/* spoon; userData.bend (rotation.x bends the top half) */
+CF.spoon = (s) => { const g = new T.Group(), o = { metalness: 0.6, roughness: 0.3 }, m = '#dfe4ec'; g.add(at3(mk(new T.BoxGeometry(0.05, 0.36, 0.02), m, o), 0, 0.18, 0)); const up = new T.Group(); up.position.y = 0.36;
+  up.add(at3(mk(new T.BoxGeometry(0.05, 0.18, 0.02), m, o), 0, 0.09, 0)); const bw = mk(new T.SphereGeometry(0.09, 10, 8), m, o); bw.scale.set(1, 1.4, 0.35); bw.position.y = 0.28; up.add(bw); g.add(up); g.userData.bend = up; g.scale.setScalar(s || 1); return g; };
+CF.key = (s) => { const g = new T.Group(), o = GOLDM; const r = mk(new T.TorusGeometry(0.12, 0.035, 6, 16), P.gold, o); r.position.y = 0.3; g.add(r, at3(mk(new T.BoxGeometry(0.04, 0.4, 0.03), P.gold, o), 0, 0, 0), at3(mk(new T.BoxGeometry(0.12, 0.04, 0.03), P.gold, o), 0.06, -0.14, 0), at3(mk(new T.BoxGeometry(0.09, 0.04, 0.03), P.gold, o), 0.05, -0.05, 0));
+  const gl = softSprite('rgba(255,220,130,1)', 0.6); gl.scale.setScalar(0.7); g.add(gl); g.scale.setScalar(s || 1); return g; };
+CF.keyring = (s) => { const g = new T.Group(); const r = mk(new T.TorusGeometry(0.18, 0.02, 6, 18), '#c0c4cc'); g.add(r); for (let i = 0; i < 6; i++) { const k = CF.key(0.55); k.position.set(Math.sin(i) * 0.12, -0.22 - (i % 2) * 0.05, 0.02 * i); k.rotation.z = -0.5 + i * 0.2; g.add(k); } g.scale.setScalar(s || 1); return g; };
+/* door: c leaf colour, gc light colour; userData.leaf (rotation.y -1.6 = open), userData.glow (opacity) */
+CF.door = (s, c, gc) => { const g = new T.Group(), f = '#e8e8ec'; g.add(at3(mk(new T.BoxGeometry(0.15, 2.5, 0.2), f), -0.65, 1.25, 0), at3(mk(new T.BoxGeometry(0.15, 2.5, 0.2), f), 0.65, 1.25, 0), at3(mk(new T.BoxGeometry(1.45, 0.15, 0.2), f), 0, 2.55, 0));
+  g.add(at3(new T.Mesh(new T.PlaneGeometry(1.15, 2.4), basic(gc || '#fff4d0')), 0, 1.22, -0.05)); const h = new T.Group(); h.position.set(-0.58, 0, 0.02);
+  h.add(at3(mk(new T.BoxGeometry(1.15, 2.4, 0.08), c || '#7a6a5a'), 0.575, 1.22, 0), at3(mk(new T.SphereGeometry(0.06, 8, 6), P.gold, GOLDM), 1.0, 1.2, 0.08)); g.add(h); g.userData.leaf = h;
+  const gl = softSprite('rgba(255,245,210,1)', 0.9); gl.scale.setScalar(3.6); gl.position.set(0, 1.3, 0.3); gl.material.opacity = 0; g.add(gl); g.userData.glow = gl; g.scale.setScalar(s || 1); return g; };
+const openDoor = (d, k) => { d.userData.leaf.rotation.y = -1.7 * k; d.userData.glow.material.opacity = 0.8 * k; };
+/* defence turret (generic): userData.head (yaw), userData.fl (muzzle flash sprite) */
+CF.turret = (s, c) => { const g = new T.Group(), col = c || '#6a6458'; g.add(at3(mk(new T.CylinderGeometry(0.9, 1.1, 0.8, 12), '#4a4640'), 0, 0.4, 0)); const h = new T.Group(); h.position.y = 1.2; g.add(h);
+  h.add(at3(mk(new T.BoxGeometry(1.3, 0.8, 1.2), col), 0, 0, 0), at3(mk(new T.BoxGeometry(0.5, 0.5, 0.1), '#2a3a4a'), 0, 0.1, 0.62)); for (const x of [-0.35, 0.35]) { const b = mk(new T.CylinderGeometry(0.09, 0.09, 1.6, 8), '#2a2a2e'); b.rotation.x = Math.PI / 2; b.position.set(x, 0.05, 1.2); h.add(b); }
+  const fl = softSprite('rgba(255,210,120,1)', 1); fl.scale.setScalar(1.4); fl.position.set(0, 0.05, 2.1); fl.visible = false; h.add(fl); g.userData.head = h; g.userData.fl = fl; g.scale.setScalar(s || 1); return g; };
+/* giant digging machine (generic cone bit + drum): userData.bit spins on y; nose points down (-y) */
+CF.drill = (s) => { const g = new T.Group(); g.add(at3(mk(new T.CylinderGeometry(2.2, 2.2, 3.4, 16), '#4a4448'), 0, 2.6, 0)); for (const y of [1.4, 3.8]) g.add(at3(mk(new T.CylinderGeometry(2.35, 2.35, 0.3, 16), '#7a2a2a'), 0, y, 0));
+  const bit = new T.Group(); const c = mk(new T.ConeGeometry(2.0, 3.2, 12), '#8a8a90', { flatShading: true, metalness: 0.4, roughness: 0.5 }); c.rotation.x = Math.PI; c.position.y = -0.6; bit.add(c);
+  for (let i = 0; i < 6; i++) { const t = mk(new T.BoxGeometry(0.2, 2.2, 0.35), '#c0c4cc'); const a = i * Math.PI / 3; t.position.set(Math.sin(a) * 1.0, -0.4, Math.cos(a) * 1.0); t.rotation.set(0.5 * Math.cos(a), a, -0.5 * Math.sin(a)); bit.add(t); }
+  for (let i = 0; i < 4; i++) { const l = softSprite('rgba(255,70,50,1)', 0.9); l.scale.setScalar(0.7); const a = i * Math.PI / 2; l.position.set(Math.sin(a) * 2.25, 3.0, Math.cos(a) * 2.25); g.add(l); }
+  g.add(bit); g.userData.bit = bit; g.scale.setScalar(s || 1); return g; };
+/* machine leader shown as a swirling cloud of lights (no face or body design); userData.tick(t) */
+CF.mind = (s) => { const g = new T.Group(), rnd = srnd(91), parts = []; const core = softSprite('rgba(255,150,70,1)', 0.75); core.scale.setScalar(4.4); g.add(core);
+  for (let i = 0; i < 80; i++) { const p = softSprite(['rgba(255,190,90,1)', 'rgba(255,110,60,1)', 'rgba(255,235,170,1)'][i % 3], 0.75); p.scale.setScalar(0.45 + rnd() * 0.7); p.userData.v = [rnd() * 6.283, Math.acos(2 * rnd() - 1), 1.6 + rnd() * 0.7]; parts.push(p); g.add(p); }
+  g.userData.tick = (t) => parts.forEach((p, i) => { const v = p.userData.v, th = v[0] + t * 0.45 * (i % 2 ? 1 : -1); p.position.set(Math.sin(v[1]) * Math.cos(th) * v[2], Math.cos(v[1]) * v[2] * 1.25, Math.sin(v[1]) * Math.sin(th) * v[2]); });
+  g.userData.tick(0); g.scale.setScalar(s || 1); return g; };
+/* dark spire with glowing window rings */
+CF.spire = (s, h) => { const g = new T.Group(), H = h || 14; g.add(at3(mk(new T.CylinderGeometry(0.4, 1.6, H, 8), '#1e1a20', { flatShading: true }), 0, H / 2, 0)); const m = basic('#ff8a3a');
+  for (let i = 1; i < 7; i++) { const r = new T.Mesh(new T.CylinderGeometry(1.6 - i * H / 7 * 1.2 / H + 0.03, 1.6 - i * H / 7 * 1.2 / H + 0.03, 0.12, 8, 1, true), m); r.position.y = i * H / 7; g.add(r); }
+  const tp = softSprite('rgba(255,120,60,1)', 0.8); tp.scale.setScalar(2.2); tp.position.y = H + 0.4; g.add(tp); g.scale.setScalar(s || 1); return g; };
+/* wall of glowing screens; userData.panels */
+CF.tvwall = (s, cols, rows, c) => { const g = new T.Group(), n = cols || 9, m = rows || 5, panels = [];
+  for (let i = 0; i < n; i++) for (let j = 0; j < m; j++) { const p = new T.Mesh(new T.PlaneGeometry(0.95, 0.66), basic(c || '#dfeeff', { transparent: true, opacity: 0.9 })); p.position.set((i - (n - 1) / 2) * 1.05, 0.5 + j * 0.76, 0); g.add(p); panels.push(p);
+    const fig = new T.Mesh(new T.CircleGeometry(0.11, 10), basic('#5a7a9a')); fig.position.set(p.position.x, p.position.y + 0.08, 0.01); g.add(fig); const bd = new T.Mesh(new T.PlaneGeometry(0.2, 0.2), basic('#5a7a9a')); bd.position.set(p.position.x, p.position.y - 0.14, 0.01); g.add(bd); }
+  g.userData.panels = panels; g.scale.setScalar(s || 1); return g; };
+CF.rabbit = (s, c) => { const g = new T.Group(), w = c || '#fbfaf6'; const b = mk(new T.SphereGeometry(0.3, 14, 10), w); b.scale.set(1, 1.1, 0.95); b.position.y = 0.3; g.add(b); const h = mk(new T.SphereGeometry(0.24, 14, 10), w); h.position.y = 0.72; g.add(h);
+  for (const sx of [-1, 1]) { const e = mk(new T.SphereGeometry(0.07, 8, 6), w); e.scale.set(1, 3.2, 0.7); e.position.set(sx * 0.1, 1.05, 0); e.rotation.z = -sx * 0.15; g.add(e); g.add(at3(mk(new T.SphereGeometry(0.035, 6, 4), '#1e1a1a'), sx * 0.09, 0.76, 0.21)); }
+  g.add(at3(mk(new T.SphereGeometry(0.035, 6, 4), '#ff9ab0'), 0, 0.7, 0.24), at3(mk(new T.SphereGeometry(0.09, 8, 6), w), 0, 0.2, -0.3)); g.scale.setScalar(s || 1); return g; };
+CF.cup = (s, c) => { const g = new T.Group(); g.add(at3(mk(new T.CylinderGeometry(0.11, 0.09, 0.22, 12), c || '#f4f0ea'), 0, 0.11, 0)); const h = mk(new T.TorusGeometry(0.06, 0.018, 6, 10), c || '#f4f0ea'); h.position.set(0.13, 0.12, 0); g.add(h);
+  g.add(at3(mk(new T.CylinderGeometry(0.1, 0.1, 0.01, 12), '#5a3420'), 0, 0.215, 0)); g.scale.setScalar(s || 1); return g; };
+CF.cloud = (s, c) => { const g = new T.Group(), rnd = srnd(141), m = M(c || '#c4cede', { flatShading: true }); for (let i = 0; i < 9; i++) { const b = new T.Mesh(new T.IcosahedronGeometry(1, 1), m); b.scale.setScalar(1.2 + rnd() * 1.4); b.position.set(-5 + i * 1.25 + rnd(), rnd() * 0.6, (rnd() - 0.5) * 2); g.add(b); } g.scale.setScalar(s || 1); return g; };
+CF.pillar = (s, c) => { const g = new T.Group(), col = c || '#d8d0c0'; g.add(at3(mk(new T.CylinderGeometry(0.5, 0.5, 5.6, 14), col), 0, 2.8, 0), at3(mk(new T.BoxGeometry(1.3, 0.3, 1.3), col), 0, 0.15, 0), at3(mk(new T.BoxGeometry(1.3, 0.3, 1.3), col), 0, 5.6, 0)); g.scale.setScalar(s || 1); return g; };
+/* flying chips (like CF.bits) in any colour; animate with burstTick */
+CF.chips = (s, c) => { const g = new T.Group(), rnd = srnd(23); for (let i = 0; i < 16; i++) { const b = mk(new T.BoxGeometry(0.16 + rnd() * 0.2, 0.12 + rnd() * 0.15, 0.14), c || '#d8d0c0', { flatShading: true }); b.userData.v = [(rnd() - 0.5) * 4.2, 1.8 + rnd() * 2.4, (rnd() - 0.2) * 2.8, rnd() * 9]; g.add(b); } g.scale.setScalar(s || 1); return g; };
+/* "seeing the code": a teal wire grid laid over floor and walls + scattered glyph tiles (not falling rain) */
+CF.codegrid = (s, c) => { const g = new T.Group(), col = c || '#5ff0e0'; const fl = gridLines(16, 13, 0.8, col, 0.55); g.add(fl); const bw = gridLines(16, 7, 0.8, col, 0.45); bw.rotation.x = Math.PI / 2; bw.position.set(0, 3.5, -6.3); g.add(bw);
+  for (const sx of [-1, 1]) { const sw = gridLines(13, 7, 0.8, col, 0.4); sw.rotation.set(Math.PI / 2, 0, Math.PI / 2); sw.position.set(sx * 7.8, 3.5, 0); g.add(sw); }
+  const rnd = srnd(57), tm = basic(col, { transparent: true, opacity: 0.6 }); for (let i = 0; i < 46; i++) { const q = new T.Mesh(new T.PlaneGeometry(0.22, 0.3), tm); q.position.set(-7 + rnd() * 14, 0.6 + rnd() * 6, -6.2); g.add(q); } g.scale.setScalar(s || 1); return g; };
+/* energy ring (push wave / EMP): grow with scale, fade with material opacity via ringTick */
+CF.ringw = (s, c) => { const m = new T.Mesh(new T.TorusGeometry(1, 0.08, 8, 40), basic(c || '#bff4ff', { transparent: true, opacity: 0.85, depthWrite: false })); m.scale.setScalar(s || 1); return m; };
+const ringTick = (o, k, s0, s1) => { o.visible = k > 0 && k < 1; o.scale.setScalar(U.lerp(s0, s1, k)); o.material.opacity = 0.85 * (1 - k); };
+Object.assign(ENVB, {
+  /* simulated world: dark floor with a teal grid, floating cubes; o.white = the white loading void */
+  cyber(st, o) { const out = [], wht = !!o.white; const fl = mk(new T.BoxGeometry(60, 0.2, 50), wht ? '#eef2f6' : '#0e1426'); place(fl, st, 0, -0.1, -8); out.push(fl);
+    const gl = gridLines(60, 50, 1.2, wht ? '#b8c4d0' : '#3fd8d0', wht ? 0.5 : 0.45); place(gl, st, 0, 0.01, -8); out.push(gl);
+    if (o.dojo) { const mat = mk(new T.BoxGeometry(10, 0.1, 8), '#b88a5a'); place(mat, st, 0, 0.05, -0.5); out.push(mat); for (const x of [-5.6, 5.6]) for (const z of [-4.6, 3.6]) { const p = mk(new T.BoxGeometry(0.3, 4, 0.3), '#5a3a2a'); place(p, st, x, 2, z); out.push(p); } }
+    const rnd = srnd(o.seed || 151), cm = basic(wht ? '#c8d4e0' : '#3fd8d0', { transparent: true, opacity: wht ? 0.35 : 0.22 }); for (let i = 0; i < 26; i++) { const c = new T.Mesh(new T.BoxGeometry(1, 1, 1), cm); c.scale.setScalar(0.5 + rnd() * 1.6); place(c, st, -24 + rnd() * 48, 1 + rnd() * 9, -14 - rnd() * 18); c.rotation.set(rnd(), rnd(), 0); out.push(c); }
+    return out; },
+  podfield(st, o) { const out = []; const fl = mk(new T.BoxGeometry(120, 0.2, 90), '#141018'); place(fl, st, 0, -0.1, -20); out.push(fl); const rnd = srnd(161);
+    for (let r = 0; r < 4; r++) for (let i = 0; i < 7; i++) { const tw = CF.podTower(0.9 + rnd() * 0.3); place(tw, st, -24 + i * 8 + (r % 2) * 4, -2 - rnd() * 3, -9 - r * 9); out.push(tw); }
+    for (let i = 0; i < 6; i++) { const h = softSprite('rgba(255,90,70,1)', 0.1); h.scale.setScalar(6 + rnd() * 5); place(h, st, -30 + rnd() * 60, 6 + rnd() * 8, -26 - rnd() * 16); out.push(h); } return out; },
+  /* machine city: dark ground, spires, orange glows */
+  mcity(st, o) { const out = [terrain(st, '#2a2226', '#1a1418', { hill: 3, seed: 171, flat: 14 }), ranges(st, [[38, '#241c22', 8, 16, 12, 2.6]], { seed: 172 })]; const rnd = srnd(173);
+    for (let i = 0; i < 16; i++) { const sp = CF.spire(0.8 + rnd() * 0.9, 10 + rnd() * 10); place(sp, st, -30 + i * 4 + rnd() * 2, 0, -12 - rnd() * 22); out.push(sp); }
+    for (let i = 0; i < 18; i++) { const h = softSprite('rgba(255,120,50,1)', 0.25); h.scale.setScalar(6 + rnd() * 8); place(h, st, -30 + rnd() * 60, 2 + rnd() * 10, -18 - rnd() * 20); out.push(h); } return out; },
+  /* above the clouds: cloud floor + sun */
+  clouds(st, o) { const out = [], rnd = srnd(181); for (let i = 0; i < 16; i++) { const c = CF.cloud(1.4 + rnd()); place(c, st, -36 + (i % 8) * 10 + rnd() * 3, -4 - rnd() * 2, -6 - Math.floor(i / 8) * 14 - rnd() * 4); out.push(c); }
+    const sun = softSprite('rgba(255,220,160,1)', 0.95); sun.scale.setScalar(14); place(sun, st, 10, 9, -50); out.push(sun); return out; },
+});
+/* building block with a lit-window facade (top at y=0 by default: o.y); for rooftop gaps */
+CF.bldg = (s, w, h, d, c) => { const g = new T.Group(), W = w || 8, Hh = h || 24, D = d || 10, col = c || '#3a3e4a'; const b = mk(new T.BoxGeometry(W, Hh, D), col); b.position.y = -Hh / 2; g.add(b);
+  const f = new T.Mesh(new T.PlaneGeometry(W * 0.92, Hh * 0.96), basic('#ffffff', { map: facadeTex(col, 9) })); f.position.set(0, -Hh / 2, D / 2 + 0.02); g.add(f); g.add(at3(mk(new T.BoxGeometry(W, 0.5, D), '#262a32'), 0, 0.2, 0)); g.scale.setScalar(s || 1); return g; };
