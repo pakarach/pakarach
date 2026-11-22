@@ -175,8 +175,8 @@ const SC = {
     sfx: [[0.3, 'tok'], [0.9, 'tok'], [1.5, 'tok'], [2.0, 'puff'], [2.2, 'puff'], [2.6, 'glide']],
     fx: (r, t, s, o) => { const k = Math.max(0, r - 2.1); o.rocket.position.y += k * k * 1.6; o.rocket.userData.flame.visible = r > 1.9; o.rocket.userData.flame.scale.setScalar(1 + Math.sin(t * 30) * 0.1); } },
   /* ---- 3 the water planet ---- */
-  w0: { st: 'SHIP', bg: 'night', cam: [0, 0.0, 1.0, 0.0, 6.0, 0.95, 0.4], A: { coopS: { p: [-2.4, 1.4], f: 30, pop: 0.2, ex: 'happy' }, amelia: { p: [-0.6, -2.2], f: 15, pop: 0.6, pose: 'wave', ex: 'happy' },
-    rom: { p: [0.6, -2.2], f: -10, pop: 1.0, ex: 'giggle' }, doyle: { p: [2.4, 1.4], f: -25, pop: 1.4, ex: 'happy' }, tars: { p: [0.0, 0.2, 4.4], pop: 1.8, bob: 0.15, say: ['ตั้งค่ามุกตลก 100%', 2.2, 3.6] },
+  w0: { st: 'SHIP', bg: 'night', cam: [0, 0.0, 1.0, 0.0, 6.0, 0.95, 0.4], A: { coopS: { p: [-2.4, 1.4], f: 30, pop: 0.2, ex: 'happy' }, amelia: { p: [-0.95, -2.2], f: 15, pop: 0.6, pose: 'wave', ex: 'happy' },
+    rom: { p: [0.95, -2.2], f: -10, pop: 1.0, ex: 'giggle' }, doyle: { p: [2.4, 1.4], f: -25, pop: 1.4, ex: 'happy' }, tars: { p: [0.0, 0.2, 4.4], pop: 1.8, bob: 0.15, say: ['ตั้งค่ามุกตลก 100%', 2.2, 3.6] },
     }, sfx: [[0.2, 'pop'], [0.6, 'pop'], [1.0, 'pop'], [1.4, 'pop'], [1.8, 'chime'], [2.2, 'zap'], [3.8, 'tok']],
     fx: (r, t, s, o) => { if (r > 3.7) s.o.coopS.userData.setExpr('giggle'); }, hud: (g, r) => { if (r > 3.7 && r < 5) pow([['ลดเหลือ 75 พอ!', 3.7, 300, 1360, '#ffffff', 64]])(g, r); } },
   w1: { cam: [0, 0.0, 1.4, 0.6, 5.0, 0.5, 0.3], A: { amelia: null, doyle: null, tars: { p: [-3.2, -0.8, 3.6], bob: 0.15 }, coopS: { p: [-2.0, 1.0], f: 40, pose: 'think', ex: 'worried' }, rom: { p: [2.0, 1.0], f: -40, pose: 'point', ex: 'happy', say: ['พับอวกาศแบบนี้!', 1.0, 3.2] },
