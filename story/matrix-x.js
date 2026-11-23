@@ -1,23 +1,23 @@
-/* The Matrix 1-4 cast — original vinyl chibis. No actor likeness (no bald head, no pince-nez, no long hair + beard), no film costumes (no black long coat, no dark sunglasses, no latex),
+/* The Matrix 1-4 cast — original vinyl chibis. No actor likeness (no bald head, no pince-nez, no long hair + beard), no film costumes (no black long coat, no latex; sunglasses are a generic round pair, Dan's call),
    no code-rain, ship, machine or logo designs. Loaded after k-vinyl.js. */
 const MX = { neoH: '#1e1a1c', skinM: '#8a5a3c' };
 /* Neo: office (blue shirt + tie), in the sim (navy jacket, teal inner), real world (grey knit), 2021 (brown cardigan + glasses) */
 CF.neoW = (s) => { const c = vin({ hair: MX.neoH, bangs: 'short', backLen: 1.75, ears: true, brow: MX.neoH, top: '#9ab8d8', bottom: '#3a3f4a', longSleeve: true, shoes: '#2a2a2e', scale: AD * (s || 1) });
   const t = mk(new T.BoxGeometry(0.09, 0.42, 0.03), '#2a3a6a'); t.position.set(0, 0.72, 0.36); t.rotation.x = -0.12; c.add(t); return c; };
-CF.neo = (s) => vin({ hair: MX.neoH, bangs: 'short', backLen: 1.75, ears: true, brow: MX.neoH, top: '#24324e', inner: '#2f8f8a', bottom: '#1e2230', longSleeve: true, shoes: '#1e1e24', scale: AD * (s || 1) });
+CF.neo = (s) => vin({ hair: MX.neoH, bangs: 'short', backLen: 1.75, ears: true, brow: MX.neoH, shades: true, top: '#24324e', inner: '#2f8f8a', bottom: '#1e2230', longSleeve: true, shoes: '#1e1e24', scale: AD * (s || 1) });
 CF.neoR = (s) => vin({ hair: MX.neoH, bangs: 'baby', backLen: 1.5, ears: true, brow: MX.neoH, top: '#8a8a8e', bottom: '#5a5a60', longSleeve: true, shoes: '#3a3a3e', scale: AD * (s || 1) });
 CF.neoB = (s) => { const c = CF.neoR(s); const b = mk(new T.BoxGeometry(1.25, 0.2, 0.2), '#e8e4dc'); b.position.set(0, 0.95, 0.62); c.userData.head.add(b); return c; }; // blindfold (Revolutions)
 CF.neo4 = (s) => vin({ hair: '#2a2224', bangs: 'side', backLen: 1.9, ears: true, glasses: true, brow: '#2a2224', top: '#7a5a3a', inner: '#e8e0d0', bottom: '#3a3a44', longSleeve: true, scale: AD * (s || 1) });
 /* Trinity: plum jacket, short dark bob; real world dark grey; Tiffany (2021) orange work jacket */
-CF.trin = (s) => vin({ hair: '#16121a', bangs: 'part', backLen: 1.9, sideOpen: 0.8, lashes: true, brow: '#16121a', top: '#4a2a5e', inner: '#1e1a26', bottom: '#2a2234', longSleeve: true, shoes: '#1e1e24', scale: AD * 0.97 * (s || 1) });
+CF.trin = (s) => vin({ hair: '#16121a', bangs: 'part', backLen: 1.9, sideOpen: 0.8, lashes: true, shades: true, brow: '#16121a', top: '#4a2a5e', inner: '#1e1a26', bottom: '#2a2234', longSleeve: true, shoes: '#1e1e24', scale: AD * 0.97 * (s || 1) });
 CF.trinR = (s) => vin({ hair: '#16121a', bangs: 'part', backLen: 1.9, sideOpen: 0.8, lashes: true, brow: '#16121a', top: '#5a5a62', bottom: '#3a3a42', longSleeve: true, scale: AD * 0.97 * (s || 1) });
 CF.tiff = (s) => vin({ hair: '#3a2a22', bangs: 'side', backLen: 2.3, sideOpen: 0.7, lashes: true, brow: '#3a2a22', top: '#d8783a', inner: '#f2ece0', bottom: '#3a4a6a', longSleeve: true, scale: AD * 0.97 * (s || 1) });
 /* Morpheus: short hair, deep red coat, gold inner (no bald head, no pince-nez); 2021 program: teal suit */
-CF.morph = (s) => vin({ hair: '#1a1414', bangs: 'short', backLen: 1.6, ears: true, brow: '#1a1414', top: '#7a2232', inner: '#d8b04a', bottom: '#2a1e22', longSleeve: true, skin: MX.skinM, shoes: '#2a1e1e', scale: AD * 1.05 * (s || 1) });
+CF.morph = (s) => vin({ hair: '#1a1414', bangs: 'short', backLen: 1.6, ears: true, brow: '#1a1414', shades: true, top: '#7a2232', inner: '#d8b04a', bottom: '#2a1e22', longSleeve: true, skin: MX.skinM, shoes: '#2a1e1e', scale: AD * 1.05 * (s || 1) });
 CF.morphR = (s) => vin({ hair: '#1a1414', bangs: 'short', backLen: 1.6, ears: true, brow: '#1a1414', top: '#6a5a50', bottom: '#4a4038', longSleeve: true, skin: MX.skinM, scale: AD * 1.05 * (s || 1) });
 CF.morph4 = (s) => vin({ hair: '#1a1414', bangs: 'side', backLen: 1.6, ears: true, brow: '#1a1414', top: '#2a9a8a', inner: '#f2d04a', bottom: '#2a9a8a', longSleeve: true, skin: CK.pal.skin[2], scale: AD * 1.03 * (s || 1) });
-/* Agents: plain grey suits, slicked hair, NO dark glasses; Smith = mid grey + green-grey tie; 2021 Smith = navy suit */
-const suit = (c, tie, hair, s) => { const f = vin({ hair: hair || '#3a2e28', bangs: 'part', backLen: 1.6, ears: true, brow: hair || '#3a2e28', top: c, inner: '#eef0f2', bottom: c, longSleeve: true, shoes: '#1a1a1e', scale: AD * (s || 1) });
+/* Agents: plain grey suits, slicked hair, round generic sunglasses (Dan's call, Nov 2026); Smith = mid grey + green-grey tie; 2021 Smith = navy suit */
+const suit = (c, tie, hair, s) => { const f = vin({ hair: hair || '#3a2e28', shades: true, bangs: 'part', backLen: 1.6, ears: true, brow: hair || '#3a2e28', top: c, inner: '#eef0f2', bottom: c, longSleeve: true, shoes: '#1a1a1e', scale: AD * (s || 1) });
   const t = mk(new T.BoxGeometry(0.09, 0.42, 0.03), tie); t.position.set(0, 0.72, 0.36); t.rotation.x = -0.12; f.add(t); return f; };
 CF.smith = (s) => suit('#6a6e76', '#3a4a40', '#3a2e28', s);
 CF.agent = (s, i) => suit(['#4a4e56', '#5a5650', '#3e4450'][(i || 0) % 3], '#2a2a30', ['#2a2420', '#6a5040', '#1a1614'][(i || 0) % 3], s);

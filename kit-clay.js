@@ -112,7 +112,7 @@
   /* chibi character. Options (v2 names; v1 names hairStyle/accessory still work):
      skin, hair, bangs side|part|short|baby|peek|none, ahoge, bun, pigtails, bald, hood(color), bear(bear ears on hood), ears,
      top, bottom, shoes, sleeve, stripes(color), inner(color, open cardigan), collar(color),
-     glasses, paci(color), bow(color), hat(color), bib, mustache(color), lashes, eyeScale, eyeSpread, round, brow, iris, scale.
+     glasses, shades(color|true), paci(color), bow(color), hat(color), bib, mustache(color), lashes, eyeScale, eyeSpread, round, brow, iris, scale.
      longSleeve (sleeve covers most of the arm).
      userData: head, arm1, arm-1 (shoulder pivots), hand1, hand-1, setExpr(happy|worried|sick|sleepy|giggle|angry|cry), tick(t,{wave,breath}). Angry shows a pop mark, cry adds falling tears. */
   CK.chibi = function (T, o0) {
@@ -189,6 +189,12 @@
       const gm = M('#2b2b2b', { roughness: 0.25 });
       for (const s of [-1, 1]) { const p = surf(T, 1.66, s * 0.31, 0.745); const r = new T.Mesh(new T.TorusGeometry(0.15, 0.026, 10, 32), gm); r.position.set(p.x, p.y, p.z + 0.035); r.rotation.y = s * 0.3; HS.add(r); }
       const br = new T.Mesh(new T.CylinderGeometry(0.016, 0.016, 0.16, 6), gm); br.rotation.z = PI / 2; br.position.set(0, -0.04, 0.77); HS.add(br);
+    }
+    if (o.shades) { /* round dark sunglasses (generic): o.shades = frame colour or true */
+      const fm = M(o.shades === true ? '#1a1a1e' : o.shades, { roughness: 0.3 }), lm = M('#121418', { roughness: 0.12, metalness: 0.3 });
+      for (const s of [-1, 1]) { const p = surf(T, 1.66, s * 0.31, 0.745); const l = new T.Mesh(new T.SphereGeometry(0.17, 20, 12), lm); l.scale.set(1.05, 0.88, 0.3); l.position.set(p.x, p.y, p.z + 0.04); l.rotation.y = s * 0.3; HS.add(l);
+        const r = new T.Mesh(new T.TorusGeometry(0.175, 0.024, 10, 32), fm); r.scale.set(1.05, 0.88, 1); r.position.set(p.x, p.y, p.z + 0.05); r.rotation.y = s * 0.3; HS.add(r); }
+      const br = new T.Mesh(new T.CylinderGeometry(0.018, 0.018, 0.16, 6), fm); br.rotation.z = PI / 2; br.position.set(0, -0.04, 0.79); HS.add(br);
     }
     if (o.mustache) for (const s of [-1, 1]) { const m = new T.Mesh(new T.SphereGeometry(0.1, 14, 10), M(o.mustache)); const p = surf(T, 1.84, s * 0.12, 0.74); m.position.copy(p); m.scale.set(1.5, 0.55, 0.6); m.rotation.z = s * 0.28; HS.add(m); }
     if (o.paci) { const p = surf(T, 1.92, 0, 0.73); const shd = new T.Mesh(new T.SphereGeometry(0.15, 18, 12), M(o.paci)); shd.scale.set(1.35, 0.85, 0.32); shd.position.copy(p).add(new T.Vector3(0, 0, 0.02)); HS.add(shd); const bt = new T.Mesh(new T.SphereGeometry(0.055, 12, 10), M('#ffffff')); bt.position.copy(shd.position).add(new T.Vector3(0, 0, 0.05)); HS.add(bt); const rg = new T.Mesh(new T.TorusGeometry(0.075, 0.022, 8, 20), M('#ffffff')); rg.position.copy(shd.position).add(new T.Vector3(0, -0.09, 0.08)); rg.rotation.x = 0.5; HS.add(rg); ud.paci = [shd, bt, rg]; }
