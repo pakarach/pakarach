@@ -252,24 +252,28 @@ const roster = (list) => (g, r) => { let k = -1; list.forEach((x, i) => { if (r 
 const foe = (x, z, tHit, dir, extra) => Object.assign({ p: [x, z], f: dir > 0 ? -60 : 60, ex: 'angry', pop: Math.max(0, tHit - 0.8), fall: [tHit + 0.05, tHit + 0.45], fallDir: dir > 0 ? 1 : -1, out: tHit + 0.9 }, extra);
 const W_ = (k, x, z, f, ex, extra) => Object.assign({ p: [x, z], f: f || 0, ex: ex || 'happy' }, extra); // plain standing actor
 const HOLD = (who, side, dy) => ({ on: [who, side || 'R', 0, dy || 0, 0.05] });
+/* intro race reveals: voiced = when each race name is spoken (vo.json marks, s into the clip; clip starts 0.3 s into the beat) */
+const IM = (id, k, d) => { const m = window.DATA && DATA.vo && DATA.vo.marks && DATA.vo.marks[id]; return m ? +(0.24 + m[k]).toFixed(2) : d; };
+const IA = { i1: [IM('i1', 0, 0.4), IM('i1', 1, 3.6)], i2: [IM('i2', 0, 0.4), IM('i2', 1, 3.6)], i3: [IM('i3', 0, 0.4), IM('i3', 1, 3.6)] };
+IA.i2[0] = Math.max(0.4, IA.i2[0]); IA.i3[0] = Math.max(0.4, IA.i3[0]);
 const SC = {
   cover: { st: 'SHIRE', bg: 'day', cam: [0, 0.3, 0.9, 0.6, 4.6, 0.5, 0.3], A: { frodo: { p: [-0.5, 0.9], f: 15, ex: 'worried', pose: 'give' }, oring: { on: ['frodo', 'R', 0, 0.12, 0.1], bob: 0.03, spin: 2 },
     sam: { p: [1.0, 1.4], f: -25, ex: 'worried' }, gand: { p: [1.6, -1.0], f: -25, ex: 'worried' }, staff: HOLD('gand', 'L') } },
   i1: { st: 'ROHAN', bg: 'day', cam: [0, 0, 0.9, 0.4, 5.6, 0.5, 0.3], A: {
-    frodo: { p: [-2.5, 0.5], f: 25, ex: 'happy', pop: 0.4, pose: at_(0.5, null, 'wave') }, sam: { p: [-1.2, 0.5], f: 15, ex: 'giggle', pop: 0.6 }, lb1: { p: [-1.85, 0.5, 2.5], pop: 0.4, bob: 0.05 },
-    thorin: { p: [1.2, 0.5], f: -15, ex: 'angry', pop: 3.6, pose: 'hips' }, gimli: { p: [2.5, 0.5], f: -25, ex: 'giggle', pop: 3.8 }, axe: { on: ['gimli', 'R', 0, 0, 0.05], pop: 3.8 }, lb2: { p: [1.85, 0.5, 3.1], pop: 3.6, bob: 0.05 } },
-    hud: roster([[0.4, 'ฮอบบิท', 'ตัวเล็กครึ่งคน เดินเท้าเปล่า', 'รักบ้าน ชอบกิน ไม่ชอบผจญภัย', 'ตัวเด่น: บิลโบ โฟรโด แซม', P.gold], [3.6, 'คนแคระ', 'ตัวเตี้ยแต่ถึก ขุดแร่เก่ง', 'รักทองมาก พกขวาน', 'ตัวเด่น: ธอริน กิมลี', '#ff9a5a']]),
-    sfx: [[0.4, 'pop'], [0.6, 'pop'], [3.6, 'pop'], [3.8, 'pop']], fx: (r, t, s, o) => { hop(o.frodo, r, 0.4, 0.5); hop(o.sam, r, 0.6, 0.5); hop(o.thorin, r, 3.6, 0.5); hop(o.gimli, r, 3.8, 0.5); } },
+    frodo: { p: [-2.5, 0.5], f: 25, ex: 'happy', pop: IA.i1[0], pose: at_(IA.i1[0] + 0.1, null, 'wave') }, sam: { p: [-1.2, 0.5], f: 15, ex: 'giggle', pop: IA.i1[0] + 0.2 }, lb1: { p: [-1.85, 0.5, 2.5], pop: IA.i1[0], bob: 0.05 },
+    thorin: { p: [1.2, 0.5], f: -15, ex: 'angry', pop: IA.i1[1], pose: 'hips' }, gimli: { p: [2.5, 0.5], f: -25, ex: 'giggle', pop: IA.i1[1] + 0.2 }, axe: { on: ['gimli', 'R', 0, 0, 0.05], pop: IA.i1[1] + 0.2 }, lb2: { p: [1.85, 0.5, 3.1], pop: IA.i1[1], bob: 0.05 } },
+    hud: roster([[IA.i1[0], 'ฮอบบิท', 'ตัวเล็กครึ่งคน เดินเท้าเปล่า', 'รักบ้าน ชอบกิน ไม่ชอบผจญภัย', 'ตัวเด่น: บิลโบ โฟรโด แซม', P.gold], [IA.i1[1], 'คนแคระ', 'ตัวเตี้ยแต่ถึก ขุดแร่เก่ง', 'รักทองมาก พกขวาน', 'ตัวเด่น: ธอริน กิมลี', '#ff9a5a']]),
+    sfx: [[IA.i1[0], 'pop'], [IA.i1[0] + 0.2, 'pop'], [IA.i1[1], 'pop'], [IA.i1[1] + 0.2, 'pop']], fx: (r, t, s, o) => { hop(o.frodo, r, IA.i1[0], 0.5); hop(o.sam, r, IA.i1[0] + 0.2, 0.5); hop(o.thorin, r, IA.i1[1], 0.5); hop(o.gimli, r, IA.i1[1] + 0.2, 0.5); } },
   i2: { cam: [0, 0, 0.9, 0.4, 5.6, 0.5, 0.3], A: { frodo: null, sam: null, lb1: null, thorin: null, gimli: null, axe: null, lb2: null,
-    legolas: { p: [-2.5, 0.5], f: 25, ex: 'happy', pop: 0.4, pose: 'draw' }, bow: { on: ['legolas', 'L', 0, 0, 0.05], pop: 0.4 }, elrond: { p: [-1.2, 0.5], f: 15, ex: 'happy', pop: 0.6 }, lb3: { p: [-1.85, 0.5, 3.4], pop: 0.4, bob: 0.05 },
-    aragorn: { p: [1.2, 0.5], f: -15, ex: 'happy', pop: 3.6, pose: raise }, sword3: { on: ['aragorn', 'R', 0, 0, 0.05], pop: 3.6 }, boromir: { p: [2.5, 0.5], f: -25, ex: 'happy', pop: 3.8, pose: 'fist' }, lb4: { p: [1.85, 0.5, 3.4], pop: 3.6, bob: 0.05 } },
-    hud: roster([[0.4, 'เอลฟ์', 'สวยหล่อ อายุยืนเป็นพันปี', 'ยิงธนูแม่นที่สุด', 'ตัวเด่น: เลโกลัส เอลรอนด์', '#8ee08a'], [3.6, 'มนุษย์', 'อายุสั้น แต่ใจกล้า', 'มีอาณาจักรและกษัตริย์', 'ตัวเด่น: อารากอร์น โบโรเมียร์', '#8ac8ff']]),
-    sfx: [[0.4, 'pop'], [0.6, 'pop'], [3.6, 'pop'], [3.8, 'pop']], fx: (r, t, s, o) => { hop(o.legolas, r, 0.4, 0.5); hop(o.elrond, r, 0.6, 0.5); hop(o.aragorn, r, 3.6, 0.5); hop(o.boromir, r, 3.8, 0.5); } },
+    legolas: { p: [-2.5, 0.5], f: 25, ex: 'happy', pop: IA.i2[0], pose: 'draw' }, bow: { on: ['legolas', 'L', 0, 0, 0.05], pop: IA.i2[0] }, elrond: { p: [-1.2, 0.5], f: 15, ex: 'happy', pop: IA.i2[0] + 0.2 }, lb3: { p: [-1.85, 0.5, 3.4], pop: IA.i2[0], bob: 0.05 },
+    aragorn: { p: [1.2, 0.5], f: -15, ex: 'happy', pop: IA.i2[1], pose: raise }, sword3: { on: ['aragorn', 'R', 0, 0, 0.05], pop: IA.i2[1] }, boromir: { p: [2.5, 0.5], f: -25, ex: 'happy', pop: IA.i2[1] + 0.2, pose: 'fist' }, lb4: { p: [1.85, 0.5, 3.4], pop: IA.i2[1], bob: 0.05 } },
+    hud: roster([[IA.i2[0], 'เอลฟ์', 'สวยหล่อ อายุยืนเป็นพันปี', 'ยิงธนูแม่นที่สุด', 'ตัวเด่น: เลโกลัส เอลรอนด์', '#8ee08a'], [IA.i2[1], 'มนุษย์', 'อายุสั้น แต่ใจกล้า', 'มีอาณาจักรและกษัตริย์', 'ตัวเด่น: อารากอร์น โบโรเมียร์', '#8ac8ff']]),
+    sfx: [[IA.i2[0], 'pop'], [IA.i2[0] + 0.2, 'pop'], [IA.i2[1], 'pop'], [IA.i2[1] + 0.2, 'pop']], fx: (r, t, s, o) => { hop(o.legolas, r, IA.i2[0], 0.5); hop(o.elrond, r, IA.i2[0] + 0.2, 0.5); hop(o.aragorn, r, IA.i2[1], 0.5); hop(o.boromir, r, IA.i2[1] + 0.2, 0.5); } },
   i3: { cam: [0, 0, 0.9, 0.4, 5.6, 0.5, 0.3], A: { legolas: null, bow: null, elrond: null, lb3: null, aragorn: null, sword3: null, boromir: null, lb4: null,
-    gand: { p: [-1.85, 0.5], f: 25, ex: 'giggle', pop: 0.4, pose: raise }, staffL: { on: ['gand', 'R', 0, 0, 0.05], pop: 0.4 }, lb5: { p: [-1.85, 0.5, 3.9], pop: 0.4, bob: 0.05 },
-    o1: { p: [1.2, 0.5], f: -15, ex: 'angry', pop: 3.6, pose: 'fist' }, o2: { p: [2.5, 0.5], f: -25, ex: 'angry', pop: 3.8, pose: raise }, sword2: { on: ['o2', 'R', 0, 0, 0.05], pop: 3.8 }, lb6: { p: [1.85, 0.5, 3.3], pop: 3.6, bob: 0.05 } },
-    hud: roster([[0.4, 'พ่อมด', 'ผู้มีพลังเวท ถือไม้เท้า', 'คอยช่วยและนำทางฝ่ายดี', 'ตัวเด่น: แกนดัล์ฟ', '#d8d8ff'], [3.6, 'ออร์ค', 'ทหารของฝ่ายมืด', 'ดุร้าย มาเป็นฝูงใหญ่', 'นายใหญ่: เซารอน จอมมาร', '#ff6a5a']]),
-    sfx: [[0.4, 'shimmer'], [3.6, 'tok'], [3.8, 'tok']], fx: (r, t, s, o) => { hop(o.gand, r, 0.4, 0.5); hop(o.o1, r, 3.6, 0.5); hop(o.o2, r, 3.8, 0.5); } },
+    gand: { p: [-1.85, 0.5], f: 25, ex: 'giggle', pop: IA.i3[0], pose: raise }, staffL: { on: ['gand', 'R', 0, 0, 0.05], pop: IA.i3[0] }, lb5: { p: [-1.85, 0.5, 3.9], pop: IA.i3[0], bob: 0.05 },
+    o1: { p: [1.2, 0.5], f: -15, ex: 'angry', pop: IA.i3[1], pose: 'fist' }, o2: { p: [2.5, 0.5], f: -25, ex: 'angry', pop: IA.i3[1] + 0.2, pose: raise }, sword2: { on: ['o2', 'R', 0, 0, 0.05], pop: IA.i3[1] + 0.2 }, lb6: { p: [1.85, 0.5, 3.3], pop: IA.i3[1], bob: 0.05 } },
+    hud: roster([[IA.i3[0], 'พ่อมด', 'ผู้มีพลังเวท ถือไม้เท้า', 'คอยช่วยและนำทางฝ่ายดี', 'ตัวเด่น: แกนดัล์ฟ', '#d8d8ff'], [IA.i3[1], 'ออร์ค', 'ทหารของฝ่ายมืด', 'ดุร้าย มาเป็นฝูงใหญ่', 'นายใหญ่: เซารอน จอมมาร', '#ff6a5a']]),
+    sfx: [[IA.i3[0], 'shimmer'], [IA.i3[1], 'tok'], [IA.i3[1] + 0.2, 'tok']], fx: (r, t, s, o) => { hop(o.gand, r, IA.i3[0], 0.5); hop(o.o1, r, IA.i3[1], 0.5); hop(o.o2, r, IA.i3[1] + 0.2, 0.5); } },
   /* =========== ฮอบบิท 1 =========== */
   h1: { st: 'SHIRE', bg: 'day', calm: true, cam: [0, 0.2, 0.9, -0.6, 5.2, 0.55, 0.4], A: { frodo: null, oring: null, sam: null,
     bilbo: { p: [-1.6, -1.6], f: 30, ex: 'happy', pose: during(0, 1.8, 'hold', null), say: [['ชาร้อนๆ ฟินจัง~', 0.2, 1.6], ['ไม่ล่ะ ขอบคุณ!', 3.5]] },
