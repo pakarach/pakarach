@@ -9,7 +9,7 @@ const EP = {
   facts: [['6 ภาครวมทำเงินเกือบ 6,000 ล้านดอลลาร์', 'ภาคสุดท้ายของแหวนทำเงินสูงสุด เกิน 1,100 ล้าน'], ['ภาค 3 ของแหวน กวาด 11 ออสการ์', 'ชิง 11 สาขา ได้ครบทุกสาขา ไม่พลาดสักรางวัล'], ['ฮอบบิทภาค 1 ถ่ายที่ 48 เฟรมต่อวินาที', 'หนังเรื่องแรกที่ถ่ายและฉายแบบนี้ ลื่นกว่าปกติ 2 เท่า']],
   src: 'ที่มา: Box Office Watch · The Numbers · Guinness World Records', factFoot: 'ภาพจำลอง 3D ไม่ใช่ภาพจากภาพยนตร์',
 };
-const BEATS = [['cover', 2.2], ['intro', 8.2]];
+const BEATS = [['cover', 2.2], ['i1', 7.0], ['i2', 7.0], ['i3', 7.0]];
 const BL = {
   h: [5.0, 4.8, 5.0, 4.8, 4.4, 5.0, 4.8, 4.6, 4.8, 4.8, 5.0, 5.0, 4.8, 5.0, 5.0, 4.8, 5.0, 4.6, 4.8, 5.2],
   m: [4.8, 4.6, 4.6, 5.0, 4.8, 4.8, 5.0, 4.6, 5.0, 4.6, 5.0, 4.8, 4.8, 4.8, 5.0, 5.0],
@@ -21,7 +21,9 @@ const BL = {
 for (const k of 'hmwftr') BL[k].forEach((d, i) => BEATS.push([k + (i + 1), d]));
 BEATS.push(['facts', 9.6], ['next', 4.0], ['ask', 4.6], ['end', 1.6]);
 const CAP = {
-  intro: ['ก่อนเริ่ม รู้จัก{6 เผ่า}ในเรื่องนี้', '<ใครดี ใครร้าย> ดูให้ดีนะ!'],
+  i1: ['ก่อนเริ่ม รู้จัก{6 เผ่า}ในเรื่องนี้', 'เริ่มที่<ฮอบบิท>กับ<คนแคระ>'],
+  i2: ['{เอลฟ์}กับ{มนุษย์}', 'เคยจับมือกันสู้<จอมมาร>มาก่อน'],
+  i3: ['{พ่อมด}ฝ่ายดี กับ<ออร์ค>ฝ่ายมืด', 'จำไว้ แล้วไปผจญภัยกันเลย!'],
   /* ---- ฮอบบิท 1 (2012) ---- */
   h1: ['ฮอบบิทชื่อ{บิลโบ} รักบ้านที่สุดในโลก', 'พ่อมด{แกนดัล์ฟ}มาชวนผจญภัย <บิลโบปฏิเสธทันที>'],
   h2: ['แกนดัล์ฟแอบนัด{คนแคระ 13 คน}มาบ้านบิลโบ', 'กินเกลี้ยงตู้ <เจ้าของบ้านไม่รู้เรื่องเลย>'],
@@ -242,10 +244,10 @@ const pow = (list) => (g, r) => list.forEach(([tx, t0, x, y, col, sz]) => { cons
   g.font = '900 ' + Math.round(z) + 'px Kanit,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 16; g.strokeStyle = '#2a1a10'; g.strokeText(tx, 0, 0); g.fillStyle = col || '#ffd94a'; g.fillText(tx, 0, 0); g.restore(); });
 const partCard = (n, yr) => (g, r) => { const a = U.clamp(r / 0.25) * U.clamp((2.8 - r) / 0.4); if (a <= 0) return; g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.85)'; rr(g, 250, 1600, 580, 170, 44); g.fill(); g.strokeStyle = P.gold; g.lineWidth = 4; g.stroke();
   txt(g, n, 540, 1660, 64, P.gold, 800); txt(g, yr, 540, 1728, 42, '#fff', 600); g.restore(); };
-/* roster card: rows [t0, name, desc, colour]; the newest row whose t0 has passed is shown */
-const roster = (list) => (g, r) => { let k = -1; list.forEach((x, i) => { if (r >= x[0]) k = i; }); if (k < 0) return; const [t0, nm, ds, col] = list[k], a = U.clamp((r - t0) / 0.18);
-  g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.86)'; rr(g, 170, 1590, 740, 190, 40); g.fill(); g.strokeStyle = col; g.lineWidth = 5; g.stroke();
-  txt(g, nm, 540, 1655, 66, col, 800); txt(g, ds, 540, 1730, 44, '#fff', 600); g.restore(); };
+/* roster card: rows [t0, name, line1, line2, notable characters, colour]; the newest row whose t0 has passed is shown */
+const roster = (list) => (g, r) => { let k = -1; list.forEach((x, i) => { if (r >= x[0]) k = i; }); if (k < 0) return; const [t0, nm, l1, l2, st, col] = list[k], a = U.clamp((r - t0) / 0.18);
+  g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.88)'; rr(g, 120, 1500, 840, 300, 40); g.fill(); g.strokeStyle = col; g.lineWidth = 5; g.stroke();
+  txt(g, nm, 540, 1560, 66, col, 800); txt(g, l1, 540, 1632, 42, '#fff', 600); txt(g, l2, 540, 1684, 42, '#fff', 600); txt(g, st, 540, 1748, 34, P.gold, 600); g.restore(); };
 /* foe: pops in 0.8 s before tHit, knocked down at tHit, fades 0.9 s later */
 const foe = (x, z, tHit, dir, extra) => Object.assign({ p: [x, z], f: dir > 0 ? -60 : 60, ex: 'angry', pop: Math.max(0, tHit - 0.8), fall: [tHit + 0.05, tHit + 0.45], fallDir: dir > 0 ? 1 : -1, out: tHit + 0.9 }, extra);
 const W_ = (k, x, z, f, ex, extra) => Object.assign({ p: [x, z], f: f || 0, ex: ex || 'happy' }, extra); // plain standing actor
@@ -253,15 +255,21 @@ const HOLD = (who, side, dy) => ({ on: [who, side || 'R', 0, dy || 0, 0.05] });
 const SC = {
   cover: { st: 'SHIRE', bg: 'day', cam: [0, 0.3, 0.9, 0.6, 4.6, 0.5, 0.3], A: { frodo: { p: [-0.5, 0.9], f: 15, ex: 'worried', pose: 'give' }, oring: { on: ['frodo', 'R', 0, 0.12, 0.1], bob: 0.03, spin: 2 },
     sam: { p: [1.0, 1.4], f: -25, ex: 'worried' }, gand: { p: [1.6, -1.0], f: -25, ex: 'worried' }, staff: HOLD('gand', 'L') } },
-  intro: { st: 'ROHAN', bg: 'day', cam: [0, 0, 1.0, 0.0, 7.6, 0.55, 0.3], A: {
-    frodo: { p: [-4.0, 0.2], f: 20, ex: 'happy', pop: 0.5, pose: at_(0.6, null, 'wave') }, d1: { p: [-2.4, 0.0], f: 15, ex: 'giggle', pop: 1.7 }, axe: { on: ['d1', 'R', 0, 0, 0.05], pop: 1.7 },
-    legolas: { p: [-0.8, -0.2], f: 5, ex: 'happy', pop: 2.9, pose: 'draw' }, bow: { on: ['legolas', 'L', 0, 0, 0.05], pop: 2.9 }, aragorn: { p: [0.8, -0.2], f: -5, ex: 'happy', pop: 4.1, pose: raise }, sword3: { on: ['aragorn', 'R', 0, 0, 0.05], pop: 4.1 },
-    gand: { p: [2.4, 0.0], f: -15, ex: 'giggle', pop: 5.3, pose: raise }, staffL: { on: ['gand', 'R', 0, 0, 0.05], pop: 5.3 }, o1: { p: [4.0, 0.2], f: -20, ex: 'angry', pop: 6.5, pose: 'fist' },
-    lb1: { p: [-4.0, 0.2, 2.6], pop: 0.5, bob: 0.05 }, lb2: { p: [-2.4, 0.0, 3.2], pop: 1.7, bob: 0.05 }, lb3: { p: [-0.8, -0.2, 3.5], pop: 2.9, bob: 0.05 }, lb4: { p: [0.8, -0.2, 3.5], pop: 4.1, bob: 0.05 }, lb5: { p: [2.4, 0.0, 3.9], pop: 5.3, bob: 0.05 }, lb6: { p: [4.0, 0.2, 3.4], pop: 6.5, bob: 0.05 } },
-    hud: roster([[0.5, 'ฮอบบิท', 'ตัวเล็ก เท้าเปล่า รักบ้าน', P.gold], [1.7, 'คนแคระ', 'ขุดแร่เก่ง รักทองมาก', '#ff9a5a'], [2.9, 'เอลฟ์', 'อายุยืน ยิงธนูแม่น', '#8ee08a'], [4.1, 'มนุษย์', 'นักรบ มีกษัตริย์ปกครอง', '#8ac8ff'],
-      [5.3, 'พ่อมด', 'มีพลังเวท คอยช่วยฝ่ายดี', '#d8d8ff'], [6.5, 'ออร์ค', 'ลูกน้องฝ่ายมืด', '#ff6a5a']]),
-    sfx: [[0.5, 'pop'], [1.7, 'pop'], [2.9, 'pop'], [4.1, 'pop'], [5.3, 'shimmer'], [6.5, 'tok']],
-    fx: (r, t, s, o) => { [['frodo', 0.5], ['d1', 1.7], ['legolas', 2.9], ['aragorn', 4.1], ['gand', 5.3], ['o1', 6.5]].forEach(([k, t0]) => hop(o[k], r, t0, 0.5)); } },
+  i1: { st: 'ROHAN', bg: 'day', cam: [0, 0, 0.9, 0.4, 5.6, 0.5, 0.3], A: {
+    frodo: { p: [-2.5, 0.5], f: 25, ex: 'happy', pop: 0.4, pose: at_(0.5, null, 'wave') }, sam: { p: [-1.2, 0.5], f: 15, ex: 'giggle', pop: 0.6 }, lb1: { p: [-1.85, 0.5, 2.5], pop: 0.4, bob: 0.05 },
+    thorin: { p: [1.2, 0.5], f: -15, ex: 'angry', pop: 3.6, pose: 'hips' }, gimli: { p: [2.5, 0.5], f: -25, ex: 'giggle', pop: 3.8 }, axe: { on: ['gimli', 'R', 0, 0, 0.05], pop: 3.8 }, lb2: { p: [1.85, 0.5, 3.1], pop: 3.6, bob: 0.05 } },
+    hud: roster([[0.4, 'ฮอบบิท', 'ตัวเล็กครึ่งคน เดินเท้าเปล่า', 'รักบ้าน ชอบกิน ไม่ชอบผจญภัย', 'ตัวเด่น: บิลโบ โฟรโด แซม', P.gold], [3.6, 'คนแคระ', 'ตัวเตี้ยแต่ถึก ขุดแร่เก่ง', 'รักทองมาก พกขวาน', 'ตัวเด่น: ธอริน กิมลี', '#ff9a5a']]),
+    sfx: [[0.4, 'pop'], [0.6, 'pop'], [3.6, 'pop'], [3.8, 'pop']], fx: (r, t, s, o) => { hop(o.frodo, r, 0.4, 0.5); hop(o.sam, r, 0.6, 0.5); hop(o.thorin, r, 3.6, 0.5); hop(o.gimli, r, 3.8, 0.5); } },
+  i2: { cam: [0, 0, 0.9, 0.4, 5.6, 0.5, 0.3], A: { frodo: null, sam: null, lb1: null, thorin: null, gimli: null, axe: null, lb2: null,
+    legolas: { p: [-2.5, 0.5], f: 25, ex: 'happy', pop: 0.4, pose: 'draw' }, bow: { on: ['legolas', 'L', 0, 0, 0.05], pop: 0.4 }, elrond: { p: [-1.2, 0.5], f: 15, ex: 'happy', pop: 0.6 }, lb3: { p: [-1.85, 0.5, 3.4], pop: 0.4, bob: 0.05 },
+    aragorn: { p: [1.2, 0.5], f: -15, ex: 'happy', pop: 3.6, pose: raise }, sword3: { on: ['aragorn', 'R', 0, 0, 0.05], pop: 3.6 }, boromir: { p: [2.5, 0.5], f: -25, ex: 'happy', pop: 3.8, pose: 'fist' }, lb4: { p: [1.85, 0.5, 3.4], pop: 3.6, bob: 0.05 } },
+    hud: roster([[0.4, 'เอลฟ์', 'สวยหล่อ อายุยืนเป็นพันปี', 'ยิงธนูแม่นที่สุด', 'ตัวเด่น: เลโกลัส เอลรอนด์', '#8ee08a'], [3.6, 'มนุษย์', 'อายุสั้น แต่ใจกล้า', 'มีอาณาจักรและกษัตริย์', 'ตัวเด่น: อารากอร์น โบโรเมียร์', '#8ac8ff']]),
+    sfx: [[0.4, 'pop'], [0.6, 'pop'], [3.6, 'pop'], [3.8, 'pop']], fx: (r, t, s, o) => { hop(o.legolas, r, 0.4, 0.5); hop(o.elrond, r, 0.6, 0.5); hop(o.aragorn, r, 3.6, 0.5); hop(o.boromir, r, 3.8, 0.5); } },
+  i3: { cam: [0, 0, 0.9, 0.4, 5.6, 0.5, 0.3], A: { legolas: null, bow: null, elrond: null, lb3: null, aragorn: null, sword3: null, boromir: null, lb4: null,
+    gand: { p: [-1.85, 0.5], f: 25, ex: 'giggle', pop: 0.4, pose: raise }, staffL: { on: ['gand', 'R', 0, 0, 0.05], pop: 0.4 }, lb5: { p: [-1.85, 0.5, 3.9], pop: 0.4, bob: 0.05 },
+    o1: { p: [1.2, 0.5], f: -15, ex: 'angry', pop: 3.6, pose: 'fist' }, o2: { p: [2.5, 0.5], f: -25, ex: 'angry', pop: 3.8, pose: raise }, sword2: { on: ['o2', 'R', 0, 0, 0.05], pop: 3.8 }, lb6: { p: [1.85, 0.5, 3.3], pop: 3.6, bob: 0.05 } },
+    hud: roster([[0.4, 'พ่อมด', 'ผู้มีพลังเวท ถือไม้เท้า', 'คอยช่วยและนำทางฝ่ายดี', 'ตัวเด่น: แกนดัล์ฟ', '#d8d8ff'], [3.6, 'ออร์ค', 'ทหารของฝ่ายมืด', 'ดุร้าย มาเป็นฝูงใหญ่', 'นายใหญ่: เซารอน จอมมาร', '#ff6a5a']]),
+    sfx: [[0.4, 'shimmer'], [3.6, 'tok'], [3.8, 'tok']], fx: (r, t, s, o) => { hop(o.gand, r, 0.4, 0.5); hop(o.o1, r, 3.6, 0.5); hop(o.o2, r, 3.8, 0.5); } },
   /* =========== ฮอบบิท 1 =========== */
   h1: { st: 'SHIRE', bg: 'day', calm: true, cam: [0, 0.2, 0.9, -0.6, 5.2, 0.55, 0.4], A: { frodo: null, oring: null, sam: null,
     bilbo: { p: [-1.6, -1.6], f: 30, ex: 'happy', pose: during(0, 1.8, 'hold', null), say: [['ชาร้อนๆ ฟินจัง~', 0.2, 1.6], ['ไม่ล่ะ ขอบคุณ!', 3.5]] },
