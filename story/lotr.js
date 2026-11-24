@@ -4,7 +4,7 @@
 const EP = {
   no: 6, file: 'lotr-hobbit-6-recap', title: 'สรุปหนัง ฮอบบิท + ลอร์ดออฟเดอะริงส์ 6 ภาค', series: 'สรุปหนัง',
   cover: [[46, 'สปอยล์ ฮอบบิท + ลอร์ดออฟเดอะริงส์ 6 ภาค', 'teal'], [104, 'แหวนใส่แล้วหายตัว', 'gold'], [92, 'วิเศษที่สุดในโลก', 'w'], [76, 'แต่ต้องเอาไปทิ้งในภูเขาไฟ!', 'coral']],
-  chap: [['ผจญภัย', 'h1', 'h20'], ['มังกร', 'm1', 'm16'], ['ศึก 5 ทัพ', 'w1', 'w16'], ['ภาคีแหวน', 'f1', 'f20'], ['หอคอยคู่', 't1', 't16'], ['คืนบัลลังก์', 'r1', 'r21']],
+  chap: [['ฮอบบิท 1', 'h1', 'h20'], ['ฮอบบิท 2', 'm1', 'm16'], ['ฮอบบิท 3', 'w1', 'w16'], ['ลอร์ดฯ 1', 'f1', 'f20'], ['ลอร์ดฯ 2', 't1', 't16'], ['ลอร์ดฯ 3', 'r1', 'r21']],
   factHead: ['รู้งี้…', 'เบื้องหลังหนัง'],
   facts: [['6 ภาครวมทำเงินเกือบ 6,000 ล้านดอลลาร์', 'ภาคสุดท้ายของแหวนทำเงินสูงสุด เกิน 1,100 ล้าน'], ['ภาค 3 ของแหวน กวาด 11 ออสการ์', 'ชิง 11 สาขา ได้ครบทุกสาขา ไม่พลาดสักรางวัล'], ['ฮอบบิทภาค 1 ถ่ายที่ 48 เฟรมต่อวินาที', 'หนังเรื่องแรกที่ถ่ายและฉายแบบนี้ ลื่นกว่าปกติ 2 เท่า']],
   src: 'ที่มา: Box Office Watch · The Numbers · Guinness World Records', factFoot: 'ภาพจำลอง 3D ไม่ใช่ภาพจากภาพยนตร์',
@@ -242,8 +242,9 @@ const bgAt2 = (k, a, b) => (r) => (r < k ? a : b);
 const hudAll = (...fs) => (g, r, t, W, HH) => fs.forEach((f) => f && f(g, r, t, W, HH));
 const pow = (list) => (g, r) => list.forEach(([tx, t0, x, y, col, sz]) => { const k = r - t0; if (k < 0 || k > 1.3) return; const z = (sz || 130) * (k < 0.15 ? 0.5 + k / 0.15 * 0.7 : 1.2 - Math.min(0.2, k - 0.15)); g.save(); g.translate(x, y); g.rotate(-0.08); g.globalAlpha = k > 1.0 ? 1 - (k - 1.0) / 0.3 : 1;
   g.font = '900 ' + Math.round(z) + 'px Kanit,sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = 16; g.strokeStyle = '#2a1a10'; g.strokeText(tx, 0, 0); g.fillStyle = col || '#ffd94a'; g.fillText(tx, 0, 0); g.restore(); });
-const partCard = (n, yr) => (g, r) => { const a = U.clamp(r / 0.25) * U.clamp((2.8 - r) / 0.4); if (a <= 0) return; g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.85)'; rr(g, 250, 1600, 580, 170, 44); g.fill(); g.strokeStyle = P.gold; g.lineWidth = 4; g.stroke();
-  txt(g, n, 540, 1660, 64, P.gold, 800); txt(g, yr, 540, 1728, 42, '#fff', 600); g.restore(); };
+/* part title card: series + part / English subtitle / year — shown 3.6 s at the start of each film */
+const partCard = (n, sub, yr) => (g, r) => { const a = U.clamp(r / 0.3) * U.clamp((3.6 - r) / 0.4); if (a <= 0) return; g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.9)'; rr(g, 150, 1520, 780, 250, 46); g.fill(); g.strokeStyle = P.gold; g.lineWidth = 5; g.stroke();
+  txt(g, n, 540, 1590, 66, P.gold, 800); txt(g, sub, 540, 1662, 46, '#fff', 600); txt(g, yr, 540, 1726, 40, '#9fd8ff', 600); g.restore(); };
 /* roster card: rows [t0, name, line1, line2, notable characters, colour]; the newest row whose t0 has passed is shown */
 const roster = (list) => (g, r) => { let k = -1; list.forEach((x, i) => { if (r >= x[0]) k = i; }); if (k < 0) return; const [t0, nm, l1, l2, st, col] = list[k], a = U.clamp((r - t0) / 0.18);
   g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.88)'; rr(g, 120, 1500, 840, 300, 40); g.fill(); g.strokeStyle = col; g.lineWidth = 5; g.stroke();
@@ -278,7 +279,7 @@ const SC = {
   h1: { st: 'SHIRE', bg: 'day', calm: true, cam: [0, 0.2, 0.9, -0.6, 5.2, 0.55, 0.4], A: { frodo: null, oring: null, sam: null,
     bilbo: { p: [-1.6, -1.6], f: 30, ex: 'happy', pose: during(0, 1.8, 'hold', null), say: [['ชาร้อนๆ ฟินจัง~', 0.2, 1.6], ['ไม่ล่ะ ขอบคุณ!', 3.5]] },
     gand: { p: [5.0, 0.6], to: [1.2, -0.4, 0.2, 1.8], f: -70, ex: 'giggle', say: ['ไปผจญภัยกันไหม?', 1.9, 3.4] } },
-    hud: partCard('เดอะ ฮอบบิท ภาค 1', '2012'), sfx: [[0.3, 'soft'], [1.9, 'chime'], [3.5, 'tok']], fx: (r, t, s, o) => { if (r > 3.4) s.o.bilbo.userData.setExpr('worried'); } },
+    hud: partCard('เดอะ ฮอบบิท ภาค 1', 'An Unexpected Journey', '2012'), sfx: [[0.3, 'soft'], [1.9, 'chime'], [3.5, 'tok']], fx: (r, t, s, o) => { if (r > 3.4) s.o.bilbo.userData.setExpr('worried'); } },
   h2: { st: 'BAGEND', bg: 'hall', cam: [0, 0, 0.9, -0.6, 5.4, 0.7, 0.4], A: { table: { p: [0, -1.2] }, food: { p: [0, -1.2, 1.18] },
     d1: { p: [-2.0, -1.0], f: 70, ex: 'giggle', pop: 0.1 }, d2: { p: [2.0, -1.0], f: -70, ex: 'giggle', pop: 0.35 }, d3: { p: [-1.2, -2.6], f: 20, ex: 'giggle', pop: 0.6 }, d4: { p: [1.2, -2.6], f: -20, ex: 'happy', pop: 0.85 },
     d5: { p: [-3.0, -0.2], f: 60, ex: 'giggle', pop: 1.1 }, d6: { p: [3.0, -0.2], f: -60, ex: 'happy', pop: 1.35 },
@@ -378,7 +379,7 @@ Object.assign(SC, {
     gand: { p: [0.4, -1.4], to: [6.0, -3.0, 1.6, 3.6], f: 90, ex: 'worried', say: ['ข้าต้องไปสืบเรื่องหนึ่ง', 0.2, 1.6] }, staffL: HOLD('gand', 'R'),
     thorin: { p: [-1.8, 0.2], to: [-0.6, -0.6, 1.0, 3.0], f: 30, ex: 'worried' }, bilbo: { p: [-0.6, 1.2], f: 0, ex: 'worried', pose: 'think' }, d1: { p: [1.6, 0.6], to: [2.4, -0.4, 1.4, 3.2], f: -40, ex: 'worried' }, d2: { p: [-3.0, 1.0], f: 60, ex: 'worried' },
     q1: { p: [-0.6, 1.2, 3.0], pop: 3.0, bob: 0.08 }, q2: { p: [1.6, 0.0, 3.0], pop: 3.3, bob: 0.08 } },
-    hud: partCard('เดอะ ฮอบบิท ภาค 2', '2013'), sfx: [[0.2, 'tok'], [1.6, 'glide'], [3.0, 'pop'], [3.3, 'pop']] },
+    hud: partCard('เดอะ ฮอบบิท ภาค 2', 'The Desolation of Smaug', '2013'), sfx: [[0.2, 'tok'], [1.6, 'glide'], [3.0, 'pop'], [3.3, 'pop']] },
   m2: { cam: [0, 0, 1.1, -0.8, 6.0, 0.7, 0.4], A: { gand: null, staffL: null, q1: null, q2: null, thorin: null, d1: null, d2: null, web1: { p: [0, -3.4] }, web2: { p: [-3.6, -4.2], rot: [0, 0.4, 0] },
     wrap1: { p: [-1.4, -2.2, 1.0] }, wrap2: { p: [0.4, -2.6, 1.3] }, wrap3: { p: [2.0, -2.0, 0.9] },
     spider1: { p: [5.0, -0.6], to: [1.8, -0.2, 0.3, 2.0], f: -90 }, spider2: { p: [-5.6, 0.4], to: [-2.6, 0.2, 0.6, 2.4], f: 90 }, bilbo: { p: [-0.2, 1.6], f: 0, ex: 'cry', pose: 'cry' } },
@@ -450,7 +451,7 @@ Object.assign(SC, {
   w1: { st: 'LAKE', bg: 'fire', cam: [0, 0, 1.2, -0.6, 6.4, 0.7, 0.4], A: { flames2: { p: [0, -7.0] }, crates: { p: [2.8, -1.8] },
     bard: { p: [2.8, -1.8, 1.9], f: -20, ex: 'angry', pose: 'point', pop: 2.4, say: ['ขึ้นไปสู้มัน!', 2.8] }, drag: { p: [0, 0] }, boom: { p: [-2, -3, 1], pop: 1.0, out: 1.8 },
     m1: { p: [-4.4, 0.8], to: [3.6, 1.6, 0.2, 2.6], f: 90, ex: 'cry' }, m2: { p: [-5.4, 1.6], to: [2.6, 2.2, 0.4, 2.8], f: 90, ex: 'cry' }, m3: { p: [-6.4, 0.2], to: [1.2, 1.0, 0.6, 3.0], f: 90, ex: 'worried' } },
-    hud: hudAll(partCard('เดอะ ฮอบบิท ภาค 3', '2014'), pow([['ตูม!!', 1.0, 360, 1050, '#ff8a3a', 150]])), sfx: [[0.3, 'zip'], [1.0, 'puff'], [2.4, 'pop'], [2.8, 'tok']],
+    hud: hudAll(partCard('เดอะ ฮอบบิท ภาค 3', 'The Battle of the Five Armies', '2014'), pow([['ตูม!!', 1.0, 360, 1050, '#ff8a3a', 150]])), sfx: [[0.3, 'zip'], [1.0, 'puff'], [2.4, 'pop'], [2.8, 'tok']],
     fx: (r, t, s, o, st) => { fly(o.drag, (u) => H.at(st, Math.cos(u * 1.6) * 6, 7 + Math.sin(u * 3.2) * 1.2, -5 + Math.sin(u * 1.6) * 3), r, 0.03); } },
   w2: { cam: [0, 0.8, 1.6, -1.4, 5.6, 0.6, 0.3], A: { m1: null, m2: null, m3: null, boom: null,
     bard: { p: [2.6, -1.8, 1.9], f: -60, ex: 'angry', pose: 'draw', say: null }, bow: HOLD('bard', 'L'), bkid: { p: [2.0, -1.4, 1.9], f: -60, ex: 'worried' },
@@ -524,10 +525,10 @@ Object.assign(SC, {
 });
 /* =========== ลอร์ดออฟเดอะริงส์ 1 =========== */
 Object.assign(SC, {
-  f1: { st: 'SHIRE', bg: 'dusk', cam: [0, 0, 1.2, -0.4, 6.2, 0.6, 0.4], A: { tent: { p: [0, -4.2] }, table: { p: [0, -1.4] }, cake: { p: [0, -1.4, 1.15], s: 0.9 }, l60: { p: [0, -2.0, 5.0], pop: 0.1, out: 1.6 },
+  f1: { st: 'SHIRE', bg: 'dusk', cam: [0, 0, 1.2, -0.4, 6.2, 0.6, 0.4], A: { tent: { p: [0, -4.2] }, table: { p: [0, -1.4] }, cake: { p: [0, -1.4, 1.15], s: 0.9 },
     bilboO: { p: [-1.6, -0.2], f: 30, ex: 'giggle', pose: 'wave' }, frodo: { p: [1.6, 0.2], f: -30, ex: 'happy' }, h1: { p: [-3.2, 0.8], f: 40, ex: 'giggle', pose: 'up' }, h2: { p: [3.2, 0.9], f: -40, ex: 'giggle', pose: 'up' }, h3: { p: [-0.2, 1.6], f: 180, ex: 'happy' },
     gand: { p: [2.8, -2.4], f: -30, ex: 'giggle', pose: raise }, staff: HOLD('gand', 'L'), boom: { p: [-3, -4, 7], pop: 1.4, out: 2.4 }, boom2: { p: [3, -6, 9], pop: 2.2, out: 3.2 }, drag: { p: [0, 0] } },
-    hud: hudAll(partCard('ลอร์ดออฟเดอะริงส์ ภาค 1', '2001'), pow([['ตูม!', 1.4, 300, 800, '#ff8ad0', 130], ['ตูมม!!', 2.2, 760, 760, '#8ad0ff', 140]])), sfx: [[0.3, 'gong'], [1.4, 'puff'], [2.2, 'puff'], [3.0, 'zip'], [3.6, 'shimmer']],
+    hud: hudAll(partCard('ลอร์ดออฟเดอะริงส์ ภาค 1', 'The Fellowship of the Ring', '2001'), pow([['ตูม!', 1.4, 300, 800, '#ff8ad0', 130], ['ตูมม!!', 2.2, 760, 760, '#8ad0ff', 140]])), sfx: [[0.3, 'gong'], [1.4, 'puff'], [2.2, 'puff'], [3.0, 'zip'], [3.6, 'shimmer']],
     fx: (r, t, s, o, st) => { o.drag.visible = r > 3.0; if (o.drag.visible) fly(o.drag, qb(st, [-8, 4, -4], [0, 9, -6], [9, 6, -10], 3.0, 4.8), r, 0.03); } },
   f2: { cam: [0, 0, 1.2, -0.6, 5.4, 0.9, 0.4], A: { l60: null, boom: null, boom2: null, drag: null, bilboO: { p: [0, -1.0, 1.2], f: 0, ex: 'giggle', pose: 'wave', say: ['ขอตัวลาไปก่อนนะ!', 0.3, 2.0] }, spark: { p: [0, 0] }, table: { p: [0, -1.2] }, cake: null,
     h1: { p: [-2.6, 0.4], f: 130, ex: 'happy', pose: null }, h2: { p: [2.6, 0.5], f: -130, ex: 'happy', pose: null }, h3: { p: [-3.2, 1.6], f: 140, ex: 'happy' }, frodo: { p: [2.8, 1.6], f: -140, ex: 'happy' } },
@@ -617,7 +618,7 @@ Object.assign(SC, {
   t1: { st: 'ROCKS', bg: 'night', cam: [0, 0, 0.9, -0.2, 5.4, 0.6, 0.4], A: {
     gollum: { p: [3.0, -2.6, 1.6], to: [0.6, 0.4, 0.4, 1.2, 0], f: -60, ex: 'angry', pose: 'reach', say: [['แหวน! ของข้า!', 0.2, 1.2], ['อย่าฆ่าข้าเลย…', 2.4]] },
     frodo: { p: [-0.8, 0.8], f: 60, ex: 'angry', pose: at_(1.6, null, aim) }, sting: HOLD('frodo'), sam: { p: [-2.0, 0.2], f: 60, ex: 'angry', pose: 'fist' } },
-    hud: hudAll(partCard('ลอร์ดออฟเดอะริงส์ ภาค 2', '2002'), pow([['ตุ้บ!', 1.2, 540, 1250, '#ffd94a', 120]])), sfx: [[0.2, 'zip'], [1.2, 'puff'], [1.6, 'shimmer'], [2.4, 'tok']],
+    hud: hudAll(partCard('ลอร์ดออฟเดอะริงส์ ภาค 2', 'The Two Towers', '2002'), pow([['ตุ้บ!', 1.2, 540, 1250, '#ffd94a', 120]])), sfx: [[0.2, 'zip'], [1.2, 'puff'], [1.6, 'shimmer'], [2.4, 'tok']],
     fx: (r, t, s, o) => { if (r > 1.4) { s.o.gollum.userData.setExpr('cry'); o.gollum.position.y -= 0.2; } } },
   t2: { st: 'ROHAN', bg: 'day', cam: [[0, 0, 0.9, 0.2, 6.0, 0.6, 0.5], [2.2, 3.0, 0.9, 0.2, 6.0, 0.6, 0.5]], A: {
     aragorn: { p: [-2.6, 0.4], to: [4.4, 0.4, 0.2, 4.4], f: 90, ex: 'angry' }, legolas: { p: [-1.4, -0.6], to: [5.6, -0.6, 0.2, 4.2], f: 90, ex: 'happy' }, gimli: { p: [-4.0, 1.2], to: [2.4, 1.2, 0.2, 4.6], f: 90, ex: 'sick', say: ['แฮ่ก… คนแคระ วิ่งระยะสั้น!', 2.4, 4.4] } },
@@ -697,7 +698,7 @@ Object.assign(SC, {
     deagol: { p: [0.6, -0.2], f: -60, ex: 'giggle', pose: during(0.3, 2.4, raise, 'hold'), say: ['ได้แหวนทองมา!', 0.5, 1.8], out: 3.0 }, oring: { on: ['deagol', 'R', 0, 0.1, 0.12], spin: 2, pop: 0.4 },
     smeagol: { p: [-1.6, 0.6], to: [-0.4, 0.2, 1.8, 2.4], f: 60, ex: 'angry', pose: 'reach', say: ['เอามานี่! วันเกิดข้า!', 1.8, 3.0], out: 3.4 },
     gollum: { p: [-0.4, 0.2], f: 30, ex: 'giggle', pose: 'hold', pop: 3.4 }, ring2: { on: ['gollum', 'R', 0, 0.1, 0.12], pop: 3.4, s: 1.0 } },
-    hud: hudAll(partCard('ลอร์ดออฟเดอะริงส์ ภาค 3', '2003'), pow([['ฮึ่ย!!', 2.4, 540, 1150, '#ff8a3a', 130]])), sfx: [[0.4, 'shimmer'], [1.8, 'tok'], [2.4, 'puff'], [3.4, 'gong']],
+    hud: hudAll(partCard('ลอร์ดออฟเดอะริงส์ ภาค 3', 'The Return of the King', '2003'), pow([['ฮึ่ย!!', 2.4, 540, 1150, '#ff8a3a', 130]])), sfx: [[0.4, 'shimmer'], [1.8, 'tok'], [2.4, 'puff'], [3.4, 'gong']],
     fx: (r, t, s, o) => { vis(o.oring, r, 0, 2.6); } },
   r2: { st: 'ISEN', bg: 'night', cam: [0, 0, 0.8, 0.0, 4.6, 0.55, 0.4], flash: [1.6, 0.5, 'rgba(255,60,30,'], A: {
     pippin: { p: [0, 0.6], f: 0, ex: 'worried', pose: 'hold', shake: 0.02 }, palan: { on: ['pippin', 'R', -0.2, 0.15, 0.25] }, redglow: { p: [0, 0.6, 1.6], pop: 1.6, out: 3.2, s: 2.2 },
