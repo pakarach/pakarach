@@ -230,8 +230,8 @@ const CAST = {
   /* animals + creatures (light, mist, plain animals) */
   owl: ['bird', 2.6, '#f4f4f0'], dogB: ['dog', 1.15, { c: '#1e1e22', w: '#2e2e34', e: '#1e1e22', prick: true }], wolfL: ['wolf', 1.6, '#6a6a70'], rat: ['rat', 1.0],
   sp1: ['spider', 1.1], sp2: ['spider', 1.0], sp3: ['spider', 1.2], sp4: ['spider', 0.9], spB: ['spider', 2.6],
-  smoke: ['streak', 2.0, 'rgba(90,255,120,1)'], snake: ['streak', 0.9, 'rgba(90,220,110,1)'], basil: ['streak', 3.2, 'rgba(90,220,110,1)'], phoenix: ['streak', 1.6, 'rgba(255,150,60,1)'],
-  drag: ['streak', 2.8, 'rgba(255,110,40,1)'], patr: ['streak', 1.8, 'rgba(220,240,255,1)'], patr2: ['streak', 1.8, 'rgba(220,240,255,1)'], doe: ['streak', 1.5, 'rgba(220,240,255,1)'], nagini: ['streak', 1.6, 'rgba(90,220,110,1)'],
+  smoke: ['streak', 2.0, 'rgba(90,255,120,1)'], snake: ['serpent', 0.55, '#4a9a4a', 12], basil: ['serpent', 2.0, '#4a7a3a', 18], phoenix: ['streak', 1.6, 'rgba(255,150,60,1)'],
+  drag: ['dragon', 0.85, '#c0402a', '#f0c070', '#8a2a1e'], dragB: ['dragon', 1.15, '#5a7a8a', '#c8d4dc', '#3a4a5a'], patr: ['streak', 1.8, 'rgba(220,240,255,1)'], patr2: ['streak', 1.8, 'rgba(220,240,255,1)'], doe: ['streak', 1.5, 'rgba(220,240,255,1)'], nagini: ['serpent', 1.0, '#5a7a4a', 16],
   dobby: ['glow', 0.55, 'rgba(150,255,170,1)'], mist: ['mist', 1.0], mist2: ['mist', 1.6], inferi: ['mist', 1.3, '#9aa49a'],
   /* wands, beams, glows */
   wH: ['wand', 1.0], wR: ['wand', 1.0, '#7a5a3a'], wHe: ['wand', 1.0, '#6a3a2a'], wD: ['wand', 1.0, '#d8d0c0'], wS: ['wand', 1.0, '#1e1a18'], wV: ['wand', 1.0, '#e8e4dc'], wDu: ['wand', 1.0, '#4a3a2a'],
@@ -262,6 +262,7 @@ const CAST = {
   lb19: ['label', 1.2, '19 ปีต่อมา'], lb10: ['label', 1.2, '10 ปีต่อมา'],
 };
 /* ---- run-time helpers (shared with the LOTR recap style) ---- */
+const dirAt = (path, r, p) => { let q = path(r + 0.06), a = p; if (Math.hypot(q.x - a.x, q.z - a.z) < 1e-3) { a = path(r - 0.06); q = p; } if (Math.hypot(q.x - a.x, q.z - a.z) < 1e-3) { a = path(r - 0.5); q = p; } return [q.x - a.x, q.y - a.y, q.z - a.z]; };
 const all = (...fs) => (...a) => fs.forEach((f) => f && f(...a));
 const aim = (c) => { c.userData.arms.R.rotation.set(-1.5, 0, -0.05); };
 const swing = (c, r, t) => { c.userData.arms.R.rotation.set(-0.3 - Math.max(0, Math.sin(t * 8)) * 1.8, 0, 0.25); };
@@ -292,8 +293,8 @@ const lockB = (a, b, ka, kb, fk, t0, t1, kf) => (r, t, s, o) => { const A = o[a]
   const pa = H.hand(A, 'R'), pb = H.hand(B, 'R'), k = kf(r), m = pa.clone().lerp(pb, k); m.y += Math.sin(t * 9) * 0.05; const g = U.clamp((r - t0) / 0.2);
   aimBeam(o[ka], pa, m, g); aimBeam(o[kb], pb, m, g); if (o[fk]) { o[fk].visible = true; o[fk].position.copy(m); o[fk].scale.setScalar(o[fk].userData.s0 * (1 + Math.sin(t * 20) * 0.2)); } };
 /* broom flight: broom follows a path, faces its motion; rider sits on it */
-const bfly = (bk, rk, path, dy) => (r, t, s, o) => { const B = o[bk]; if (!B || !B.visible) return; const p = path(r), q = path(r + 0.06); B.position.copy(p); const d = Math.hypot(q.x - p.x, q.z - p.z);
-  if (d > 1e-3) B.userData.ry = Math.atan2(q.x - p.x, q.z - p.z); B.rotation.set(0, B.userData.ry || 0, 0); B.rotation.x = -Math.max(-0.5, Math.min(0.5, (q.y - p.y) * 3)); B.rotation.z = Math.sin(t * 3 + bk.length) * 0.06;
+const bfly = (bk, rk, path, dy) => (r, t, s, o) => { const B = o[bk]; if (!B || !B.visible) return; const p = path(r), dv = dirAt(path, r, p), q = { x: p.x + dv[0], y: p.y + dv[1], z: p.z + dv[2] }; B.position.copy(p); const d = Math.hypot(dv[0], dv[2]);
+  if (d > 1e-3) B.userData.ry = Math.atan2(dv[0], dv[2]); B.rotation.set(0, B.userData.ry || 0, 0); B.rotation.x = -Math.max(-0.5, Math.min(0.5, (q.y - p.y) * 3)); B.rotation.z = Math.sin(t * 3 + bk.length) * 0.06;
   const R = o[rk]; if (R && R.visible) { R.position.set(p.x, p.y + (dy == null ? -0.62 : dy) * R.scale.y, p.z); R.rotation.y = B.rotation.y; if (R.userData.arms) { R.userData.arms.L.rotation.set(-1.1, 0, 0.25); R.userData.arms.R.rotation.set(-1.1, 0, -0.25); } } };
 /* streak creature along a path (fly leaves a light trail) */
 const streakP = (k, path, t0, t1) => (r, t, s, o) => { const c = o[k]; if (!c) return; c.visible = r >= t0 && r <= t1; if (c.visible) fly(c, path, r, 0.03); };
@@ -330,8 +331,8 @@ const hxHud = (note) => (g, r, t) => { const [n, tc] = hxAt(t), p = U.clamp((t -
   txt(g, 'ฮอร์ครักซ์ที่พัง ' + n + '/7', -40, -14, 34, '#fff', 800); for (let i = 0; i < 7; i++) { g.fillStyle = i < n ? '#5aff7a' : 'rgba(255,255,255,.18)'; g.beginPath(); g.arc(-150 + i * 40, 26, 12, 0, 6.283); g.fill(); }
   if (note) txt(g, note, 0, 92, 30, P.coral, 700); g.restore(); };
 /* car / creature carrying riders along a path: riders [key, dx, dy, dz] in the car's frame */
-const carFly = (ck, path, riders) => (r, t, s, o) => { const C = o[ck]; if (!C || !C.visible) return; const p = path(r), q = path(r + 0.06); C.position.copy(p); const d = Math.hypot(q.x - p.x, q.z - p.z);
-  if (d > 1e-3) C.userData.ry = Math.atan2(q.x - p.x, q.z - p.z); C.rotation.set(0, C.userData.ry || 0, Math.sin(t * 4) * 0.05);
+const carFly = (ck, path, riders) => (r, t, s, o) => { const C = o[ck]; if (!C || !C.visible) return; const p = path(r), dv = dirAt(path, r, p); C.position.copy(p); const d = Math.hypot(dv[0], dv[2]);
+  if (d > 1e-3) C.userData.ry = Math.atan2(dv[0], dv[2]); C.rotation.set(0, C.userData.ry || 0, Math.sin(t * 4) * 0.05);
   (riders || []).forEach(([k, dx, dy, dz]) => { const R = o[k]; if (!R || !R.visible) return; const ry = C.rotation.y, c = Math.cos(ry), sn = Math.sin(ry); R.position.set(p.x + dx * c + (dz || 0) * sn, p.y + dy, p.z - dx * sn + (dz || 0) * c); R.rotation.y = ry; }); };
 const glowAt = (gk, who, dy, a, b, pulse) => (r, t, s, o) => { const g = o[gk], w = o[who]; if (!g || !w || !w.visible || r < a || (b != null && r > b)) return; g.visible = true; g.position.copy(H.pos(w, dy == null ? 1.0 : dy)); g.scale.setScalar(g.userData.s0 * (1 + Math.sin(t * (pulse || 8)) * 0.15)); };
 const greyOut = (k, t0, t1) => (r, t, s, o) => { const c = o[k]; if (!c || r < t0) return; const q = U.clamp((r - t0) / (t1 - t0)); c.traverse((m) => { if (m.isMesh && m.material && m.material.color && !m.userData.c0) m.userData.c0 = m.material.color.clone(); if (m.isMesh && m.userData.c0) m.material.color.copy(m.userData.c0).lerp(new T.Color('#9a9a94'), q); }); };
@@ -379,12 +380,12 @@ const SC = {
     snape: { p: [-1.2, -6.4], f: 10, ex: 'angry' }, dumb: { p: [0.6, -6.6], f: 0, ex: 'happy', pose: 'up' } },
     sfx: [[0.2, 'shimmer'], [1.0, 'chime'], [2.8, 'tok']], fx: expr('harry', 'worried', 3.0) },
   a10: { st: 'GROUND', bg: 'day', cam: [0, 0, 2.2, -1.0, 6.6, 0.5, 0.45], A: {
-    broom1: { p: [2, 0.5, 0] }, draco: { p: [2, 0], ex: 'giggle', say: ['มาเอาคืนสิ!', 0.4, 1.6] }, broom2: { p: [-2, 0.8, 0] }, harry: { p: [-2, 0.8], ex: 'angry' }, ballR: { p: [0, 0] },
+    broom1: { p: [3, -0.6, 0.6] }, draco: { p: [3, -0.6], ex: 'giggle', say: ['มาเอาคืนสิ!', 0.4, 1.6] }, broom2: { p: [-3, 0, 0.6] }, harry: { p: [-3, 0], ex: 'angry' }, ballR: { p: [0, 0] },
     ron: { p: [-3.4, 1.6], f: 30, ex: 'worried' }, herm: { p: [-2.6, 2.4], f: 20, ex: 'worried' }, nev: { p: [3.6, 1.8], f: -30, ex: 'cry' }, s1: { p: [0.6, 2.4], f: 0, ex: 'happy', pose: at_(3.0, null, 'up') } },
     hud: pow([['หมับ!', 2.9, 540, 900, '#ffd94a', 140], ['ว้าววว!', 3.3, 760, 1250, '#ffffff', 110]]), sfx: [[0.3, 'zip'], [1.0, 'glide'], [1.4, 'zip'], [2.9, 'pop'], [3.3, 'bell']],
-    fx: (r, t, s, o, st) => { const PD = qb(st, [2.0, 0.5, 0], [2.6, 2.4, -0.5], [2.4, 3.0, -1.0], 0, 1.3), PH = qb(st, [-2.0, 0.5, 0.8], [-1.6, 2.2, 0.2], [0.4, 3.0, -2.0], 0.9, 2.8);
+    fx: (r, t, s, o, st) => { const PD = qb(st, [3.4, 0.6, -0.6], [2.0, 2.4, -0.8], [1.2, 3.0, -1.2], 0, 1.3), PH = qb(st, [-3.6, 0.6, 0.0], [-2.0, 2.2, -0.6], [-0.2, 2.8, -1.4], 0.9, 2.8);
       bfly('broom1', 'draco', PD)(r, t, s, o); bfly('broom2', 'harry', PH)(r, t, s, o);
-      const B = o.ballR; if (r < 1.4) B.position.copy(H.hand(o.draco, 'R')); else if (r < 2.85) along(B, qb(st, [2.4, 4.0, -1.0], [1.6, 6.2, -2.6], [0.5, 4.0, -2.0], 1.4, 2.85), r); else B.position.copy(H.hand(o.harry, 'R'));
+      const B = o.ballR; if (r < 1.4) B.position.copy(H.hand(o.draco, 'R')); else if (r < 2.85) along(B, qb(st, [1.2, 4.2, -1.2], [0.6, 5.6, -1.6], [0.0, 3.9, -1.4], 1.4, 2.85), r); else B.position.copy(H.hand(o.harry, 'R'));
       if (r > 1.2 && r < 1.5) o.draco.userData.arms.R.rotation.set(-2.6, 0, 0); if (r > 2.6) o.harry.userData.arms.R.rotation.set(-2.6, 0, 0); if (r > 3.0) { s.o.harry.userData.setExpr('giggle'); ['ron', 'herm', 'nev'].forEach((k) => s.o[k].userData.setExpr('giggle')); } } },
   a11: { st: 'BATH', bg: 'night', cam: [0, 0, 0.9, -1.6, 6.0, 0.6, 0.5], shake: [2.6, 3.2, 0.12], A: {
     troll: { p: [-7, 0.4], to: [-1.4, -0.8, 0.2, 2.4], f: 70, ex: 'angry', pose: at_(2.3, raise, swing) }, club: HOLD('troll'), herm: { p: [2.6, -2.8], f: -60, ex: 'cry', pose: 'cry', say: ['ช่วยด้วยยย!', 0.8, 2.4] }, puff2: { p: [0, -4.6, 0.6], pop: 2.6, out: 3.6 } },
@@ -454,14 +455,14 @@ const SC = {
     draco: { p: [1.8, -2.2], f: -80, ex: 'giggle', pose: during(0.2, 0.8, aim, 'hips') }, wD: W_('draco'), harry: { p: [-0.6, 0.6], f: 150, ex: 'angry', pose: 'reach', say: ['หยุดนะ! (ภาษางู)', 1.6, 3.0] },
     ron: { p: [0.6, 1.8], to: [1.6, 2.8, 3.0, 3.6], f: 180, ex: 'worried', pose: at_(3.0, 'cry', null) }, s1: { p: [-2.6, 0.6], to: [-3.6, 1.6, 3.0, 3.6], f: 140, ex: 'worried', pose: at_(3.0, 'cry', null) }, s2: { p: [2.6, 0.8], to: [3.6, 1.8, 3.0, 3.6], f: 220, ex: 'cry' } },
     hud: pow([['ฟ่อออ…', 1.6, 540, 1000, '#9aff9a', 120], ['เฮือก!', 3.0, 760, 1150, '#ffffff', 110]]), sfx: [[0.3, 'puff'], [0.6, 'zip'], [1.6, 'soft'], [3.0, 'tok']],
-    fx: all((r, t, s, o, st) => { o.snake.visible = r > 0.4; if (o.snake.visible) fly(o.snake, (u) => H.at(st, Math.cos(u * 3) * 1.0, 0.25, -1.2 + Math.sin(u * 3) * 0.6), r, 0.02); }, expr('snape', 'angry', 3.0)) },
+    fx: all((r, t, s, o, st) => { o.snake.visible = r > 0.4; if (o.snake.visible) CF.serpentTick(o.snake, (u) => H.at(st, Math.cos(Math.max(u, 0.4) * 2.4) * 1.0, 0.15, -1.2 + Math.sin(Math.max(u, 0.4) * 2.4) * 0.6), r, 0.05); }, expr('snape', 'angry', 3.0)) },
   b9: { st: 'FOREST', bg: 'night', cam: [0, 0, 1.0, -0.4, 6.4, 0.6, 0.5], A: {
     ron: { p: [-0.6, 0.6], to: [3.0, 1.4, 1.8, 3.4], f: 180, ex: 'cry', pose: during(0, 1.8, 'cry', null), say: ['แมงมุมมม!!', 0.4, 2.0] }, harry: { p: [0.6, 0.4], to: [3.6, 0.8, 1.8, 3.4], f: 180, ex: 'worried' },
     spB: { p: [0, -6.0], pop: 0.3 }, sp1: { p: [-3, -4], to: [-0.6, 0.2, 0.8, 3.0] }, sp2: { p: [2.4, -4.6], to: [1.4, -0.4, 1.0, 3.2] }, sp3: { p: [-4.6, -2.6], to: [-1.4, 1.0, 1.2, 3.4] }, sp4: { p: [4.4, -3.0], to: [2.2, 0.6, 1.4, 3.6] },
     car: { p: [9, 1.0], to: [4.2, 1.2, 2.2, 3.0], f: -90 } },
     hud: pow([['ปี๊นนน!', 2.6, 820, 1050, '#ffd94a', 130]]), sfx: [[0.3, 'tok'], [0.8, 'zip'], [2.2, 'zip'], [2.6, 'bell'], [3.4, 'zip']],
     fx: (r, t, s, o) => { if (r > 3.0) { s.o.ron.userData.setExpr('giggle'); } ['sp1', 'sp2', 'sp3', 'sp4'].forEach((k, i) => (o[k].position.y += Math.abs(Math.sin(t * 9 + i)) * 0.05)); } },
-  b10: { st: 'CORR', bg: 'dusk', calm: true, cam: [0, 0, 0.7, -0.4, 4.4, 0.65, 0.4], A: { cot: { p: [0, -0.6] }, hermS: { p: [0, -0.6, 0.45], lie: true, ex: 'worried' }, lbP: { p: [0, -1.0, 2.1], pop: 2.0, bob: 0.05 },
+  b10: { st: 'CORR', bg: 'dusk', calm: true, cam: [0, 0, 0.5, -0.6, 4.2, 0.34, 0.7], A: { cot: { p: [0, -0.6] }, hermS: { p: [0, -0.6, 0.45], lie: true, ex: 'worried' }, lbP: { p: [0, -1.0, 2.1], pop: 2.0, bob: 0.05 },
     harry: { p: [-1.4, 0.6], f: 60, ex: 'cry', pose: during(1.6, 9, 'reach', null) }, ron: { p: [1.8, 0.8], f: -70, ex: 'cry', pose: 'cry' } },
     sfx: [[0.3, 'soft'], [2.0, 'chime'], [2.6, 'tok']], fx: (r, t, s, o) => { if (r > 2.4) s.o.harry.userData.setExpr('worried'); } },
   b11: { st: 'CHAMB', bg: 'grove', cam: [0, 0, 0.9, -0.6, 5.4, 0.6, 0.45], shake: [1.4, 2.4, 0.12], A: {
@@ -476,11 +477,11 @@ const SC = {
   b13: { cam: [0, 0, 1.6, -1.4, 6.4, 0.6, 0.45], A: { basil: { p: [0, 0] }, phoenix: { p: [0, 0] }, swordG: { on: ['harry', 'R', 0, 0, 0.05], pop: 3.1 },
     tom: { p: [0.4, -2.6], f: 10, ex: 'giggle', pose: 'point', say: ['ไปเลย เจ้างู!', 0.2, 1.4] }, harry: { p: [-1.2, 0.8], to: [-2.6, 1.4, 0.8, 1.8], f: 120, ex: 'cry', pose: at_(3.1, null, raise) } },
     hud: pow([['ฟ่อออ!!', 0.6, 700, 900, '#8aff7a', 150], ['กรี๊ยย!', 1.8, 360, 820, '#ffb060', 120]]), sfx: [[0.4, 'zip'], [0.6, 'puff'], [1.8, 'glide'], [3.1, 'shimmer']],
-    fx: all(streakP('basil', (u) => H.at('CHAMB', Math.cos(u * 1.6) * 3.0, 1.0 + Math.sin(u * 3.2) * 0.4, -2.0 + Math.sin(u * 1.6) * 1.6), 0.4, 9), streakP('phoenix', (u) => H.at('CHAMB', Math.cos(u * 2.6 + 1) * 2.4, 3.6 + Math.sin(u * 5) * 0.4, -1.6 + Math.sin(u * 2.6 + 1) * 1.6), 1.6, 9), expr('harry', 'angry', 3.1)) },
+    fx: all((r, t, s, o) => { o.basil.visible = r > 0.4; if (o.basil.visible) CF.serpentTick(o.basil, (u) => H.at('CHAMB', Math.cos(Math.max(u, 0.4) * 1.4) * 2.8, 0.45 + Math.max(0, Math.sin(Math.max(u, 0.4) * 2.8)) * 0.6, -2.2 + Math.sin(Math.max(u, 0.4) * 1.4) * 1.4), r, 0.07); }, streakP('phoenix', (u) => H.at('CHAMB', Math.cos(u * 2.6 + 1) * 2.4, 3.6 + Math.sin(u * 5) * 0.4, -1.6 + Math.sin(u * 2.6 + 1) * 1.6), 1.6, 9), expr('harry', 'angry', 3.1)) },
   b14: { cam: [0, 0, 1.2, -1.0, 6.0, 0.6, 0.45], flash: [2.7, 0.5, 'rgba(255,255,255,'], A: { phoenix: null, swordG: HOLD('harry'), fang: { on: ['harry', 'R', 0, 0, 0.05], pop: 1.8 }, boom2: { p: [0.6, -1.6, 1.4], pop: 1.1, out: 1.8, s: 1.6 },
     harry: { p: [-0.8, 0.4], f: 80, ex: 'angry', pose: during(0.4, 1.2, swing, at_(2.4, 'down', null)), to: [0.0, -0.6, 1.8, 2.4] }, diary: { p: [0.6, -1.0, 0.06], rot: [-Math.PI / 2, 0, 0] }, tom: { p: [1.4, -2.4], f: -30, ex: 'cry', out: 3.0, pose: 'reach' }, gG: null, boom: { p: [0.6, -1.0, 0.3], pop: 2.6, out: 3.4 } },
     hud: pow([['ฉัวะ!!', 0.8, 760, 950, '#ffd94a', 150], ['ฉึก!!', 2.6, 540, 1050, '#ffd94a', 160]]), sfx: [[0.6, 'zip'], [0.8, 'puff'], [1.8, 'shimmer'], [2.6, 'puff'], [2.7, 'gong']],
-    fx: (r, t, s, o) => { o.basil.visible = r < 1.1; if (o.basil.visible) fly(o.basil, (u) => H.at('CHAMB', 2.4 - u * 1.4, 1.2, -1.6), r, 0.03); vis(o.swordG, r, 0, 1.6); if (r > 1.6 && r < 2.6) o.tom.position.y += Math.sin(t * 30) * 0.03; } },
+    fx: (r, t, s, o) => { o.basil.visible = r < 1.1; if (o.basil.visible) CF.serpentTick(o.basil, (u) => H.at('CHAMB', 3.6 - Math.max(u, -1) * 2.0, 0.5 + U.clamp(u / 0.8) * 0.8, -1.4 - Math.max(u, -1) * 0.3), r, 0.08); vis(o.swordG, r, 0, 1.6); if (r > 1.6 && r < 2.6) o.tom.position.y += Math.sin(t * 30) * 0.03; } },
   b15: { cam: [0, 0, 1.2, -0.6, 5.6, 0.6, 0.45], A: { fang: null, swordG: null, boom2: null, boom: null, tom: null, puff: { p: [0.6, -1.0], pop: 0.1 },
     harry: { p: [-0.6, 0.0], f: 30, ex: 'happy', pose: null }, ginny: { p: [0.8, 0.4], f: -40, lie: false, ex: 'worried', pop: 0.2 }, phoenix: { p: [0, 0] } },
     hud: hxHud('ตอนนั้นยังไม่มีใครรู้!'), sfx: [[0.6, 'pop'], [1.4, 'chime'], [2.4, 'glide']],
@@ -563,11 +564,11 @@ const SC = {
   d3: { cam: [0, 0, 0.9, 0.4, 4.6, 0.55, 0.45], A: { lb4: null, cedric: null, s1: null, s2: null, dumb: null,
     harry: { p: [-0.6, 0.8], f: 60, ex: 'cry', pose: 'shrug', say: ['ผมไม่ได้สมัครนะ!', 0.3, 1.8] }, ron: { p: [0.8, 0.8], f: 200, ex: 'angry', pose: 'hips', say: ['ไม่เชื่อหรอก!', 2.0] }, herm: { p: [2.0, 0.2], f: -80, ex: 'worried' } },
     sfx: [[0.3, 'tok'], [2.0, 'tok']], fx: (r, t, s, o) => { if (r > 2.6) o.ron.rotation.y = Math.PI + 0.3; } },
-  d4: { st: 'ARENA', bg: 'day', cam: [0, 0, 1.8, -1.0, 6.6, 0.55, 0.5], A: { egg: { p: [1.0, -3.0, 2.6], bob: 0.06 }, drag: { p: [0, 0] }, broom2: { p: [0, 0] }, harry: { p: [0, 0], ex: 'angry' }, boom: { p: [0, 0] } },
+  d4: { st: 'ARENA', bg: 'day', cam: [0, 0, 1.6, -1.4, 7.2, 0.5, 0.5], A: { egg: { p: [1.0, -3.0, 2.6], bob: 0.06 }, drag: { p: [0, 0] }, broom2: { p: [0, 0] }, harry: { p: [0, 0], ex: 'angry' } },
     hud: pow([['ฟู่วว!!', 0.8, 300, 950, '#ff8a3a', 150], ['ฟู่ว!!', 2.2, 780, 900, '#ff8a3a', 140], ['ได้แล้ว!', 3.8, 540, 900, '#ffd94a', 130]]), sfx: [[0.3, 'glide'], [0.8, 'puff'], [2.2, 'puff'], [3.8, 'bell']],
     fx: (r, t, s, o, st) => { const PH = (u) => (u < 3.4 ? loopP(st, 0, 2.6, -1.6, 3.2, 1.8, 1.6, 0, 0.5)(u) : loopP(st, 0, 2.6, -1.6, 3.2, 1.8, 1.6, 0, 0.5)(3.4).lerp(H.at(st, 1.0, 2.8, -3.0), U.clamp((u - 3.4) / 0.4)));
-      bfly('broom2', 'harry', PH)(r, t, s, o); fly(o.drag, (u) => loopP(st, 0, 2.6, -1.6, 3.4, 2.0, 1.6, -0.9, 0.6)(u), r, 0.03);
-      const bt = [0.8, 2.2].find((x) => r > x && r < x + 0.7); o.boom.visible = !!bt; if (bt) { o.boom.position.copy(PH(bt)); o.boom.position.y -= 0.6; } if (r > 3.8) { o.egg.position.copy(H.hand(o.harry, 'R')); s.o.harry.userData.setExpr('giggle'); } } },
+      bfly('broom2', 'harry', PH)(r, t, s, o); carFly('drag', (u) => loopP(st, 0, 1.4, -2.0, 3.6, 2.2, 1.6, -1.0, 0.5)(u), [])(r, t, s, o);
+      const bt = [0.6, 2.0].find((x) => r > x && r < x + 0.8); o.drag.userData.flame.visible = !!bt; o.drag.userData.flame.scale.setScalar(bt ? 0.6 + U.clamp((r - bt) / 0.3) * 0.8 : 1); if (r > 3.8) { o.egg.position.copy(H.hand(o.harry, 'R')); s.o.harry.userData.setExpr('giggle'); } } },
   d5: { st: 'UNDER', bg: 'sea', cam: [0, 0, 1.4, -0.6, 5.6, 0.6, 0.45], A: {
     ron: { p: [1.4, -1.6, 1.0], f: 0, ex: 'sleepy', closed: true }, harry: { p: [-4.0, 0.8, 1.6], to: [0.6, -1.2, 0.2, 3.0, 1.2], f: 90, ex: 'angry', pose: flail }, spark: { p: [0, 0] } },
     hud: pow([['ปุ๋งๆ', 0.8, 300, 1050, '#bfe8ff', 110], ['คว้า!', 3.2, 640, 950, '#ffd94a', 130]]), sfx: [[0.3, 'soft'], [0.8, 'pop'], [1.8, 'pop'], [3.2, 'tok']],
@@ -817,17 +818,17 @@ const SC = {
     harry: { p: [-0.4, -1.6], f: 0, ex: 'worried', pose: at_(1.2, 'up', null), say: ['ร้อน! แตะไม่ได้!', 1.6, 3.0] }, ron: { p: [-1.6, 0.6], f: 20, ex: 'cry', pose: 'cry' }, herm: { p: [1.4, 0.4], f: -20, ex: 'worried' } },
     hud: pow([['เพิ่มขึ้นอีก!!', 1.8, 540, 950, '#ffd94a', 130]]), sfx: [[0.4, 'ching'], [1.0, 'ching'], [1.6, 'ching'], [2.2, 'ching'], [2.8, 'ching']],
     fx: (r, t, s, o) => { const k = U.clamp((r - 0.8) / 3.6); ['gold1', 'gold2', 'gold3'].forEach((g, i) => o[g].scale.setScalar(o[g].userData.s0 * (1 + k * (1.2 + i * 0.3)))); ['harry', 'ron', 'herm'].forEach((n) => (o[n].position.y -= k * 0.5)); if (r > 3.6) { o.cupG.position.copy(H.hand(o.harry, 'R')); } } },
-  h3: { st: 'SKY', bg: 'day', cam: [0, 0, 1.6, -0.6, 6.6, 0.5, 0.55], A: { drag: { p: [0, 0] }, harry: { p: [0, 0], ex: 'giggle', sit: true }, ron: { p: [0, 0], ex: 'cry', sit: true }, herm: { p: [0, 0], ex: 'happy', sit: true, pose: 'up' }, boom2: { p: [-5, 0, 0.4], pop: 0.2, out: 1.0 } },
+  h3: { st: 'SKY', bg: 'day', cam: [0, 0, 2.4, -0.6, 6.6, 0.5, 0.6], A: { dragB: { p: [0, 0] }, harry: { p: [0, 0], ex: 'giggle' }, ron: { p: [0, 0], ex: 'cry' }, herm: { p: [0, 0], ex: 'happy', pose: 'up' }, boom2: { p: [-5, 0, 0.4], pop: 0.2, out: 1.0 } },
     hud: pow([['บินนน!!', 0.8, 540, 900, '#ffd94a', 150]]), sfx: [[0.2, 'puff'], [0.6, 'glide'], [2.0, 'zip']],
-    fx: (r, t, s, o, st) => { const P = qb(st, [-3.6, 0.6, 1], [0, 2.4, 1.6], [3.6, 2.0, -1.6], 0, 4.6); carFly('drag', P, [['harry', 0, 0.35, 0.6], ['ron', 0, 0.35, -0.2], ['herm', 0, 0.35, -1.0]])(r, t, s, o); fly(o.drag, P, r, 0.03); } },
+    fx: (r, t, s, o, st) => { const P = qb(st, [-3.6, 0.6, 1], [0, 2.4, 1.6], [3.6, 2.0, -1.6], 0, 4.6); carFly('dragB', P, [['harry', 0, 1.75, 0.5], ['ron', 0, 1.8, -0.35], ['herm', 0, 1.7, -1.15]])(r, t, s, o); o.dragB.userData.flame.visible = r > 0.1 && r < 0.9; } },
   h4: { st: 'GHALL', bg: 'night', cam: [0, 0, 1.0, -1.6, 6.2, 0.55, 0.5], A: {
     snape: { p: [0.4, -3.6], to: [3.0, -5.6, 3.2, 4.0], f: 0, ex: 'angry', pose: during(1.4, 3.0, guard, null), out: 4.0, say: ['ใครเห็นแฮร์รี่…', 0.2, 1.2] }, wS: W_('snape'),
     harry: { p: [-0.4, 1.6], to: [-0.4, 0.2, 0.6, 1.4], f: 180, ex: 'angry', pop: 0.6, say: ['ผมอยู่นี่!', 1.0, 2.0] }, mcg: { p: [-2.4, -1.6], f: 40, ex: 'angry', pose: aim, pop: 1.2 }, wMc: W_('mcg'),
     s1: { p: [-2.6, 1.2], f: 160, ex: 'happy', pose: at_(3.4, 'up', null) }, s2: { p: [2.6, 1.0], f: 200, ex: 'happy', pose: at_(3.4, 'up', null) }, nevA: { p: [1.4, 1.6], f: 190, ex: 'happy', pose: at_(3.4, 'up', null) } },
     hud: pow([['ฟึ่บ! ฟึ่บ!', 1.8, 540, 900, '#ff8a3a', 130], ['เย้!!', 3.4, 540, 1150, '#ffffff', 120]]), sfx: [[1.0, 'tok'], [1.6, 'zap'], [2.0, 'zap'], [2.4, 'zap'], [3.4, 'bell']],
     fx: zap([[1.6, 2.0, 'mcg', 'snape', 'bY'], [2.1, 2.5, 'mcg', 'snape', 'bY'], [2.6, 3.0, 'mcg', 'snape', 'bY']]) },
-  h5: { st: 'BATTLE', bg: 'dusk', cam: [0, 0, 3.0, -10.0, 8.4, 0.5, 0.35], flash: [1.0, 0.5, 'rgba(150,200,255,'], A: { dome: { p: [0, -34], pop: 1.0, s: 2.2 },
-    vold: { p: [0, -4.0], f: 180, ex: 'angry', pose: at_(3.0, 'up', null) }, de1: { p: [-1.8, -3.2], f: 190, ex: 'giggle' }, de2: { p: [1.8, -3.0], f: 170, ex: 'angry' }, de3: { p: [-3.4, -2.2], f: 190, ex: 'angry' }, de4: { p: [3.4, -2.0], f: 170, ex: 'giggle' }, bella: { p: [-0.8, -2.4], f: 180, ex: 'giggle' } },
+  h5: { st: 'BATTLE', bg: 'dusk', cam: [0, 0, 5.0, -24.0, 7.6, 0.5, 0.4], flash: [1.0, 0.5, 'rgba(150,200,255,'], A: { dome: { p: [0, -42], pop: 1.0, s: 2.2 },
+    vold: { p: [0.0, -17.0], f: 180, ex: 'angry', pose: at_(3.0, 'up', null) }, de1: { p: [-1.8, -16.2], f: 190, ex: 'giggle' }, de2: { p: [1.8, -16.0], f: 170, ex: 'angry' }, de3: { p: [-3.4, -15.4], f: 190, ex: 'angry' }, de4: { p: [3.4, -15.2], f: 170, ex: 'giggle' }, bella: { p: [-0.8, -15.6], f: 180, ex: 'giggle' } },
     hud: pow([['วิ้งงง…', 1.0, 540, 700, '#bfe0ff', 120]]), sfx: [[0.5, 'shimmer'], [1.0, 'gong'], [2.0, 'shimmer'], [3.0, 'tok']] },
   h6: { st: 'CHAMB', bg: 'grove', cam: [0, 0, 0.9, -0.6, 5.0, 0.55, 0.45], flash: [2.6, 0.4, 'rgba(90,255,120,'], A: { cupG: { p: [0.2, -1.0, 0.1] }, boom2: { p: [0.2, -1.0, 0.8], pop: 2.6, out: 3.4 },
     herm: { p: [-0.6, -0.2], f: 40, ex: 'angry', pose: during(1.8, 2.8, raise, at_(3.6, 'embrace', null)) }, fang: HOLD('herm'), ron: { p: [-1.6, 0.4], f: 40, ex: 'worried', pose: at_(3.6, 'embrace', null), say: ['แทงเลย!', 0.6, 1.8] } },
@@ -837,7 +838,7 @@ const SC = {
     harry: { p: [-0.8, 0.2], f: 40, ex: 'angry', pose: during(1.0, 1.8, swing, null) }, fang: HOLD('harry'), ron: { p: [1.2, 0.6], f: -60, ex: 'angry', pose: null, say: ['ลงไปเลย!', 2.0, 3.0] } },
     hud: hudAll(hxHud(), pow([['ฉึก!', 1.4, 380, 1050, '#ffd94a', 120], ['ปึ้ก!', 2.2, 760, 1050, '#ffd94a', 120], ['ตูมม!!', 2.8, 540, 900, '#ff8a3a', 150]])), sfx: [[1.4, 'puff'], [2.2, 'tok'], [2.8, 'puff'], [2.9, 'gong']],
     fx: (r, t, s, o, st) => { if (r > 2.2) { along(o.diadem, qb(st, [0.2, 0.1, -0.6], [0, 1.6, -2.0], [0, 0.6, -3.2], 2.2, 2.8), r); o.diadem.rotation.z = t * 8; } vis(o.diadem, r, 0, 2.85); if (r > 2.0 && r < 2.4) o.ron.position.x -= Math.sin((r - 2.0) / 0.4 * Math.PI) * 0.3; } },
-  h8: { st: 'BATTLE', bg: 'war', cam: [0, 0, 1.8, -2.6, 7.0, 0.5, 0.5], shake: [0.4, 4.4, 0.08], flash: [0.4, 0.5, 'rgba(255,255,255,'], A: { dome: { p: [0, -34], s: 2.2, out: 0.8 },
+  h8: { st: 'BATTLE', bg: 'war', cam: [0, 0, 1.8, -2.6, 7.0, 0.5, 0.5], shake: [0.4, 4.4, 0.08], flash: [0.4, 0.5, 'rgba(255,255,255,'], A: { dome: { p: [0, -42], s: 2.2, out: 0.8 },
     boom2: { p: [-6, -28, 10], pop: 1.0, out: 2.0 }, boom3: { p: [5, -30, 14], pop: 2.2, out: 3.2 }, fire2: { p: [-3, -24, 6], pop: 1.4 }, smokeD: { p: [0, 0] }, smokeD2: { p: [0, 0] },
     nevA: { p: [-1.6, 1.0], f: 140, ex: 'angry', pose: aim }, wN: W_('nevA'), ginny: { p: [1.4, 1.2], f: 200, ex: 'angry', pose: aim }, wHe: W_('ginny'), de1: { p: [-3.2, -1.6], f: 40, ex: 'angry', pose: aim }, wP: W_('de1'), de2: { p: [3.0, -1.8], f: -40, ex: 'angry', pose: aim }, wB: W_('de2') },
     hud: pow([['เพล้ง!!', 0.5, 540, 700, '#bfe0ff', 140], ['ตูม!!', 1.0, 300, 800, '#ff8a3a', 140], ['ตูมม!!', 2.2, 780, 760, '#ff8a3a', 150]]), sfx: [[0.4, 'puff'], [1.0, 'puff'], [1.6, 'zap'], [2.2, 'puff'], [2.8, 'zap']],
@@ -845,7 +846,7 @@ const SC = {
   h9: { st: 'BOAT', bg: 'night', cam: [0, 0, 0.9, -0.8, 5.4, 0.55, 0.45], A: { nagini: { p: [0, 0] },
     vold: { p: [1.6, -1.6], f: -60, ex: 'angry', pose: 'point', out: 3.6, say: ['ขอโทษนะ เซเวอรัส', 0.3, 1.6] }, wE: W_('vold'), snape: { p: [-0.6, -0.6], f: 60, ex: 'worried', fall: [2.4, 3.0], fallDir: -1 } },
     hud: pow([['ฟ่อ!!', 2.2, 380, 1000, '#9aff9a', 130]]), sfx: [[0.3, 'tok'], [1.6, 'zip'], [2.2, 'puff'], [3.6, 'puff']],
-    fx: (r, t, s, o, st) => { o.nagini.visible = r > 0.6; if (o.nagini.visible) fly(o.nagini, (u) => (u < 2.0 ? H.at(st, 1.6 + Math.cos(u * 3) * 1.2, 0.6, -1.6 + Math.sin(u * 3) * 0.8) : H.at(st, U.lerp(1.6 + Math.cos(6) * 1.2, -0.6, U.clamp((u - 2.0) / 0.3)), 1.2, U.lerp(-1.6 + Math.sin(6) * 0.8, -0.6, U.clamp((u - 2.0) / 0.3)))), r, 0.02); } },
+    fx: (r, t, s, o, st) => { o.nagini.visible = r > 0.6; if (o.nagini.visible) CF.serpentTick(o.nagini, (u) => { u = Math.max(u, 0.6); return u < 2.0 ? H.at(st, 1.6 + Math.cos(u * 2.4) * 1.2, 0.25, -1.6 + Math.sin(u * 2.4) * 0.8) : H.at(st, U.lerp(1.6 + Math.cos(4.8) * 1.2, -0.4, U.clamp((u - 2.0) / 0.3)), 0.25 + U.clamp((u - 2.0) / 0.3) * 0.9, U.lerp(-1.6 + Math.sin(4.8) * 0.8, -0.5, U.clamp((u - 2.0) / 0.3))); }, r, 0.06); } },
   h10: { cam: [0, 0, 0.7, -0.2, 4.4, 0.55, 0.45], A: { nagini: null, vold: null, wE: null, snape: { p: [-0.4, -0.4], f: 60, lie: true, fall: null, ex: 'sick', closed: false, say: ['มองตาฉันที…', 0.6, 2.4] }, gS2: { p: [0, 0] },
     harry: { p: [0.9, 0.4], f: -110, ex: 'cry', pose: 'reach' } },
     sfx: [[0.3, 'soft'], [1.6, 'shimmer'], [3.2, 'chime']],
@@ -882,7 +883,7 @@ const SC = {
   h19: { cam: [0, 0, 1.0, -0.8, 6.2, 0.55, 0.5], flash: [0.6, 0.4, 'rgba(255,240,200,'], A: { hagrid: null, harry: null, ron: null, herm: null, ginny: null, mcg: null, nagini: { p: [0, 0] }, boom2: { p: [0, 0], pop: 2.4, out: 3.2 },
     nevA: { p: [-1.4, 0.8], f: 60, ex: 'angry', pose: during(0.6, 2.0, raise, at_(2.2, swing, null)) }, swordG: { on: ['nevA', 'R', 0, 0, 0.05], pop: 0.6 }, vold: { p: [1.8, -1.6], f: -110, ex: 'worried', pose: null, say: null } },
     hud: hudAll(hxHud(), pow([['ฉัวะ!!', 2.3, 540, 950, '#ffd94a', 160]])), sfx: [[0.6, 'shimmer'], [1.4, 'zip'], [2.3, 'puff'], [2.4, 'gong']],
-    fx: (r, t, s, o, st) => { o.nagini.visible = r > 1.0 && r < 2.4; if (o.nagini.visible) fly(o.nagini, qb(st, [3, 0.6, -3], [1.4, 1.4, -0.6], [-0.4, 1.2, 0.6], 1.0, 2.35), r, 0.02); o.boom2.position.copy(H.at(st, -0.4, 1.2, 0.6)); if (r > 2.4) s.o.vold.userData.setExpr('cry'); } },
+    fx: (r, t, s, o, st) => { o.nagini.visible = r > 1.0 && r < 2.4; if (o.nagini.visible) CF.serpentTick(o.nagini, qb(st, [3.4, 0.25, -3], [1.6, 0.4, -0.8], [-0.4, 1.0, 0.4], 0.6, 2.35), r, 0.06); o.boom2.position.copy(H.at(st, -0.4, 1.2, 0.6)); if (r > 2.4) s.o.vold.userData.setExpr('cry'); } },
   h20: { cam: [0, 0, 1.0, -0.6, 5.6, 0.55, 0.5], shake: [3.0, 3.8, 0.12], flash: [3.0, 0.6, 'rgba(255,240,200,'], A: { nagini: null, boom2: null, nevA: null, swordG: null, flare: { p: [0, 0] }, puff2: { p: [1.8, -0.6], pop: 3.1, out: 4.6 },
     harry: { p: [-1.8, 0.6], f: 70, ex: 'angry', pose: aim }, wH: W_('harry'), vold: { p: [1.8, -0.6], f: -110, ex: 'angry', pose: aim, out: 3.4 }, wE: W_('vold') },
     hud: pow([['แดง!!', 0.6, 300, 900, '#ff6a5a', 130], ['เขียว!!', 0.9, 780, 900, '#6aff7a', 130], ['ตูมมม!!', 3.0, 540, 850, '#ffd94a', 170]]), sfx: [[0.3, 'zap'], [0.6, 'gong'], [2.0, 'shimmer'], [3.0, 'puff'], [3.1, 'gong']],
@@ -902,6 +903,21 @@ const SC = {
   next: { cam: [0, 0.2, 1.0, 0.6, 3.8, 0.45, 0.6], A: { harry: { pose: 'wave', ex: 'giggle' }, ron: { pose: 'wave', ex: 'giggle' }, herm: { pose: 'wave', ex: 'happy' } }, sfx: [[0.8, 'pop']] },
   ask: { cam: [0, 0.2, 1.0, 0.6, 3.6, 0.45, 0.6], A: { harry: { pose: 'think', ex: 'happy', say: ['?', 0.6, 99, true] }, ron: { pose: 'think', ex: 'happy' }, herm: { pose: 'think', ex: 'happy' } } },
 };
+/* name tags under the feet: each character's first appearance in each film (trio only in film 1) */
+const NAMES = { harry: 'แฮร์รี่', ron: 'รอน', herm: 'เฮอร์ไมโอนี่', baby: 'แฮร์รี่ (ทารก)', dumb: 'ดัมเบิลดอร์', hagrid: 'แฮกริด', snape: 'สเนป', vold: 'โวลเดอมอร์', tom: 'ทอม ริดเดิล', draco: 'เดรโก',
+  quir: 'ครูควีเรลล์', lock: 'ครูล็อกฮาร์ต', mcg: 'ครูมักกอนนากัล', sirius: 'ซีเรียส', lupin: 'ครูลูปิน', peter: 'ปีเตอร์', marge: 'ป้ามาร์จ', vernon: 'ลุงเวอร์นอน', petunia: 'ป้าเพ็ตทูเนีย', dudley: 'ดัดลีย์',
+  cedric: 'เซดริก', moody: 'ครูมู้ดดี้', umb: 'อัมบริดจ์', bella: 'เบลลาทริกซ์', nev: 'เนวิลล์', nevA: 'เนวิลล์', ginny: 'จินนี่', fred: 'เฟร็ด', george: 'จอร์จ', slug: 'ครูสลักฮอร์น', minister: 'รัฐมนตรี',
+  lily: 'ลิลลี่ (แม่)', james: 'เจมส์ (พ่อ)', snapeK: 'สเนป (เด็ก)', lilyK: 'ลิลลี่ (เด็ก)', harryA: 'แฮร์รี่', ronA: 'รอน', hermA: 'เฮอร์ไมโอนี่', ginnyA: 'จินนี่', dracoA: 'เดรโก', kid1: 'อัลบัส', kid2: 'โรส',
+  death: 'ความตาย', bro1: 'พี่คนโต', bro2: 'พี่คนกลาง', bro3: 'น้องคนเล็ก', ronL: 'รอน', hermB: 'เฮอร์ไมโอนี่' };
+const TRIO = new Set(['harry', 'ron', 'herm']), NOTAG = { h1: ['bella'], b1: ['ron', 'harry'], h3: ['harry', 'ron', 'herm'] };
+const nameHud = (tags) => (g, r, t, W, HH) => { const d = window.__dbg; if (!d || !d.camera) return; const v = new T.Vector3();
+  tags.forEach(([k, t0]) => { const a = U.clamp((r - t0) / 0.2) * U.clamp((t0 + 2.2 - r) / 0.3); if (a <= 0) return; const o = d.s[k]; if (!o || !o.visible) return; o.getWorldPosition(v); v.project(d.camera); if (v.z > 1) return;
+    const x = U.clamp((v.x + 1) / 2 * W, 110, W - 110), y = Math.min((1 - v.y) / 2 * HH + 36, 1820); g.save(); g.globalAlpha = a; g.font = F(700, 30); const w = g.measureText(NAMES[k]).width + 36;
+    g.fillStyle = 'rgba(15,22,48,.86)'; rr(g, x - w / 2, y - 24, w, 48, 24); g.fill(); g.strokeStyle = P.teal; g.lineWidth = 3; g.stroke(); txt(g, NAMES[k], x, y + 1, 30, '#fff', 700); g.restore(); }); };
+(() => { const ids = BEATS.map((b) => b[0]); EP.chap.forEach(([nm, a0, b0], ci) => { const i0 = ids.indexOf(a0), i1 = ids.indexOf(b0), seen = new Set();
+  for (let i = i0; i <= i1; i++) { const id = ids[i], sc = SC[id]; if (!sc || !sc.A) continue; const tags = [];
+    for (const k in sc.A) { const a = sc.A[k]; if (!a || !NAMES[k] || seen.has(k) || (ci > 0 && TRIO.has(k)) || (NOTAG[id] || []).includes(k)) continue; const t0 = Math.max(0.25, (a.pop || 0) + 0.15); if (a.out != null && a.out < t0 + 0.8) continue; seen.add(k); tags.push([k, t0]); }
+    if (tags.length) { const h = nameHud(tags); sc.hud = sc.hud ? hudAll(sc.hud, h) : h; } } }); })();
 /* horcrux counter stays on screen from the reveal (f8) to the epilogue */
 (() => { const ids = ORDER_HX(); ids.forEach((id) => { const sc = SC[id]; if (!sc || /h6|h7|h17|h19|g11|b15/.test(id) && sc.hud) return; sc.hud = sc.hud ? hudAll(sc.hud, hxHud()) : hxHud(); }); })();
 function ORDER_HX() { const ids = BEATS.map((b) => b[0]); const a = ids.indexOf('f8'), b = ids.indexOf('h21'); return ids.slice(a, b + 1); }

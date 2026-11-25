@@ -586,3 +586,30 @@ CF.cloak = (s) => { const g = new T.Group(); const p = new T.Mesh(new T.PlaneGeo
 /* rat */
 CF.rat = (s, c) => { const g = new T.Group(), col = c || '#8a847a'; const b = mk(new T.SphereGeometry(0.22, 12, 8), col); b.scale.set(0.9, 0.8, 1.4); b.position.y = 0.18; g.add(b); g.add(at3(mk(new T.SphereGeometry(0.13, 10, 8), col), 0, 0.22, 0.32));
   for (const x of [-0.08, 0.08]) g.add(at3(mk(new T.SphereGeometry(0.06, 8, 6), '#e8b0b0'), x, 0.35, 0.3)); const t = mk(new T.CylinderGeometry(0.02, 0.01, 0.5, 5), '#e8b0b0'); t.rotation.x = Math.PI / 2 - 0.3; t.position.set(0, 0.15, -0.45); g.add(t); g.scale.setScalar(s || 1); return g; };
+/* chibi dragon (generic, original): c body, b belly, w wing; faces +z; userData.wings flap, userData.flame (hide/show), userData.mouth */
+CF.dragon = (s, c, b, w) => { const g = new T.Group(), col = c || '#c0402a', bel = b || '#f0c070', wc = w || new T.Color(col).multiplyScalar(0.62).getStyle(), fs = { flatShading: true };
+  const body = mk(new T.SphereGeometry(0.9, 14, 10), col, fs); body.scale.set(1.0, 0.85, 1.35); body.position.y = 1.1; g.add(body);
+  const belly = mk(new T.SphereGeometry(0.72, 12, 8), bel, fs); belly.scale.set(0.9, 0.7, 1.2); belly.position.set(0, 0.95, 0.25); g.add(belly);
+  const neck = mk(new T.CylinderGeometry(0.28, 0.4, 0.9, 8), col, fs); neck.position.set(0, 1.75, 1.05); neck.rotation.x = 0.7; g.add(neck);
+  const hd = new T.Group(); hd.position.set(0, 2.15, 1.45); g.add(hd); hd.add(mk(new T.SphereGeometry(0.5, 14, 10), col, fs));
+  const sn = mk(new T.BoxGeometry(0.55, 0.36, 0.6), col, fs); sn.position.set(0, -0.1, 0.45); hd.add(sn);
+  for (const x of [-0.12, 0.12]) hd.add(at3(mk(new T.SphereGeometry(0.04, 6, 4), '#2a1010'), x, -0.02, 0.76));
+  for (const x of [-1, 1]) { const e = mk(new T.SphereGeometry(0.13, 10, 8), '#ffffff'); e.position.set(x * 0.22, 0.14, 0.36); hd.add(e); const p = mk(new T.SphereGeometry(0.07, 8, 6), '#1a1418'); p.position.set(x * 0.22, 0.14, 0.47); hd.add(p);
+    const hn = mk(new T.ConeGeometry(0.09, 0.45, 6), bel, fs); hn.position.set(x * 0.25, 0.5, -0.15); hn.rotation.x = -0.5; hd.add(hn); }
+  for (let i = 0; i < 5; i++) { const sp = mk(new T.ConeGeometry(0.12, 0.3, 5), bel, fs); sp.position.set(0, 1.85 - i * 0.05, 0.6 - i * 0.42); g.add(sp); }
+  let tz = -1.1; for (let i = 0; i < 5; i++) { const r = 0.32 - i * 0.055; const tl = mk(new T.SphereGeometry(r, 8, 6), col, fs); tl.position.set(0, 0.95 - i * 0.1, tz); g.add(tl); tz -= r * 1.6; }
+  const tip = mk(new T.ConeGeometry(0.16, 0.35, 4), bel, fs); tip.position.set(0, 0.5, tz); tip.rotation.x = -Math.PI / 2; g.add(tip);
+  for (const x of [-0.45, 0.45]) for (const z of [-0.5, 0.55]) g.add(at3(mk(new T.CylinderGeometry(0.13, 0.15, 0.55, 6), col, fs), x, 0.28, z));
+  const wings = []; for (const sx of [-1, 1]) { const pv = new T.Group(); pv.position.set(sx * 0.6, 1.6, 0.1); const sh = new T.Shape(); sh.moveTo(0, 0); sh.lineTo(sx * 2.2, 0.9); sh.lineTo(sx * 1.9, -0.2); sh.lineTo(sx * 1.4, -0.9); sh.lineTo(0, -0.6); sh.lineTo(0, 0);
+    const wm = new T.Mesh(new T.ShapeGeometry(sh), M(wc, { side: T.DoubleSide, flatShading: true })); wm.rotation.x = -Math.PI / 2; pv.add(wm); g.add(pv); wings.push(pv); }
+  g.userData.wings = wings; const mo = new T.Object3D(); mo.position.set(0, -0.1, 0.8); hd.add(mo); g.userData.mouth = mo; g.userData.headG = hd;
+  const fl = new T.Group(); for (let i = 0; i < 6; i++) { const f = softSprite(['rgba(255,240,170,1)', 'rgba(255,170,60,1)', 'rgba(255,90,30,1)'][i % 3], 0.9); f.scale.setScalar(0.5 + i * 0.35); f.position.z = 0.3 + i * 0.5; fl.add(f); } fl.visible = false; mo.add(fl); g.userData.flame = fl;
+  g.scale.setScalar(s || 1); return g; };
+/* segmented serpent (generic snake); size baked in so the group scale stays 1; animate with userData.segs */
+CF.serpent = (s, c, n) => { const g = new T.Group(), k = s || 1, col = c || '#4a8a3a', N = n || 14, segs = [];
+  for (let i = 0; i < N; i++) { const r = k * (0.26 - i * 0.012 * (14 / N)); const m = mk(new T.SphereGeometry(Math.max(0.05 * k, r), 10, 8), i % 2 ? col : new T.Color(col).multiplyScalar(0.8).getStyle()); g.add(m); segs.push(m); }
+  const h = segs[0]; h.scale.set(1.15, 0.9, 1.4); for (const x of [-1, 1]) { const e = mk(new T.SphereGeometry(0.07 * k, 8, 6), '#ffe24a'); e.position.set(x * 0.15 * k, 0.12 * k, 0.18 * k); h.add(e); const p = mk(new T.SphereGeometry(0.035 * k, 6, 4), '#141010'); p.position.set(x * 0.15 * k, 0.12 * k, 0.24 * k); h.add(p); }
+  const tg = mk(new T.ConeGeometry(0.03 * k, 0.25 * k, 4), '#d02a3a'); tg.rotation.x = Math.PI / 2; tg.position.set(0, -0.05 * k, 0.42 * k); h.add(tg); g.userData.segs = segs; g.userData.size = k; return g; };
+/* pose a serpent along a path: head at path(r), body trails behind (gap in seconds) */
+CF.serpentTick = (g, path, r, gap) => { const segs = g.userData.segs, k = g.userData.size; g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1); segs.forEach((m, i) => { const p = path(r - i * (gap || 0.05)); m.position.set(p.x, p.y + Math.sin(r * 8 - i * 0.7) * 0.06 * k, p.z); });
+  const a = path(r), b = path(r - 0.04); segs[0].rotation.y = Math.atan2(a.x - b.x, a.z - b.z); };
