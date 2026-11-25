@@ -10,12 +10,12 @@ function bubble(g, b) {
   g.fillStyle = b.c === '#fff' ? '#1a1f3a' : '#a01830'; g.font = F(700, px); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(b.txt, x + w / 2, y + h / 2 + 3); g.restore();
 }
 function chapter(g, t) {
-  const n = CHAP.length, w = 142, gap = 10, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
+  const n = CHAP.length, gap = 10, w = Math.min(142, Math.floor((1010 - (n - 1) * gap) / n)), x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
   let cur = -1; CHAP.forEach((c, i) => { if (t >= at(c[1])) cur = i; });
   CHAP.forEach((c, i) => {
     const x = x0 + i * (w + gap); g.save(); g.globalAlpha = 0.95; g.fillStyle = i < cur ? 'rgba(46,230,197,.35)' : i === cur ? P.teal : 'rgba(255,255,255,.14)'; rr(g, x, y, w, 40, 20); g.fill();
     if (i === cur) { const k = U.clamp((t - at(c[1])) / (end(c[2]) - at(c[1]))); g.fillStyle = 'rgba(15,22,48,.25)'; rr(g, x + w * k, y, w * (1 - k), 40, 20); g.fill(); }
-    g.font = F(600, 24); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
+    g.font = F(600, w < 130 ? 22 : 24); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
   });
 }
 function panel(g, x, y, w, h, a) { g.save(); g.globalAlpha = a; g.fillStyle = 'rgba(15,22,48,.9)'; rr(g, x, y, w, h, 36); g.fill(); g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 3; g.stroke(); g.restore(); }

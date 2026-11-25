@@ -501,3 +501,88 @@ const wizHat = (c, col) => { const h = c.userData.head, hm = M(col || '#7a7a84')
 /* deco: static props per station from data, items [CF name, scale, arg, x, y, z, rotY] */
 ENVB.deco = (st, o) => (o.items || []).map(([n, sc, arg, x, y, z, ry]) => { const m = CF[n](sc, arg); place(m, st, x, y || 0, z); if (ry) m.rotation.y = ry; if (m.userData.isFire) m.userData.still = true; return m; });
 CF.beacon = (s) => { const g = new T.Group(); for (let i = 0; i < 10; i++) { const l = mk(new T.CylinderGeometry(0.1, 0.12, 2.4, 5), '#6a4a2a'); const a = i * 0.63; l.position.set(Math.sin(a) * 0.5, 1.0, Math.cos(a) * 0.5); l.rotation.set(Math.cos(a) * 0.35, 0, -Math.sin(a) * 0.35); g.add(l); } g.add(at3(mk(new T.CylinderGeometry(1.2, 1.4, 0.3, 8), '#7a7a72'), 0, 0.15, 0)); g.scale.setScalar(s || 1); return g; };
+/* ---- added for Harry Potter 1-8 (Nov 2026): generic castle, school + magic props, reusable ---- */
+/* castle on a hill: keep + round towers with cone roofs, warm windows (generic fairy-tale shape) */
+CF.castle = (s, c, roof) => { const g = new T.Group(), col = c || '#8e887c', rc = roof || '#34425e', wm = basic('#ffd88a');
+  const hill = mk(new T.CylinderGeometry(15, 21, 6, 9), '#46563a', { flatShading: true }); hill.position.y = 1; g.add(hill);
+  const keep = mk(new T.BoxGeometry(14, 9, 7), col, { flatShading: true }); keep.position.set(0, 8.5, 0); g.add(keep);
+  const rf = mk(new T.CylinderGeometry(0.01, 5.6, 4, 4), rc, { flatShading: true }); rf.rotation.y = Math.PI / 4; rf.scale.set(1.75, 1, 0.9); rf.position.set(0, 15, 0); g.add(rf);
+  for (let i = 0; i < 6; i++) for (let j = 0; j < 2; j++) { const w = new T.Mesh(new T.PlaneGeometry(0.7, 1.4), wm); w.position.set(-5 + i * 2, 7.4 + j * 2.8, 3.52); g.add(w); }
+  for (const [x, z, r, h] of [[-9, 1, 1.7, 14], [9, 1, 1.7, 12], [-4.5, -4, 1.3, 19], [5, -3, 1.2, 21], [-13.5, -3, 1.2, 10], [13.5, -2, 1.3, 11], [0.5, -6, 1.9, 16]]) {
+    const tw = mk(new T.CylinderGeometry(r, r * 1.08, h, 10), col, { flatShading: true }); tw.position.set(x, 4 + h / 2, z); g.add(tw);
+    const cn = mk(new T.ConeGeometry(r * 1.3, r * 2.8, 10), rc, { flatShading: true }); cn.position.set(x, 4 + h + r * 1.4, z); g.add(cn);
+    for (let k = 0; k < 3; k++) { const w = new T.Mesh(new T.PlaneGeometry(0.45, 0.9), wm); w.position.set(x, 6 + k * (h - 4) / 3, z + r + 0.05); g.add(w); } }
+  g.scale.setScalar(s || 1); return g; };
+/* floating candles: rows of small candles with warm glows; userData.kids bob in fx */
+CF.candles = (s, n) => { const g = new T.Group(), rnd = srnd(57), m = M('#f4efe2'); g.userData.kids = [];
+  for (let i = 0; i < (n || 26); i++) { const c = new T.Group(); c.add(new T.Mesh(new T.CylinderGeometry(0.07, 0.07, 0.42, 8), m)); const f = softSprite('rgba(255,200,110,1)', 0.95); f.scale.setScalar(0.62); f.position.y = 0.36; c.add(f);
+    c.position.set((rnd() - 0.5) * 15, 4.4 + rnd() * 1.8, -7 + rnd() * 9); g.add(c); g.userData.kids.push(c); }
+  g.scale.setScalar(s || 1); return g; };
+/* broom: stick along z (front +z), bristles at the back */
+CF.broom = (s) => { const g = new T.Group(); const st = mk(new T.CylinderGeometry(0.045, 0.05, 2.0, 8), '#7a5232'); st.rotation.x = Math.PI / 2; g.add(st);
+  const br = mk(new T.ConeGeometry(0.2, 0.75, 10), '#c8a060', { flatShading: true }); br.rotation.x = Math.PI / 2; br.position.z = -1.15; g.add(br); g.scale.setScalar(s || 1); return g; };
+/* cauldron with glowing brew (c = brew colour) */
+CF.cauldron = (s, c) => { const g = new T.Group(), col = c || '#5aff7a'; const pot = mk(new T.SphereGeometry(0.75, 16, 10, 0, 6.3, 0.9, 2.24), '#1e1e22'); pot.position.y = 0.72; g.add(pot);
+  for (const a of [0, 2.1, 4.2]) g.add(at3(mk(new T.CylinderGeometry(0.06, 0.06, 0.4, 6), '#1e1e22'), Math.sin(a) * 0.5, 0.15, Math.cos(a) * 0.5));
+  const brew = new T.Mesh(new T.CircleGeometry(0.62, 18), basic(col)); brew.rotation.x = -Math.PI / 2; brew.position.y = 1.15; g.add(brew);
+  const gl = softSprite(col.startsWith('#') ? 'rgba(120,255,150,1)' : col, 0.8); gl.scale.setScalar(2.6); gl.position.y = 1.5; g.add(gl); g.userData.glow = gl; g.scale.setScalar(s || 1); return g; };
+/* stone goblet with blue flames */
+CF.goblet = (s) => { const g = new T.Group(), c = '#8a8478'; g.add(at3(mk(new T.CylinderGeometry(0.7, 0.9, 0.3, 10), c, { flatShading: true }), 0, 0.15, 0), at3(mk(new T.CylinderGeometry(0.22, 0.3, 1.2, 8), c, { flatShading: true }), 0, 0.9, 0));
+  g.add(at3(mk(new T.CylinderGeometry(0.85, 0.35, 0.9, 10, 1, true), c, { flatShading: true, side: T.DoubleSide }), 0, 1.9, 0)); const fl = [];
+  for (let i = 0; i < 3; i++) { const f = softSprite(['rgba(90,170,255,1)', 'rgba(150,220,255,1)', 'rgba(230,245,255,1)'][i], 0.9); f.scale.setScalar(2.4 - i * 0.6); f.position.y = 2.6 + i * 0.25; g.add(f); fl.push(f); }
+  g.userData.flames = fl; g.scale.setScalar(s || 1); return g; };
+/* tall standing mirror */
+CF.mirror = (s) => { const g = new T.Group(), f = '#c8a040'; g.add(at3(mk(new T.BoxGeometry(1.9, 3.2, 0.16), f, GOLDM), 0, 1.9, 0)); const gl = new T.Mesh(new T.PlaneGeometry(1.6, 2.9), basic('#a8c8e0')); gl.position.set(0, 1.9, 0.09); g.add(gl);
+  for (const x of [-0.7, 0.7]) g.add(at3(mk(new T.BoxGeometry(0.16, 0.3, 0.7), f, GOLDM), x, 0.15, 0)); g.userData.glass = gl; g.scale.setScalar(s || 1); return g; };
+/* checkerboard floor (n x n tiles) and a plain stone chess piece */
+CF.checker = (s, n) => { const g = new T.Group(), N = n || 8, a = M('#e4dccb'), b = M('#2a2a32'); for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) { const t = new T.Mesh(new T.BoxGeometry(1, 0.1, 1), (i + j) % 2 ? a : b); t.position.set(i - N / 2 + 0.5, 0.05, j - N / 2 + 0.5); g.add(t); } g.scale.setScalar(s || 1); return g; };
+CF.chessP = (s, c) => { const g = new T.Group(), col = c || '#e4dccb'; g.add(at3(mk(new T.CylinderGeometry(0.55, 0.65, 0.3, 12), col), 0, 0.15, 0), at3(mk(new T.CylinderGeometry(0.22, 0.48, 1.5, 12), col), 0, 1.05, 0), at3(mk(new T.SphereGeometry(0.38, 14, 10), col), 0, 2.05, 0));
+  g.scale.setScalar(s || 1); return g; };
+/* hourglass on a chain */
+CF.hourglass = (s) => { const g = new T.Group(), gm = basic('#d8f0ff', { transparent: true, opacity: 0.5 }); for (const k of [-1, 1]) { const c = new T.Mesh(new T.ConeGeometry(0.16, 0.24, 12), gm); c.position.y = k * 0.12; if (k > 0) c.rotation.x = Math.PI; g.add(c); g.add(at3(mk(new T.CylinderGeometry(0.2, 0.2, 0.03, 12), P.gold, GOLDM), 0, k * 0.25, 0)); }
+  const sd = mk(new T.ConeGeometry(0.1, 0.12, 10), '#e8c070'); sd.position.y = -0.17; g.add(sd); const gl = softSprite('rgba(255,225,150,1)', 0.6); gl.scale.setScalar(0.9); g.add(gl); g.scale.setScalar(s || 1); return g; };
+/* hedge wall (maze) */
+CF.hedge = (s, len) => { const m = mk(new T.BoxGeometry(len || 6, 3.0, 0.9), '#2f5a2e', { flatShading: true }); m.position.y = 1.5; const g = new T.Group(); g.add(m); g.scale.setScalar(s || 1); return g; };
+/* dark floating mist figures (soul-sucking guards, cave shades): c = colour */
+CF.mist = (s, c) => { const g = new T.Group(), rnd = srnd(97), m = basic(c || '#14141c', { transparent: true, opacity: 0.6, depthWrite: false }); g.userData.kids = [];
+  for (let i = 0; i < 9; i++) { const k = new T.Group(); k.add(at3(new T.Mesh(new T.SphereGeometry(0.4, 10, 8), m), 0, 1.5, 0)); const cn = new T.Mesh(new T.ConeGeometry(0.55, 1.8, 10, 1, true), m); cn.position.y = 0.6; cn.rotation.x = Math.PI; k.add(cn);
+    k.position.set((rnd() - 0.5) * 8, rnd() * 1.5, (rnd() - 0.5) * 4); g.add(k); g.userData.kids.push(k); }
+  g.scale.setScalar(s || 1); return g; };
+/* a swarm of envelopes (animate with userData.kids) */
+CF.letters = (s, n) => { const g = new T.Group(), rnd = srnd(23), m = M('#f6efdc'), d = basic('#c0302a'); g.userData.kids = [];
+  for (let i = 0; i < (n || 40); i++) { const e = new T.Group(); e.add(new T.Mesh(new T.BoxGeometry(0.42, 0.03, 0.3), m)); e.add(at3(new T.Mesh(new T.CircleGeometry(0.05, 10), d), 0, 0.02, 0)); e.children[1].rotation.x = -Math.PI / 2;
+    e.userData.a = rnd() * 6.3; e.userData.r = 0.8 + rnd() * 3; e.userData.h = rnd() * 3; e.userData.v = 0.6 + rnd() * 1.4; g.add(e); g.userData.kids.push(e); }
+  g.scale.setScalar(s || 1); return g; };
+CF.lettersTick = (g, t, k) => { (g.userData.kids || []).forEach((e) => { const u = e.userData, a = u.a + t * u.v * 2; e.position.set(Math.cos(a) * u.r * k, 0.6 + u.h * k + Math.sin(t * 3 + u.a) * 0.2, Math.sin(a) * u.r * 0.6 * k); e.rotation.set(t * u.v * 3, a, t * u.v * 2); }); };
+/* small wooden door in a wall (cupboard under stairs) */
+CF.doorW = (s, c) => { const g = new T.Group(), col = c || '#7a5232'; g.add(at3(mk(new T.BoxGeometry(1.4, 1.9, 0.12), '#4a3220'), 0, 0.95, 0), at3(mk(new T.BoxGeometry(1.2, 1.75, 0.14), col), 0, 0.9, 0.02));
+  g.add(at3(mk(new T.SphereGeometry(0.06, 8, 6), P.gold, GOLDM), 0.45, 0.9, 0.12)); g.scale.setScalar(s || 1); return g; };
+/* spell beam: inner white core + coloured glow tube, length along +z (use aimBeam) */
+CF.spell = (s, c) => { const g = new T.Group(), col = c || '#ff3a2a'; const a = new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 1, 6), basic('#ffffff')); const b = new T.Mesh(new T.CylinderGeometry(0.15, 0.15, 1, 8), basic(col, { transparent: true, opacity: 0.55, depthWrite: false }));
+  for (const m of [a, b]) { m.geometry.translate(0, 0.5, 0); m.geometry.rotateX(Math.PI / 2); g.add(m); } g.visible = false; g.scale.setScalar(s || 1); return g; };
+/* translucent shield dome */
+CF.dome = (s, c) => { const g = new T.Group(); const d = new T.Mesh(new T.SphereGeometry(10, 24, 12, 0, 6.3, 0, Math.PI / 2), basic(c || '#8ac8ff', { transparent: true, opacity: 0.16, depthWrite: false, side: T.DoubleSide })); g.add(d);
+  const w = new T.Mesh(new T.SphereGeometry(10.05, 16, 8, 0, 6.3, 0, Math.PI / 2), basic(c || '#bfe4ff', { wireframe: true, transparent: true, opacity: 0.28 })); g.add(w); g.scale.setScalar(s || 1); return g; };
+/* stone arch with a dark drifting veil */
+CF.archV = (s) => { const g = new T.Group(), c = '#4a4a50'; for (const x of [-1.3, 1.3]) g.add(at3(mk(new T.BoxGeometry(0.5, 3.4, 0.5), c, { flatShading: true }), x, 1.7, 0)); const a = mk(new T.TorusGeometry(1.3, 0.25, 6, 14, Math.PI), c, { flatShading: true }); a.position.y = 3.4; g.add(a);
+  const v = new T.Mesh(new T.PlaneGeometry(2.2, 3.6), basic('#0a0a10', { transparent: true, opacity: 0.75, side: T.DoubleSide })); v.position.y = 2.0; g.add(v); g.userData.veil = v; g.add(at3(mk(new T.BoxGeometry(4, 0.5, 1.6), c), 0, -0.05, 0)); g.scale.setScalar(s || 1); return g; };
+/* tall shelf of glowing glass balls */
+CF.orbShelf = (s) => { const g = new T.Group(), w = '#2a2a3a', om = basic('#a8dcff'); g.add(at3(mk(new T.BoxGeometry(5, 5.2, 0.6), w), 0, 2.6, -0.2));
+  for (let r = 0; r < 4; r++) { g.add(at3(mk(new T.BoxGeometry(5, 0.08, 0.8), '#3a3a4a'), 0, 0.8 + r * 1.2, 0.2)); for (let i = 0; i < 7; i++) { g.add(at3(new T.Mesh(new T.SphereGeometry(0.17, 10, 8), om), -2.1 + i * 0.7, 1.05 + r * 1.2, 0.3)); } }
+  const gl = softSprite('rgba(140,200,255,1)', 0.5); gl.scale.setScalar(6); gl.position.set(0, 2.8, 0.6); g.add(gl); g.scale.setScalar(s || 1); return g; };
+/* long dining table */
+CF.tableL = (s, len) => { const g = new T.Group(), L = len || 10; g.add(at3(mk(new T.BoxGeometry(L, 0.14, 1.3), '#6a4528'), 0, 0.8, 0)); for (const x of [-L / 2 + 0.4, 0, L / 2 - 0.4]) g.add(at3(mk(new T.BoxGeometry(0.14, 0.8, 1.0), '#4a3020'), x, 0.4, 0));
+  for (let i = 0; i < Math.floor(L / 1.2); i++) g.add(at3(mk(new T.SphereGeometry(0.16, 8, 6), ['#e8a040', '#c85a3a', '#f0d070'][i % 3]), -L / 2 + 0.7 + i * 1.2, 0.95, 0)); g.scale.setScalar(s || 1); return g; };
+/* stone basin on a pedestal with glowing liquid */
+CF.basin = (s, c) => { const g = new T.Group(), k = '#7a7a72'; g.add(at3(mk(new T.CylinderGeometry(0.25, 0.4, 1.0, 8), k, { flatShading: true }), 0, 0.5, 0), at3(mk(new T.CylinderGeometry(0.85, 0.45, 0.4, 12), k, { flatShading: true }), 0, 1.15, 0));
+  const l = new T.Mesh(new T.CircleGeometry(0.75, 16), basic(c || '#6aff8a')); l.rotation.x = -Math.PI / 2; l.position.y = 1.36; g.add(l); const gl = softSprite('rgba(120,255,150,1)', 0.7); gl.scale.setScalar(2.2); gl.position.y = 1.6; g.add(gl); g.scale.setScalar(s || 1); return g; };
+/* tall wooden cabinet */
+CF.cabinet = (s, c) => { const g = new T.Group(), col = c || '#3a2618'; g.add(at3(mk(new T.BoxGeometry(1.5, 3.0, 0.9), col), 0, 1.5, 0)); for (const x of [-0.36, 0.36]) g.add(at3(mk(new T.BoxGeometry(0.66, 2.6, 0.06), '#4a3424'), x, 1.5, 0.47));
+  g.add(at3(mk(new T.ConeGeometry(0.95, 0.5, 4), col), 0, 3.25, 0)); g.children[g.children.length - 1].rotation.y = Math.PI / 4; g.scale.setScalar(s || 1); return g; };
+/* white marble tomb */
+CF.tomb = (s) => { const g = new T.Group(); g.add(at3(mk(new T.BoxGeometry(2.6, 1.0, 1.3), '#ecebe6'), 0, 0.5, 0), at3(mk(new T.BoxGeometry(2.8, 0.18, 1.45), '#f8f8f4'), 0, 1.09, 0)); g.scale.setScalar(s || 1); return g; };
+/* silvery cloak (flat fold) */
+CF.cloak = (s) => { const g = new T.Group(); const p = new T.Mesh(new T.PlaneGeometry(1.0, 1.3, 4, 4), basic('#c8d8ec', { transparent: true, opacity: 0.6, side: T.DoubleSide })); p.rotation.z = 0.2; g.add(p); const gl = softSprite('rgba(200,220,255,1)', 0.4); gl.scale.setScalar(1.8); g.add(gl); g.scale.setScalar(s || 1); return g; };
+/* rat */
+CF.rat = (s, c) => { const g = new T.Group(), col = c || '#8a847a'; const b = mk(new T.SphereGeometry(0.22, 12, 8), col); b.scale.set(0.9, 0.8, 1.4); b.position.y = 0.18; g.add(b); g.add(at3(mk(new T.SphereGeometry(0.13, 10, 8), col), 0, 0.22, 0.32));
+  for (const x of [-0.08, 0.08]) g.add(at3(mk(new T.SphereGeometry(0.06, 8, 6), '#e8b0b0'), x, 0.35, 0.3)); const t = mk(new T.CylinderGeometry(0.02, 0.01, 0.5, 5), '#e8b0b0'); t.rotation.x = Math.PI / 2 - 0.3; t.position.set(0, 0.15, -0.45); g.add(t); g.scale.setScalar(s || 1); return g; };
