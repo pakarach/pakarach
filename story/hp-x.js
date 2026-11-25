@@ -80,3 +80,7 @@ WRAP('herm', (c) => puffs(c, HPH.herm, 11, 0.3)); WRAP('hermStone', (c) => puffs
 WRAP('hagrid', (c) => puffs(c, '#2a2018', 12, 0.34, true)); WRAP('bella', (c) => puffs(c, '#141014', 12, 0.3)); WRAP('sirius', (c) => puffs(c, '#1a1618', 6, 0.24));
 WRAP('snape', (c) => bigCollar(c, '#0e0e12')); WRAP('dumb', (c) => wizHat(c, '#2a3a6a')); WRAP('mcg', (c) => rectGlasses(c));
 WRAP('draco', (c) => bigCollar(c, '#1a3a2e'));
+/* generic house elf (folklore elf: small, long pointed ears, big eyes, plain brown tunic) */
+CF.hpElf = (s) => { const c = vin({ hair: '#6a4a2a', bangs: 'baby', backLen: 1.1, brow: '#5a3a1a', skin: '#e2c6a4', eyeScale: 1.3, iris: '#3a6aa0', top: '#7a5a3a', bottom: '#6a4a2e', shoes: '#e2c6a4', scale: AD * 0.52 * (s || 1) });
+  const m = M('#e2c6a4'); for (const sx of [-1, 1]) { const e = new T.Mesh(new T.ConeGeometry(0.17, 1.0, 8), m); e.scale.set(1, 1, 0.45); onHead(c, e, 1.5, sx * 1.52, 0.8); e.rotateZ(sx * 0.05); }
+  return c; };
