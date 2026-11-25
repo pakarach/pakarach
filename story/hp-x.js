@@ -64,7 +64,7 @@ CF.trollG = (s) => vin({ bald: true, ears: true, skin: '#8a8a7a', brow: '#5a5a4a
 CF.baby = (s) => vin({ hair: HPH.harry, bangs: 'baby', backLen: 1.2, brow: HPH.harry, top: '#e8f0f8', bottom: '#e8f0f8', scale: AD * 0.42 * (s || 1) });
 CF.kidA = (s, c) => vin({ hair: c ? HPH.ron : HPH.harry, bangs: 'side', backLen: 1.5, ears: !c, lashes: !!c, brow: '#2a2018', top: c ? '#7a4a9a' : '#3a4a7a', bottom: '#2e2e36', longSleeve: true, scale: AD * 0.66 * (s || 1) });
 CF.wand = (s, c, tip) => CF.staff((s || 1) * 0.32, c || '#5a3a22', tip);
-CF.lbl = (s, txt, col) => { const l = label(txt || '', { size: 64, color: col || '#fff' }); l.scale.multiplyScalar(s || 1); return l; };
+CF.lbl = (s, txt, col) => { const g = new T.Group(); g.add(label(txt || '', { size: 64, color: col || '#fff' })); g.scale.setScalar(s || 1); return g; }; // group keeps the sprite's aspect when the actor system sets a uniform scale
 /* ---- face / silhouette details so each character is easy to tell apart (generic shapes, no actor likeness) ---- */
 const HSP = (c) => c.userData.headSpace || c.userData.head;
 const onHead = (c, m, th, dp, r) => { const p = CK.surf(T, th, dp, r); m.position.copy(p); const n = p.clone().normalize(); m.quaternion.setFromUnitVectors(new T.Vector3(0, 1, 0), n); HSP(c).add(m); return m; };
