@@ -48,7 +48,7 @@ const CAP = {
   a17: ['แฮร์รี่จับตัวเขา <ร่างไหม้เป็นผง!>', 'เพราะ{ความรักของแม่}ที่ยอมตายแทน ยังคุ้มครองอยู่'],
   a18: ['ควันจอมมารหนีไปได้', '<มันยังไม่ตาย…> แค่รอวันกลับมา'],
   /* ---- ภาค 2 ห้องแห่งความลับ (2002) ---- */
-  b1: ['ปี 2 ตกรถไฟ รอนเลยขับ{รถบินได้}ของพ่อ', '<บินข้ามประเทศ>ไปโรงเรียน!'],
+  b1: ['ด็อบบี้<ปิดทางเข้าชานชาลา> ตกรถไฟ!', 'รอนเลยขับ{รถบินได้}ของพ่อ บินไปโรงเรียน'],
   b2: ['ลงจอดใส่<ต้นไม้ที่ตีกลับ!>', 'ไม้กายสิทธิ์รอน{หักครึ่ง} ซวยตั้งแต่วันแรก'],
   b3: ['ครูคนใหม่ {ล็อกฮาร์ต} ดังที่สุดในโลก', 'แต่<ร่ายคาถาไม่เคยถูกสักครั้ง>'],
   b4: ['รอนร่ายคาถาด้วยไม้หัก', '<สะท้อนเข้าตัว อ้วกทากไม่หยุด!>'],
@@ -58,7 +58,7 @@ const CAP = {
   b8: ['เดรโกเสกงู แฮร์รี่<พูดภาษางูได้!>', 'ทุกคนเลยสงสัย {แฮร์รี่เป็นตัวร้าย?}'],
   b9: ['แฮกริดใบ้ว่า <ให้ตามแมงมุม> รอนกลัวที่สุด!', 'ฝูงแมงมุมยักษ์ไล่ {รถบินมาช่วยพอดี}'],
   b10: ['{เฮอร์ไมโอนี่}ก็กลายเป็นหิน', 'ในมือมีกระดาษ <"งูยักษ์" + "ท่อน้ำ">'],
-  b11: ['ล็อกฮาร์ตจะลบความจำเด็กๆ แล้วหนี', 'แต่ใช้ไม้หักของรอน <ลบความจำตัวเอง!>'],
+  b11: ['บังคับครูล็อกฮาร์ต<ลงห้องลับไปด้วย>', 'เขาจะลบความจำเด็กๆ แต่ใช้ไม้หักของรอน {ลบความจำตัวเอง!}'],
   b12: ['จินนี่สลบ ข้างตัวคือ{สมุดเล่มนั้น}', 'วิญญาณในสมุดชื่อ{ทอม ริดเดิล} <คือโวลเดอมอร์ตอนหนุ่ม!>'],
   b13: ['ทอมปล่อย<งูยักษ์>ไล่ล่า', '{นกฟีนิกซ์}บินมาช่วย พร้อม<ดาบ>'],
   b14: ['แฮร์รี่ฟันงูยักษ์ แล้วเอา{เขี้ยวพิษ}', '<แทงสมุดทะลุ!> ทอมสลายหายไป'],
@@ -143,13 +143,13 @@ const CAP = {
   g15: ['แต่มีดของเบลลาทริกซ์ตามมา…', '<ด็อบบี้จากไปบนชายหาด>'],
   g16: ['จอมมารรู้ว่า{ไม้ที่แกร่งที่สุด}คือไม้ของดัมเบิลดอร์', 'เปิดหลุมศพ <ขโมยไปจากมือศพ!>'],
   /* ---- ภาค 8 เครื่องรางยมทูต 2 (2011) ---- */
-  h1: ['ฮอร์ครักซ์อีกชิ้นคือ{ถ้วย} ซ่อนในธนาคาร', 'ในห้องนิรภัยของเบลลาทริกซ์ <ปลอมตัวบุก!>'],
+  h1: ['เบลลาทริกซ์<กลัวมีคนเข้าห้องนิรภัยของเธอ>', 'ทั้งสามเดาว่า{ฮอร์ครักซ์ซ่อนในนั้น} ปลอมตัวบุกธนาคาร!'],
   h2: ['ของในห้อง<แตกตัวทวีคูณ>เวลาแตะ!', 'ทองท่วมจน{เกือบจม}'],
   h3: ['หนีออกมาบน{หลังมังกร}!', '<พังหลังคาธนาคาร> บินลิ่ว'],
   h4: ['กลับฮอกวอตส์ {สเนปเป็นครูใหญ่}', 'แฮร์รี่โผล่ <มักกอนนากัลดวลสเนปจนหนี>'],
   h5: ['ทุกคน{ร่ายเกราะ}คลุมปราสาท', '<ทัพจอมมารนับพัน>รออยู่ข้างนอก'],
   h6: ['รอนกับเฮอร์ไมโอนี่ ใช้{เขี้ยวงูยักษ์}', '<ทำลายถ้วย!> ชิ้นที่ 4'],
-  h7: ['{มงกุฎ}ซ่อนในห้องต้องประสงค์', 'แฮร์รี่แทง รอนเตะเข้ากองไฟ <ชิ้นที่ 5>'],
+  h7: ['จิตที่เชื่อมจอมมารบอกว่า <อีกชิ้นอยู่ในโรงเรียน>', 'คือ{มงกุฎ}ในห้องต้องประสงค์ แทงแล้วเตะเข้ากองไฟ ชิ้นที่ 5'],
   h8: ['เกราะ<แตก!> ศึกใหญ่เริ่ม', 'ปราสาท<ลุกเป็นไฟ>'],
   h9: ['จอมมารสั่ง{นากินี} งูคู่ใจ กัดสเนป', 'คิดว่า<สเนปต้องตาย ไม้ถึงจะยอมรับ>'],
   h10: ['สเนปใกล้ตาย ส่ง{น้ำตาความทรงจำ}', 'ขอ<มองตาแฮร์รี่เป็นครั้งสุดท้าย>'],
@@ -240,7 +240,7 @@ const ENV = {
   BANK: [['hall', { floor: '#e8e2d4', wall: '#d8cfbe', carpet: '#8a2a2a', pillar: '#c8b890', throne: false }]],
   VAULT: [['room', { floor: '#6a4a22', wall: '#3a2a20', side: '#34261c', lamps: [-4, 4], lampC: 'rgba(255,190,80,1)' }], ['deco', { items: [['goldpile', 2.0, null, -4, 0, -4], ['goldpile', 2.4, null, 4, 0, -4.4]] }]],
   BATTLE: [['field', { g1: '#4a4a3e', g2: '#2a2a24', seed: 141, r1: '#3a3a40' }], CASTLE_FAR(-34, 1.0)],
-  BOAT: [['room', { floor: '#2a2a24', wall: '#1e2a24', side: '#202a24', lamps: [-3, 3], lampC: 'rgba(150,230,200,1)' }]],
+  BOAT: [['room', { floor: '#4a4234', wall: '#3a4038', side: '#3a3e36', lamps: [-3, 0, 3], lampC: 'rgba(200,240,220,1)' }]],
   MEM: [['field', { g1: '#c8c088', g2: '#a89a68', seed: 143, r1: '#c8b8a0' }], ['deco', { items: [['tree', 2.0, '#8aa060', -3.6, 0, -3.4]] }]],
   STAGE: [['room', { floor: '#1a1a26', wall: '#14142a', side: '#16162a', lamps: [-4, 0, 4], lampC: 'rgba(255,220,160,1)' }]],
   WHITE: [['room', { floor: '#f4f4f2', wall: '#ffffff', side: '#f8f8f6', lamps: [-4, 0, 4], lampC: 'rgba(255,255,255,1)' }]],
@@ -673,7 +673,7 @@ const SC = {
     harry: { p: [-0.4, 1.4], f: 180, ex: 'happy', pose: at_(2.0, 'up', null) }, ron: { p: [0.6, 1.6], f: 180, ex: 'giggle', pose: at_(2.0, 'up', null) },
     broom1: { p: [0, 0] }, fred: { p: [0, 0], ex: 'giggle' }, broom3: { p: [0, 0] }, george: { p: [0, 0], ex: 'giggle' },
     fw1: { p: [-2.4, -2.4, 4.0], pop: 1.0, out: 1.8 }, fw2: { p: [2.0, -2.8, 4.6], pop: 1.6, out: 2.4 }, fw3: { p: [0, -4.2, 5.2], pop: 2.2, out: 3.0 }, fw4: { p: [-1.0, -3.2, 3.6], pop: 2.8, out: 3.6 }, fwS: { p: [0, 0] } },
-    hud: pow([['ตูม!', 1.0, 300, 920, '#ff8adc', 130], ['ตูม!!', 1.6, 780, 900, '#8ad8ff', 140], ['ตูมม!!', 2.2, 540, 880, '#ffe066', 150], ['เย้!!', 3.2, 540, 1150, '#ffffff', 120]]), sfx: [[0.3, 'zip'], [1.0, 'puff'], [1.6, 'puff'], [2.2, 'puff'], [2.8, 'puff'], [3.2, 'bell']],
+    hud: pow([['ตูม!', 1.0, 200, 900, '#ff8adc', 120], ['ตูม!!', 1.9, 880, 900, '#8ad8ff', 130], ['ตูมม!!', 2.9, 540, 860, '#ffe066', 140], ['เย้!!', 3.2, 540, 1150, '#ffffff', 120]]), sfx: [[0.3, 'zip'], [1.0, 'puff'], [1.6, 'puff'], [2.2, 'puff'], [2.8, 'puff'], [3.2, 'bell']],
     fx: all(bfly('broom1', 'fred', loopP('GHALL', 0, 3.4, -2.2, 3.4, 1.6, 1.8, 0, 0.6)), bfly('broom3', 'george', loopP('GHALL', 0, 3.8, -2.2, 3.4, 1.6, 1.8, Math.PI, 0.6)), streakP('fwS', loopP('GHALL', 0, 4.6, -3.0, 2.6, 1.4, 3.0, 1, 1.0), 0.6, 9)) },
   e8: { st: 'PROPH', bg: 'storm', dim: 0.25, cam: [0, 0, 0.9, -1.4, 5.4, 0.6, 0.45], flash: [[0.2, 0.4, 'rgba(255,255,255,'], [2.4, 0.4, 'rgba(255,255,255,']], A: {
     sirius: { p: [-0.6, -1.6], f: 30, ex: 'cry', pose: 'cry', sit: true }, vold: { p: [1.6, -2.4], f: -60, ex: 'angry', pose: aim, say: ['ส่งคำทำนายมา!', 1.2, 2.6] }, wV: W_('vold'), gB: { p: [0, -1.8, 2.0], s: 4 } },
@@ -876,7 +876,7 @@ const SC = {
     nevA: { p: [-1.6, 1.0], f: 140, ex: 'angry', pose: aim }, wN: W_('nevA'), ginny: { p: [1.4, 1.2], f: 200, ex: 'angry', pose: aim }, wHe: W_('ginny'), de1: { p: [-3.2, -1.6], f: 40, ex: 'angry', pose: aim }, wP: W_('de1'), de2: { p: [3.0, -1.8], f: -40, ex: 'angry', pose: aim }, wB: W_('de2') },
     hud: pow([['เพล้ง!!', 0.5, 540, 880, '#bfe0ff', 140], ['ตูม!!', 1.0, 300, 920, '#ff8a3a', 140], ['ตูมม!!', 2.2, 780, 900, '#ff8a3a', 150]]), sfx: [[0.4, 'puff'], [1.0, 'puff'], [1.6, 'zap'], [2.2, 'puff'], [2.8, 'zap']],
     fx: all(zap([[1.4, 1.8, 'nevA', 'de1', 'bR'], [1.6, 2.0, 'de2', 'ginny', 'bG'], [2.6, 3.0, 'ginny', 'de2', 'bR2'], [3.0, 3.4, 'de1', 'nevA', 'bG2']]), streakP('smokeD', loopP('BATTLE', 0, 6, -10, 8, 4, 1.4, 0, 1), 0, 9), streakP('smokeD2', loopP('BATTLE', 0, 8, -14, 7, 5, 1.2, 2, 1), 0, 9)) },
-  h9: { st: 'BOAT', bg: 'night', cam: [0, 0, 0.9, -0.8, 5.4, 0.55, 0.45], A: { nagini: { p: [0, 0] },
+  h9: { st: 'BOAT', bg: 'hall', cam: [0, 0, 0.9, -0.8, 5.4, 0.55, 0.45], A: { nagini: { p: [0, 0] },
     vold: { p: [1.6, -1.6], f: -60, ex: 'angry', pose: 'point', out: 3.6, say: ['ขอโทษนะ เซเวอรัส', 0.3, 1.6] }, wE: W_('vold'), snape: { p: [-0.6, -0.6], f: 60, ex: 'worried', fall: [2.4, 3.0], fallDir: -1 } },
     hud: pow([['ฟ่อ!!', 2.2, 380, 1000, '#9aff9a', 130]]), sfx: [[0.3, 'tok'], [1.6, 'zip'], [2.2, 'puff'], [3.6, 'puff']],
     fx: (r, t, s, o, st) => { o.nagini.visible = r > 0.6; if (o.nagini.visible) CF.serpentTick(o.nagini, (u) => { u = Math.max(u, 0.6); return u < 2.0 ? H.at(st, 1.6 + Math.cos(u * 2.4) * 1.2, 0.25, -1.6 + Math.sin(u * 2.4) * 0.8) : H.at(st, U.lerp(1.6 + Math.cos(4.8) * 1.2, -0.4, U.clamp((u - 2.0) / 0.3)), 0.25 + U.clamp((u - 2.0) / 0.3) * 0.9, U.lerp(-1.6 + Math.sin(4.8) * 0.8, -0.5, U.clamp((u - 2.0) / 0.3))); }, r, 0.06); } },
@@ -925,9 +925,9 @@ const SC = {
     harry: { p: [0, 0.0], f: 0, ex: 'happy', pose: during(0.4, 2.2, 'hold', at_(2.6, 'up', null)) }, wE: { on: ['harry', 'R', 0, 0.1, 0.1], out: 2.0 }, puff: { p: [0, 0.4, 1.4], pop: 1.9, out: 2.6 },
     ron: { p: [-1.4, 0.6], f: 30, ex: 'happy', say: ['ไม้ที่แกร่งที่สุดเลยนะ!', 0.4, 1.8] }, herm: { p: [1.4, 0.6], f: -30, ex: 'giggle', pose: at_(2.6, 'embrace', null) } },
     hud: pow([['กร๊อบ!', 1.95, 540, 950, '#ffd94a', 140]]), sfx: [[0.4, 'tok'], [1.95, 'tok'], [2.6, 'chime']] },
-  h22: { st: 'TRAIN', bg: 'day', calm: true, cam: [0, 0, 0.9, -0.2, 5.6, 0.55, 0.5], A: { puff2: { p: [4.4, -4.4, 2.8] },
+  h22: { st: 'TRAIN', bg: 'day', calm: true, cam: [0, 0.4, 0.9, 0.0, 6.2, 0.55, 0.5], A: { puff2: { p: [4.4, -4.4, 2.8] },
     harryA: { p: [-0.6, 0.4], f: 30, ex: 'happy', pose: at_(2.0, 'give', null), say: ['ไม่ต้องกลัวนะลูก', 2.2] }, kid1: { p: [0.4, 0.8], f: -60, ex: 'worried' }, ginnyA: { p: [-1.6, 0.0], f: 30, ex: 'happy' },
-    ronA: { p: [1.8, 0.2], f: -40, ex: 'giggle', pose: 'wave' }, hermA: { p: [2.8, -0.2], f: -40, ex: 'happy' }, kid2: { p: [1.2, 1.2], f: -20, ex: 'giggle' }, dracoA: { p: [-3.6, -2.0], f: 40, ex: 'happy', pop: 2.8 } },
+    ronA: { p: [2.4, 0.0], f: -40, ex: 'giggle', pose: 'wave' }, hermA: { p: [3.4, -0.6], f: -40, ex: 'happy' }, kid2: { p: [2.2, 1.4], f: -20, ex: 'giggle' }, dracoA: { p: [-3.6, -2.0], f: 40, ex: 'happy', pop: 2.8 } },
     sfx: [[0.1, 'pop'], [2.2, 'chime'], [2.8, 'pop'], [3.6, 'bell']], fx: expr('kid1', 'happy', 3.4) },
   rc: { st: 'LAKE', bg: 'dawn', calm: true, cam: [0, 0, 1.0, 0.2, 5.6, 0.5, 0.5], A: {
     harry: { p: [0, 0.6], f: 0, ex: 'happy', pose: 'wave' }, ron: { p: [-1.2, 0.8], f: 20, ex: 'giggle' }, herm: { p: [1.2, 0.8], f: -20, ex: 'happy' } },
@@ -1025,8 +1025,9 @@ const PID = { nevA: 'nev', ronL: 'ron', hermB: 'herm', hermS: 'herm', de2: 'de1'
 const card = (g, k, x, y, a, role) => { const rw = ROLE[k] || ROLE[PID[k]]; if (!rw) return; const [nm, rl] = rw, two = role && rl; g.save(); g.globalAlpha = a; g.font = F(700, 30); let w = g.measureText(nm).width; if (two) { g.font = F(600, 25); w = Math.max(w, g.measureText(rl).width); } w += 40;
   g.fillStyle = 'rgba(15,22,48,.88)'; rr(g, x - w / 2, y - 24, w, two ? 84 : 48, 22); g.fill(); g.strokeStyle = P.teal; g.lineWidth = 3; g.stroke(); txt(g, nm, x, y + 1, 30, '#fff', 700); if (two) txt(g, rl, x, y + 37, 25, P.gold, 600); g.restore(); };
 function tagHud(tags, role, dur) { return (g, r, t, W, HH) => { const d = window.__dbg; if (!d || !d.camera) return; const v = new T.Vector3();
-  tags.forEach(([k, t0]) => { const a = U.clamp((r - t0) / 0.2) * U.clamp((t0 + (dur || 2.8) - r) / 0.3); if (a <= 0) return; const o = d.s[k]; if (!o || !o.visible) return; (o.userData.segs ? o.userData.segs[0] : o).getWorldPosition(v); v.project(d.camera); if (v.z > 1) return;
-    card(g, k, U.clamp((v.x + 1) / 2 * W, 150, W - 150), Math.min((1 - v.y) / 2 * HH + 38, 1780), a, role); }); }; }
+  const put = []; tags.forEach(([k, t0]) => { const a = U.clamp((r - t0) / 0.2) * U.clamp((t0 + (dur || 2.8) - r) / 0.3); if (a <= 0) return; const o = d.s[k]; if (!o || !o.visible) return; (o.userData.segs ? o.userData.segs[0] : o).getWorldPosition(v); v.project(d.camera); if (v.z > 1) return;
+    const x = U.clamp((v.x + 1) / 2 * W, 150, W - 150); let y = Math.min((1 - v.y) / 2 * HH + 38, 1780); const hh = role ? 96 : 58; for (let n = 0; role && n < 6 && put.some((q) => Math.abs(q[0] - x) < 250 && Math.abs(q[1] - y) < hh); n++) y += hh;
+    put.push([x, y]); card(g, k, x, y, a, role); }); }; }
 (() => { const ids = BEATS.map((b) => b[0]), seen = new Set(); ids.forEach((id) => { const sc = SC[id]; if (!sc || !sc.A || /^p\d$/.test(id) || id === 'h20b' || id === 'cover') return; const tags = [];
   for (const k in sc.A) { const a = sc.A[k]; const pid = PID[k] || k; if (!a || !(ROLE[k] || ROLE[pid]) || seen.has(pid) || (id === 'h1' && k === 'bella')) continue; const t0 = Math.max(0.3, (a.pop || 0) + 0.15) + tags.length * 0.5; if (a.out != null && a.out < t0 + 1.0) continue; seen.add(pid); tags.push([k, t0]); }
   if (tags.length) { const h = tagHud(tags, true, 2.8); sc.hud = sc.hud ? hudAll(sc.hud, h) : h; } }); })();
