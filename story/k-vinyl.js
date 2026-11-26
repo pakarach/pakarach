@@ -613,3 +613,30 @@ CF.serpent = (s, c, n) => { const g = new T.Group(), k = s || 1, col = c || '#4a
 /* pose a serpent along a path: head at path(r), body trails behind (gap in seconds) */
 CF.serpentTick = (g, path, r, gap) => { const segs = g.userData.segs, k = g.userData.size; g.position.set(0, 0, 0); g.rotation.set(0, 0, 0); g.scale.setScalar(1); segs.forEach((m, i) => { const p = path(r - i * (gap || 0.05)); m.position.set(p.x, p.y + Math.sin(r * 8 - i * 0.7) * 0.06 * k, p.z); });
   const a = path(r), b = path(r - 0.04); segs[0].rotation.y = Math.atan2(a.x - b.x, a.z - b.z); };
+/* ---- added for the Hunger Games recap (Nov 2026): generic reusable props ---- */
+/* white rose: bloom of soft petals on a green stem (s = size) */
+CF.rose = (s, c) => { const g = new T.Group(), col = c || '#f6f4f0'; g.add(at3(mk(new T.CylinderGeometry(0.015, 0.015, 0.5, 5), '#3a7a3a'), 0, -0.25, 0));
+  for (let i = 0; i < 6; i++) { const p = mk(new T.SphereGeometry(0.07, 8, 6), col); const a = i * 1.047; p.position.set(Math.sin(a) * 0.05, 0.02 + (i % 2) * 0.03, Math.cos(a) * 0.05); g.add(p); } g.add(at3(mk(new T.SphereGeometry(0.06, 8, 6), col), 0, 0.07, 0)); g.scale.setScalar(s || 1); return g; };
+/* plain acoustic guitar (held in front) */
+CF.guitar = (s, c) => { const g = new T.Group(), col = c || '#b8783a'; const b1 = mk(new T.CylinderGeometry(0.22, 0.22, 0.09, 16), col); b1.rotation.x = Math.PI / 2; const b2 = b1.clone(); b2.scale.setScalar(0.8); b2.position.y = 0.26; g.add(b1, b2);
+  g.add(at3(mk(new T.CylinderGeometry(0.06, 0.06, 0.1, 10), '#2a1a10'), 0, 0.1, 0.03)); g.children[g.children.length - 1].rotation.x = Math.PI / 2; g.add(at3(mk(new T.BoxGeometry(0.06, 0.6, 0.04), '#4a2e1a'), 0, 0.62, 0)); g.scale.setScalar(s || 1); return g; };
+/* bottle (green glass) */
+CF.bottle = (s, c) => { const g = new T.Group(), m = M(c || '#3a7a4a', { roughness: 0.2, transparent: true, opacity: 0.9 }); g.add(at3(new T.Mesh(new T.CylinderGeometry(0.09, 0.09, 0.3, 10), m), 0, 0.15, 0), at3(new T.Mesh(new T.CylinderGeometry(0.035, 0.08, 0.14, 10), m), 0, 0.37, 0)); g.scale.setScalar(s || 1); return g; };
+/* small parachute with a box (supply drop) */
+CF.chute = (s, c) => { const g = new T.Group(); const cp = mk(new T.SphereGeometry(0.7, 12, 6, 0, 6.3, 0, 1.2), c || '#e8e4dc', { side: T.DoubleSide }); cp.position.y = 1.5; g.add(cp);
+  for (let i = 0; i < 4; i++) { const a = i * 1.57 + 0.78, l = mk(new T.CylinderGeometry(0.008, 0.008, 1.3, 4), '#d8d4cc'); l.position.set(Math.sin(a) * 0.3, 0.75, Math.cos(a) * 0.3); l.rotation.set(Math.cos(a) * 0.4, 0, -Math.sin(a) * 0.4); g.add(l); }
+  g.add(at3(mk(new T.BoxGeometry(0.34, 0.3, 0.34), '#c0b080'), 0, 0.0, 0)); g.scale.setScalar(s || 1); return g; };
+/* horn of plenty: a big golden curved cone lying on its side, open end forward */
+CF.horn = (s) => { const g = new T.Group(); for (let i = 0; i < 6; i++) { const r = 0.25 + i * 0.32, seg = mk(new T.CylinderGeometry(r + 0.32, r, 0.7, 14, 1, true), P.gold, Object.assign({ side: T.DoubleSide }, GOLDM)); seg.rotation.x = Math.PI / 2; seg.position.set(0, 0.6 + r * 0.9, -2.2 + i * 0.66); seg.rotation.x += 0.12 * (5 - i); g.add(seg); }
+  g.scale.setScalar(s || 1); return g; };
+/* glass ball of name slips (draw bowl) */
+CF.bowlG = (s) => { const g = new T.Group(); g.add(at3(mk(new T.CylinderGeometry(0.22, 0.3, 0.9, 10), '#5a4a3a'), 0, 0.45, 0)); const b = new T.Mesh(new T.SphereGeometry(0.55, 16, 12), new T.MeshStandardMaterial({ color: '#dff0ff', transparent: true, opacity: 0.3, roughness: 0.1 })); b.position.y = 1.4; g.add(b);
+  const rnd = srnd(61); for (let i = 0; i < 26; i++) { const p = mk(new T.BoxGeometry(0.16, 0.02, 0.1), '#f4f0e4'); p.position.set((rnd() - 0.5) * 0.6, 1.08 + rnd() * 0.3, (rnd() - 0.5) * 0.6); p.rotation.set(rnd() * 3, rnd() * 3, 0); g.add(p); } g.scale.setScalar(s || 1); return g; };
+/* insect nest hanging from a branch (grey papery ball) */
+CF.nest = (s) => { const g = new T.Group(); const b = mk(new T.SphereGeometry(0.45, 10, 8), '#a8a090', { flatShading: true }); b.scale.set(1, 1.3, 1); g.add(b); g.add(at3(mk(new T.CylinderGeometry(0.03, 0.03, 0.5, 5), '#5a4a3a'), 0, 0.75, 0)); g.scale.setScalar(s || 1); return g; };
+/* handful of dark berries */
+CF.berries = (s) => { const g = new T.Group(); for (let i = 0; i < 5; i++) { const b = mk(new T.SphereGeometry(0.045, 8, 6), '#2a1e4a', { roughness: 0.25 }); b.position.set(Math.sin(i * 1.3) * 0.06, (i % 2) * 0.04, Math.cos(i * 1.3) * 0.06); g.add(b); } g.scale.setScalar(s || 1); return g; };
+/* invisible-wall shimmer: a tall translucent panel with a faint grid (force field / arena edge); userData.flash(k) brightens it */
+CF.ffwall = (s, c) => { const g = new T.Group(), col = c || '#8ad8ff'; const m = basic(col, { transparent: true, opacity: 0.12, depthWrite: false, side: T.DoubleSide }); const p = new T.Mesh(new T.PlaneGeometry(22, 9), m); p.position.y = 4.5; g.add(p);
+  const lm = basic(col, { transparent: true, opacity: 0.35, depthWrite: false }); for (let i = 0; i < 12; i++) { const v = new T.Mesh(new T.PlaneGeometry(0.04, 9), lm); v.position.set(-10.5 + i * 1.9, 4.5, 0.01); g.add(v); } for (let j = 0; j < 5; j++) { const h = new T.Mesh(new T.PlaneGeometry(22, 0.04), lm); h.position.set(0, 0.5 + j * 2, 0.01); g.add(h); }
+  g.userData.flash = (k) => { m.opacity = 0.12 + k * 0.5; lm.opacity = 0.35 + k * 0.6; }; g.scale.setScalar(s || 1); return g; };
