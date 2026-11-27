@@ -640,3 +640,59 @@ CF.berries = (s) => { const g = new T.Group(); for (let i = 0; i < 5; i++) { con
 CF.ffwall = (s, c) => { const g = new T.Group(), col = c || '#8ad8ff'; const m = basic(col, { transparent: true, opacity: 0.12, depthWrite: false, side: T.DoubleSide }); const p = new T.Mesh(new T.PlaneGeometry(22, 9), m); p.position.y = 4.5; g.add(p);
   const lm = basic(col, { transparent: true, opacity: 0.35, depthWrite: false }); for (let i = 0; i < 12; i++) { const v = new T.Mesh(new T.PlaneGeometry(0.04, 9), lm); v.position.set(-10.5 + i * 1.9, 4.5, 0.01); g.add(v); } for (let j = 0; j < 5; j++) { const h = new T.Mesh(new T.PlaneGeometry(22, 0.04), lm); h.position.set(0, 0.5 + j * 2, 0.01); g.add(h); }
   g.userData.flash = (k) => { m.opacity = 0.12 + k * 0.5; lm.opacity = 0.35 + k * 0.6; }; g.scale.setScalar(s || 1); return g; };
+
+/* DRESS-START: generic costume layer for vin() chibis. Editor: Vinyl Chibi Editor (claude.ai artifact). Used in <film>-x.js as
+   CF.x = (s) => { const c = vin({...}); dress(c, {...}); return c; };   Every part is off unless its key is set.
+   coat (colour), coatLen 0..1 (hip..ankle), coatOpen (front gap 0..1.2 rad), coatCollar (bool), coatSleeve (bool, default true), coatLining (colour)
+   cape (colour), capeLen 0..1 · vest (colour) · belt (colour), buckle (colour) · scarf (colour) · bandana (colour), bandanaTail (bool)
+   gloves (colour), gloveCuff (colour) · boots (colour), bootH 0..1 · kneepads (colour) · shoulderPads (colour)
+   prop: 'staff' | 'card' | 'cards' | 'sword' | 'bag' | 'book' | 'cup' (right hand), propColor, propLen (staff/sword length), propHand 'R'|'L'
+   glow (colour, emissive tint on the prop) */
+function dress(c, o) {
+  o = o || {}; const u = c.userData, PI = Math.PI, TAU = PI * 2;
+  const M = (col, x) => CK.mat(T, col, Object.assign({ roughness: 0.48 }, x || {}));
+  const adult = u.head.position.y > 1.6, legH = adult ? 0.36 : 0.12, bodyH = adult ? 1.28 : 1.0;
+  const bodyY = legH + 0.08 + 0.46 * bodyH * 0.92, ry = 0.46 * bodyH, rx = 0.47, armL = adult ? 0.56 : 0.42, ar = adult ? 0.1 : 0.095;
+  const top = bodyY + ry * 0.86, waist = bodyY - 0.2219 * bodyH, D = new T.Group(); D.name = 'dress'; c.add(D); u.dress = D;
+  const at = (m, x, y, z) => { m.position.set(x, y, z); return m; };
+  /* body-hugging profile r(y) for coats/vests: follows the body above its middle, hangs straight and flares below */
+  const prof = (y0, y1, k, flare) => { const pts = []; for (let i = 0; i <= 22; i++) { const y = y0 + (y1 - y0) * i / 22; let r;
+      if (y >= bodyY) { const q = (y - bodyY) / ry; r = rx * Math.sqrt(Math.max(0.04, 1 - q * q)) * k; } else r = rx * k + (bodyY - y) * flare; pts.push(new T.Vector2(Math.max(0.05, r), y)); }
+    return pts; };
+  const shell = (pts, col, gap, back) => { const g = new T.LatheGeometry(pts, 40, back ? PI / 2 + gap : gap / 2, back ? PI - 2 * gap : TAU - gap); const m = new T.Mesh(g, M(col, { side: T.DoubleSide })); m.scale.z = 0.9; return m; };
+  if (o.coat) {
+    const len = o.coatLen == null ? 0.6 : o.coatLen, hem = (bodyY - ry * 0.45) * (1 - len) + 0.1 * len, gap = o.coatOpen == null ? 0.5 : o.coatOpen;
+    const pts = prof(hem, top, 1.08, 0.16); D.add(shell(pts.reverse(), o.coat, gap));
+    if (o.coatLining) { const L = shell(prof(hem + 0.02, top - 0.02, 1.05, 0.15), o.coatLining, gap); D.add(L); }
+    if (o.coatCollar) { const cp = [new T.Vector2(0.27, top - 0.04), new T.Vector2(0.3, top + 0.08), new T.Vector2(0.36, top + 0.2)]; D.add(shell(cp, o.coat, gap + 0.25)); }
+    if (o.coatSleeve !== false) for (const s of [-1, 1]) { const a = u['arm' + s], L = armL * 0.86, sl = new T.Mesh(new T.CylinderGeometry(ar * 1.32, ar * 1.42, L, 14), M(o.coat)); sl.position.y = -L / 2 + 0.02; a.add(sl); a.add(at(new T.Mesh(new T.SphereGeometry(ar * 1.36, 14, 10), M(o.coat)), 0, 0, 0)); }
+  }
+  if (o.vest) D.add(shell(prof(bodyY - ry * 0.55, top - 0.04, 1.05, 0.05).reverse(), o.vest, 0.7));
+  if (o.cape) { const len = o.capeLen == null ? 0.7 : o.capeLen, hem = (bodyY - ry * 0.3) * (1 - len) + 0.08 * len, pts = [];
+    for (let i = 0; i <= 12; i++) { const y = top + 0.02 - (top + 0.02 - hem) * i / 12; pts.push(new T.Vector2(0.36 + 0.3 * i / 12, y)); } D.add(shell(pts, o.cape, 0.15, true)); }
+  if (o.belt) { const b = new T.Mesh(new T.TorusGeometry(rx * 0.9, 0.045, 8, 40), M(o.belt)); b.rotation.x = PI / 2; b.scale.set(1, 0.9, 1.4); b.position.y = waist; D.add(b);
+    D.add(at(new T.Mesh(new T.BoxGeometry(0.14, 0.1, 0.04), M(o.buckle || '#d8b24a', { metalness: 0.5, roughness: 0.3 })), 0, waist, rx * 0.82)); }
+  if (o.scarf) { const sc = new T.Mesh(new T.TorusGeometry(0.3, 0.09, 10, 28), M(o.scarf)); sc.rotation.x = PI / 2; sc.position.y = top + 0.02; D.add(sc);
+    const tl = at(new T.Mesh(new T.BoxGeometry(0.13, 0.42, 0.06), M(o.scarf)), 0.15, top - 0.2, 0.33); tl.rotation.set(-0.25, 0, 0.12); D.add(tl); }
+  if (o.shoulderPads) for (const s of [-1, 1]) { const p = new T.Mesh(new T.SphereGeometry(ar * 1.7, 14, 8, 0, TAU, 0, PI / 2), M(o.shoulderPads)); p.scale.set(1.1, 0.7, 1); p.position.y = 0.02; u['arm' + s].add(p); }
+  if (o.bandana) { const HS = u.headSpace, b = new T.Mesh(new T.TorusGeometry(0.7, 0.06, 8, 40), M(o.bandana)); b.rotation.x = PI / 2 - 0.22; b.position.set(0, 0.33, -0.03); HS.add(b);
+    if (o.bandanaTail !== false) for (const s of [-1, 1]) { const t = at(new T.Mesh(new T.BoxGeometry(0.1, 0.32, 0.03), M(o.bandana)), s * 0.1, 0.12, -0.72); t.rotation.set(0.3, 0, s * 0.35); HS.add(t); } }
+  if (o.gloves) for (const s of [-1, 1]) { const a = u['arm' + s];
+    const h = at(new T.Mesh(new T.SphereGeometry(ar * 1.32, 14, 10), M(o.gloves)), 0, -armL, 0); h.scale.set(1, 1.08, 0.9); a.add(h);
+    a.add(at(new T.Mesh(new T.CylinderGeometry(ar * 1.0, ar * 0.95, 0.14, 12), M(o.gloveCuff || o.gloves)), 0, -armL + 0.13, 0)); }
+  if (o.boots) { const bh = o.bootH == null ? 0.7 : o.bootH, H = (legH + 0.12) * bh + 0.06;
+    for (const s of [-1, 1]) { D.add(at(new T.Mesh(new T.CylinderGeometry(0.15, 0.155, H, 14), M(o.boots)), s * 0.17, H / 2 + 0.03, 0));
+      const sh = at(new T.Mesh(new T.SphereGeometry(0.172, 16, 12), M(o.boots)), s * 0.18, 0.085, 0.06); sh.scale.set(1, 0.64, 1.38); D.add(sh); } }
+  if (o.kneepads && adult) for (const s of [-1, 1]) { const k = at(new T.Mesh(new T.SphereGeometry(0.1, 12, 8), M(o.kneepads)), s * 0.17, legH * 0.62 + 0.08, 0.11); k.scale.set(1, 1.1, 0.6); D.add(k); }
+  if (o.prop) { const a = u[o.propHand === 'L' ? 'arm-1' : 'arm1'], g = new T.Group(), pc = o.propColor || '#7a5a3a', len = o.propLen || 1, gl = o.glow ? { emissive: new T.Color(o.glow), emissiveIntensity: 0.8 } : {};
+    g.position.set(0, -armL, 0.06); g.rotation.z = (o.propHand === 'L' ? 1 : -1) * 0.4; a.add(g); u.prop = g;
+    if (o.prop === 'staff') { const L = 2.2 * len; g.add(at(new T.Mesh(new T.CylinderGeometry(0.035, 0.035, L, 10), M(pc, gl)), 0, L * 0.18, 0)); for (const y of [L * 0.68, -L * 0.32]) g.add(at(new T.Mesh(new T.CylinderGeometry(0.05, 0.05, 0.08, 10), M('#c8c8cc', { metalness: 0.5 })), 0, y, 0)); }
+    else if (o.prop === 'sword') { const L = 1.1 * len; g.add(at(new T.Mesh(new T.BoxGeometry(0.07, L, 0.02), M('#d8dce2', Object.assign({ metalness: 0.6, roughness: 0.25 }, gl))), 0, L / 2 + 0.12, 0), at(new T.Mesh(new T.BoxGeometry(0.28, 0.04, 0.06), M(pc)), 0, 0.1, 0), at(new T.Mesh(new T.CylinderGeometry(0.03, 0.03, 0.2, 8), M(pc)), 0, -0.02, 0)); }
+    else if (o.prop === 'card' || o.prop === 'cards') { const n = o.prop === 'cards' ? 5 : 1;
+      for (let i = 0; i < n; i++) { const cg = new T.Group(); cg.rotation.z = (i - (n - 1) / 2) * 0.22; const f = at(new T.Mesh(new T.BoxGeometry(0.17, 0.24, 0.008), M('#fbfaf6', gl)), 0, 0.14, 0.01 + i * 0.002); const b = at(new T.Mesh(new T.BoxGeometry(0.17, 0.24, 0.008), M(pc, gl)), 0, 0.14, -0.002 + i * 0.002); cg.add(f, b); cg.position.z = 0.06; g.add(cg); } }
+    else if (o.prop === 'bag') g.add(at(new T.Mesh(new T.BoxGeometry(0.4, 0.3, 0.14), M(pc)), 0, -0.2, 0), at(new T.Mesh(new T.TorusGeometry(0.1, 0.02, 6, 16, PI), M(pc)), 0, -0.05, 0));
+    else if (o.prop === 'book') g.add(at(new T.Mesh(new T.BoxGeometry(0.26, 0.34, 0.07), M(pc)), 0, 0, 0.06));
+    else if (o.prop === 'cup') g.add(at(new T.Mesh(new T.CylinderGeometry(0.08, 0.065, 0.18, 14), M(pc)), 0, 0.06, 0.08)); }
+  return c;
+}
+/* DRESS-END */
