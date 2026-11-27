@@ -37,11 +37,12 @@ function coverLand(g) {
 function hud(g, t, { W, H }) {
   const id = beatAt(t), LA = L.LAND, sc = SC[id] || {}, r = rel(t, id);
   atmoGrade(g, t, W, H, bgKey(t), sc.rays != null ? sc.rays : null);
-  if (LA) FK.landGradients(g, W, H, { left: t < end('cover') });
+  if (LA && !EP.recap) FK.landGradients(g, W, H, { left: t < end('cover') });
   if (LA && t < end('cover')) coverLand(g);
   if (sc.dim) { g.fillStyle = 'rgba(10,6,30,' + (sc.dim === true ? 0.22 : sc.dim) + ')'; g.fillRect(0, 0, W, H); }
   if (sc.flash) { const fl = Array.isArray(sc.flash[0]) ? sc.flash : [sc.flash]; for (const q of fl) if (r > q[0] && r < q[0] + q[1]) { g.fillStyle = (q[2] || 'rgba(255,250,230,') + (0.75 * (1 - (r - q[0]) / q[1])) + ')'; g.fillRect(0, 0, W, H); } }
   for (const b of BUB) bubble(g, b);
+  if (EP.recap) { RC.hud(g, t, W, H); return; }
   const sh = (dx, dy, f) => { g.save(); if (LA) g.translate(dx, dy); f(); g.restore(); };
   if (t >= at(CHAP[0][1]) && t < at('facts')) sh(L.CX - 540, -70, () => chapter(g, t));
   if (sc.hud) sh(0, 0, () => sc.hud(g, r, t, W, H));
@@ -51,16 +52,18 @@ FK.softSfx();
 VE.registerSfx('gong', (tt) => { VE.audio.tone(tt, 330, 1.8, { type: 'sine', vol: 0.04, rel: 1.6 }); VE.audio.tone(tt + 0.01, 495, 1.2, { type: 'sine', vol: 0.016, rel: 1.0 }); });
 VE.registerSfx('zap', (tt) => { VE.audio.tone(tt, 1300, 0.18, { type: 'sine', vol: 0.03, rel: 0.15 }); VE.audio.tone(tt + 0.05, 900, 0.22, { type: 'sine', vol: 0.025, rel: 0.2 }); });
 VE.registerSfx('ching', (tt) => { VE.audio.tone(tt, 1760, 0.4, { type: 'sine', vol: 0.02, rel: 0.35 }); VE.audio.tone(tt + 0.12, 2350, 0.3, { type: 'sine', vol: 0.014, rel: 0.25 }); });
-const AUD = [[0.1, 'gong'], [at('facts'), 'gong']];
+const HASB = (id) => ORDER.indexOf(id) >= 0;
+const AUD = EP.recap ? [] : [[0.1, 'gong']]; if (HASB('facts')) AUD.push([at('facts'), 'gong']);
 IRIS.forEach((q) => AUD.push([q.t, 'glide']));
 for (const id of ORDER) { const sc = SC[id]; if (sc && sc.sfx) for (const q of sc.sfx) AUD.push([at(id, q[0]), q[1]]); }
-AUD.push([at('next', 0.8), 'pop']);
+if (HASB('next')) AUD.push([at('next', 0.8), 'pop']);
 AUD.sort((a, b) => a[0] - b[0]);
 caps.forEach((c) => { if (L.LAND) { if (!c.instant) c.y = FK.subtitleY(c); else c.t1 = 0; } });
 VE.run({
   DUR, W: L.W, H: L.H, coverAt0: true, capFont: 'Trirong', file: L.LAND ? EP.file + '-youtube' : EP.file, title: EP.title,
   brand: { name: 'RuNgee รู้งี้', series: EP.series || 'ตำนานเล่าใหม่', color: P.teal, icon: 'globe', bg: ['#0f1630', '#1b2a55'], endLine: 'รู้งี้... ติดตามไว้', motif: { notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' } },
-  setup({ scene }) { S = setupScene(scene); window.__S = S; return S; },
+  brandBar: !EP.recap, vignette: EP.recap ? 'rgba(8,6,20,.55)' : undefined,
+  setup({ scene, renderer }) { S = setupScene(scene); if (EP.recap) RC.setup(S, scene, renderer); window.__S = S; return S; },
   update, bgAt, hud, caps, trans: IRIS, audio: AUD,
-  bed: [(EP.bed === 'lively' && FK.livelyBed ? FK.livelyBed : FK.chillBed)({ DUR, calm: (t) => !!(SC[beatAt(t)] && SC[beatAt(t)].calm) || inB(t, 'facts'), vol: window.DATA && DATA.vo ? 0.6 : 1, voice: FK.voice(window.DATA && DATA.vo, B) })],
+  bed: [(EP.bed === 'lively' && FK.livelyBed ? FK.livelyBed : FK.chillBed)({ DUR, calm: (t) => !!(SC[beatAt(t)] && SC[beatAt(t)].calm) || (HASB('facts') && inB(t, 'facts')), vol: window.DATA && DATA.vo ? 0.6 : 1, voice: FK.voice(window.DATA && DATA.vo, B) })],
 });

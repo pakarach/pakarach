@@ -35,7 +35,7 @@ const RES = (() => {
 })();
 const SHOT = {}; const CUT = new Set();
 for (const id of ORDER) { const r = RES[id]; SHOT[id] = r.cam.map((c) => [c[0], fr(r.st, c[1], c[2], c[3], c[4], c[5], c[6]), !!c[7]]); if (r.cut && id !== 'cover') CUT.add(id); }
-const IRIS = [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
+const IRIS = EP.recap ? [] : [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
 const CAM = (() => {
   const keys = []; let prev = null;
   const push = (f, k) => ({ look: f.look, pos: f.pos.map((v, i) => f.look[i] + (v - f.look[i]) * k) });

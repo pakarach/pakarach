@@ -4,7 +4,9 @@
 F=$1; OUT=${2:-/home/claude/out/$F.html}; shift; [ $# -gt 0 ] && shift
 cd "$(dirname "$0")/.."
 X=story/$F-x.js; [ -f "$X" ] || X=
+# CAST=<film> shares another film's cast file (story/<film>-x.js), joined before this film's own -x.js
+C=; [ -n "$CAST" ] && C=story/$CAST-x.js
 # your own libraries: every story/lib/*.js, plus story/<film>-lib.js, are joined just before the cast file
 L=$(ls story/lib/*.js 2>/dev/null); [ -f story/$F-lib.js ] && L="$L story/$F-lib.js"
-{ echo '(function () {'; cat story/k-pre.js story/$F.js story/k-base.js ram1/b-models.js ram1/b2-atmo.js story/k-cast.js story/k-vinyl.js $L $X story/k-run.js story/k-hud.js; echo '})();'; } > story/video-$F.js
+{ echo '(function () {'; cat story/k-pre.js story/$F.js story/k-base.js ram1/b-models.js ram1/b2-atmo.js story/k-cast.js story/k-vinyl.js $L $C $X story/k-run.js story/k-recap.js story/k-hud.js; echo '})();'; } > story/video-$F.js
 node --check story/video-$F.js && node build.js story/video-$F.js "$OUT" --kit fact,clay --data world=world.geo.json --font "Trirong:wght@600;800" "$@"

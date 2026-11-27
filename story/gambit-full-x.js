@@ -4,6 +4,7 @@
      CF.gambit = (s) => { const m = myBuilder(); return actor(m.root, { head: ..., armR: ..., armL: ... }, 1.8 * (s || 1)); };   // own model
    Badges: tag(c, 'name') — drop it from your own actors if you don't want the badge. */
 function tag(c, name) {
+  if (EP.badges === false) return c; /* recap look names characters with a lower third instead */
   const cv = document.createElement('canvas'); cv.width = 512; cv.height = 128; const x = cv.getContext('2d');
   x.fillStyle = 'rgba(21,20,26,.82)'; const r = 40; x.beginPath(); x.moveTo(r, 8); x.arcTo(504, 8, 504, 120, r); x.arcTo(504, 120, 8, 120, r); x.arcTo(8, 120, 8, 8, r); x.arcTo(8, 8, 504, 8, r); x.fill();
   x.font = '700 ' + (name.length > 9 ? 54 : 66) + 'px Kanit, Trirong, sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillStyle = '#fff6e0'; x.fillText(name, 256, 68);
