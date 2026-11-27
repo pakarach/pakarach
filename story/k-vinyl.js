@@ -762,3 +762,22 @@ FK.livelyBed = function (o) {
     play(base, from);
   } };
 };
+
+/* ---- slim build (Nov 2026): slim(c, o) reshapes a vin() chibi toward ~2.2-head figurine proportions (smaller head, narrow body, longer legs) so plain
+   extras sit well next to hand-built models. o = { head: 0.82, w: 0.64, d: 0.76, leg: 0.34 (extra leg length), keepH: true (keep the overall height) }.
+   Call it last (after dress()/tag()); capes/coats/vests follow the body, boots and knee pads are not adjusted. Poses, faces and props keep working. ---- */
+function slim(c, o) {
+  const u = c.userData; if (u.slim || !u.head || !u.arm1) return c; const adult = u.head.position.y > 1.6;
+  o = Object.assign({ head: 0.82, w: 0.64, d: 0.76, leg: adult ? 0.34 : 0.2, keepH: true }, o || {});
+  const V = new T.Vector3(), h0 = new T.Box3().setFromObject(c).getSize(V).y, ch = c.children.slice(), up = new T.Group(); up.position.y = o.leg;
+  const body = ch.find((m) => m.isMesh && m.geometry.type === 'SphereGeometry' && Math.abs(m.geometry.parameters.radius - 0.46) < 1e-6); if (!body) return c;
+  for (const m of ch) { if (!m.isMesh || m === body) continue;
+    if (m.geometry.type === 'CylinderGeometry') { const len = m.geometry.parameters.height; m.scale.set(0.84, (len + o.leg) / len, 0.84); m.position.y += o.leg / 2; m.position.x *= 0.82; }   // legs
+    else if (m.geometry.type === 'SphereGeometry') { m.position.x *= 0.82; m.scale.multiplyScalar(0.92); } }                                                             // shoes
+  const bw = new T.Group(); bw.scale.set(o.w, 1, o.d); bw.add(body); if (u.dress) bw.add(u.dress); up.add(bw);
+  for (const s of [-1, 1]) { const a = u['arm' + s]; a.position.x *= o.w * 1.04; a.scale.set(0.9, 1, 0.9); up.add(a); }
+  const P = u.head.position.y - 0.52, hw = new T.Group(); hw.position.y = P * (1 - o.head) - 0.04; hw.scale.setScalar(o.head); hw.add(u.head); up.add(hw);
+  if (u.badge) { u.badge.position.y += o.leg; u.badge.position.z *= o.d; } c.add(up); u.slim = true;
+  if (o.keepH) { const h1 = new T.Box3().setFromObject(c).getSize(V).y; if (h1 > 0) c.scale.multiplyScalar(h0 / h1); }
+  return c;
+}

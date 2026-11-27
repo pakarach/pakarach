@@ -283,4 +283,4 @@ const SC = {
 };
 /* portrait-height pull-back for the vinyl cast (same as ironman.js) */
 (() => { const LANDF = !!(window.DATA && DATA.cfg && DATA.cfg.land), K = LANDF ? 1.8 : 2.25; const sc1 = (c) => { c[2] += 1.45; c[4] *= K; c[5] *= K; c[6] *= K; }; for (const id in SC) { let c = SC[id].cam; if (!c) continue; if (typeof c[0] === 'number') { c = SC[id].cam = c.slice(); sc1(c); } else { c = SC[id].cam = c.map((k) => k.slice()); c.forEach(sc1); } } })();
-EP.light = 1.0; EP.toon = { w: 0.024 }; EP.bed = 'lively';
+EP.light = 1.0; EP.toon = { w: 0.024 }; EP.bed = 'lively'; EP.slim = true;

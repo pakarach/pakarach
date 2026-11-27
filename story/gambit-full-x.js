@@ -11,10 +11,13 @@ function tag(c, name) {
   const sp = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(cv), transparent: true, depthWrite: false }));
   const k = 1 / (c.scale.x || 1); sp.scale.set(1.25 * k * 1.25, 0.31 * k * 1.25, 1); sp.position.set(0, 1.12, 0.62); sp.renderOrder = 5; c.add(sp); c.userData.badge = sp; return c;
 }
-const ph = (name, o, kid) => (s) => { const c = vin(Object.assign({ brow: o.hair || '#3a2a22', shoes: '#2e2e34', longSleeve: true }, o, { scale: (kid ? 0.8 : AD) * (o.k || 1) * (s || 1) })); return name ? tag(c, name) : c; };
+/* EP.slim = true (or slim() options): plain figures get the slimmer ~2.2-head build so they match hand-built models */
+const SL = (c) => (EP.slim ? slim(c, EP.slim === true ? null : EP.slim) : c);
+const ph0 = (name, o, kid) => (s) => { const c = vin(Object.assign({ brow: o.hair || '#3a2a22', shoes: '#2e2e34', longSleeve: true }, o, { scale: (kid ? 0.8 : AD) * (o.k || 1) * (s || 1) })); return name ? tag(c, name) : c; };
 /* minor roles: plain figures with no badge (kept out of Character Swap on purpose) */
+const ph = (name, o, kid) => (s) => SL(ph0(name, o, kid)(s));
+const phD = (name, o, d, kid) => (s) => { const c = ph0(name, o, kid)(s); dress(c, d); return SL(c); };
 const gen = (o, kid) => ph('', o, kid), genD = (o, d, kid) => phD('', o, d, kid);
-const phD = (name, o, d, kid) => (s) => { const c = ph(name, o, kid)(s); dress(c, d); return c; };
 
 /* ---- named cast (PLACEHOLDERS) ---- */
 CF.gambit = phD('แกมบิท', { hair: '#4a3328', bangs: 'side', backLen: 1.85, top: '#7d8a99', bottom: '#33384a' }, { prop: 'card', propColor: '#3a4a7a' });
@@ -53,7 +56,7 @@ CF.blade = ph('เบลด', { hair: '#1e1e22', bangs: 'short', skin: CK.pal.sk
 CF.x23 = ph('เอ็กซ์ยี่สิบสาม', { hair: '#2a2420', bangs: 'side', backLen: 2.2, lashes: true, top: '#9aa0a8', bottom: '#3a3e44', k: 0.9 });
 /* unnamed extras (fans, bullies, guild members, guests, morlocks, viewers) */
 CF.extra = (s, n) => { const L = [['#7aa0b8', '#3a2a22', 'short'], ['#c8a070', '#2a2a30', 'part'], ['#a0b088', '#5a3a2a', 'side'], ['#b89ab0', '#6a4a3a', 'baby']][(n || 0) % 4];
-  return vin({ hair: L[1], bangs: L[2], backLen: L[2] === 'part' ? 2.2 : 1.75, lashes: L[2] === 'part', brow: L[1], top: L[0], bottom: '#3a3d4d', shoes: '#2e2e34', longSleeve: true, scale: AD * 0.95 * (s || 1) }); };
+  return SL(vin({ hair: L[1], bangs: L[2], backLen: L[2] === 'part' ? 2.2 : 1.75, lashes: L[2] === 'part', brow: L[1], top: L[0], bottom: '#3a3d4d', shoes: '#2e2e34', longSleeve: true, scale: AD * 0.95 * (s || 1) })); };
 CF.extraKid = (s, n) => { const c = CF.extra(1, n); c.scale.setScalar(0.8 * (s || 1)); return c; };
 /* the giant robot attack: a coloured light, not a design */
 CF.giant = (s) => { const g = CF.streak(1, 'rgba(255,150,110,1)'); g.scale.setScalar(4 * (s || 1)); return g; };

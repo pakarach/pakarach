@@ -64,6 +64,6 @@ VE.run({
   brand: { name: 'RuNgee รู้งี้', series: EP.series || 'ตำนานเล่าใหม่', color: P.teal, icon: 'globe', bg: ['#0f1630', '#1b2a55'], endLine: 'รู้งี้... ติดตามไว้', motif: { notes: ['G4', 'D5', 'G5'], gap: 0.08, timbre: 'synth' } },
   brandBar: !EP.recap, vignette: EP.recap ? 'rgba(8,6,20,.55)' : undefined,
   setup({ scene, renderer }) { S = setupScene(scene); if (EP.recap) RC.setup(S, scene, renderer); window.__S = S; return S; },
-  update, bgAt, hud, caps, trans: IRIS, audio: AUD,
+  update: (t, s, c) => { update(t, s, c); if (EP.recap) RC.update(t, s, c); }, bgAt, hud, caps, trans: IRIS, audio: AUD,
   bed: [(EP.bed === 'lively' && FK.livelyBed ? FK.livelyBed : FK.chillBed)({ DUR, calm: (t) => !!(SC[beatAt(t)] && SC[beatAt(t)].calm) || (HASB('facts') && inB(t, 'facts')), vol: window.DATA && DATA.vo ? 0.6 : 1, voice: FK.voice(window.DATA && DATA.vo, B) })],
 });

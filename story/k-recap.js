@@ -123,7 +123,21 @@ const RC = (() => {
     g.font = K(800, 26); g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = P.teal; g.fillText('RuNgee รู้งี้', 40, 24); if (EP.series) { g.font = K(600, 22); g.fillStyle = 'rgba(255,255,255,.7)'; g.textAlign = 'right'; g.fillText(EP.series, W - 40, 24); }
     titleCard(g, id, r, W, H);
   }
-  function update(t, s) { hideBooth(); }
+  /* recap camera: SC[id].rc = [[t, lookX, lookY, lookZ, dist, height, angleDeg, cut, drift], ...] (station-relative look point; the camera sits on a circle around it).
+     Between two keys everything eases together, so a change of angle is an orbit and a change of look point is a truck; a key with cut = 1 jumps. After the last key
+     (or before a cut) the shot keeps breathing: a slow orbit and push (drift = 0 turns that off). Without rc the story kit's own cam keys are used. */
+  function camState(id, r) {
+    const ks = SC[id] && SC[id].rc; if (!ks) return null; let i = 0; while (i + 1 < ks.length && r >= ks[i + 1][0]) i++; const a = ks[i], b = ks[i + 1];
+    if (b && !b[7] && r >= a[0]) { const k = U.easeIO(U.clamp((r - a[0]) / (b[0] - a[0]))); return a.map((x, j) => U.lerp(x, b[j], k)); }
+    const v = a.slice(), d = Math.max(0, r - a[0]), dk = a[8] == null ? 1 : a[8]; v[6] += d * 0.8 * dk; v[4] *= 1 - 0.005 * d * dk; return v;
+  }
+  function update(t, s, ctx) {
+    const id = beatAt(t), r = rel(t, id), v = camState(id, r); if (!v) return; const c = ST[RES[id].st], cam = ctx.camera, a = v[6] * D2R;
+    const lx = c[0] + v[1], ly = c[1] + v[2], lz = c[2] + v[3]; cam.position.set(lx + Math.sin(a) * v[4] + Math.sin(t * 0.5) * 0.08, ly + v[5] + Math.cos(t * 0.4) * 0.04, lz + Math.cos(a) * v[4]); cam.lookAt(lx, ly, lz);
+    const sk = SC[id].shake; if (sk && r > sk[0] && r < sk[1]) { const q = 1 - (r - sk[0]) / (sk[1] - sk[0]); cam.position.x += Math.sin(t * 55) * (sk[2] || 0.1) * q; cam.position.y += Math.sin(t * 43) * (sk[2] || 0.1) * 0.8 * q; }
+    cam.updateMatrixWorld(true); const p = s.anchorV;
+    for (const b of BUB) { b.o.getWorldPosition(p); p.y += (b.dy || 2) * (b.o.scale.y || 1); p.project(cam); b.x = (p.x + 1) / 2 * ctx.W; b.y = (1 - p.y) / 2 * ctx.H; }
+  }
   return { setup, hud, update, cam, act, prop, BO, ctext };
 })();
 BG.studio = ['#1c1836', '#7a3a5a']; LT.studio = [0.86, 0.85, '#ffe6c8']; ATMO.studio = ['#ffe0a0', 0.08, 0.12, 60, 0, '#ffe0b0', 0.8, '#ffb060', 0.05, 0.45];
