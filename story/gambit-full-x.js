@@ -83,3 +83,7 @@ Object.assign(ENVB, {
   gvoid(st) { const out = ENVB.desert(st, { seed: 41 }); out.push(...decor(st, [[CF.ruin(1.4), -6, 0, -5], [CF.wreck(1.2), 5.5, 0, -4.6]])); return out; },
   ggenosha(st) { const out = ENVB.village(st, {}); out.push(...decor(st, [[CF.bldg(0.35, 8, 20, 8, '#5a5a66'), -9, 0, -10], [CF.bldg(0.35, 8, 26, 8, '#4a4a56'), 9, 0, -11]])); return out; },
 });
+/* lightning bolt (generic weather effect) */
+CF.bolt = (s) => { const g = new T.Group(), m = new T.MeshBasicMaterial({ color: '#e6eeff' }); let x = 0, y = 6;
+  for (let i = 0; i < 7; i++) { const nx = x + (i % 2 ? 0.55 : -0.5), ny = y - 0.86, dx = nx - x, dy = ny - y, len = Math.hypot(dx, dy); const b = new T.Mesh(new T.BoxGeometry(0.13, len, 0.13), m); b.position.set((x + nx) / 2, (y + ny) / 2, 0); b.rotation.z = Math.atan2(-dx, dy); g.add(b); x = nx; y = ny; }
+  const gl = softSprite('rgba(200,220,255,1)', 0.8); gl.scale.setScalar(4); gl.position.y = 3; g.add(gl); g.scale.setScalar(s || 1); return g; };

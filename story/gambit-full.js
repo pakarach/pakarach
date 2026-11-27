@@ -107,6 +107,8 @@ const CAST = {
   s1992: ['sign', 0.9, 'การ์ตูนทีวี 1992', '#ffd66a'], sGame: ['sign', 0.7, 'X-Men vs Street Fighter', '#ffd66a'], s2009: ['sign', 1.4, '2009 · เทย์เลอร์ คิทช์', '#ffd66a'],
   s2014: ['sign', 1.2, '2014 เริ่มพัฒนา', '#bfe6ff'], s2019: ['sign', 1.2, '2019 ยกเลิก', '#ff8a8a'], sDW: ['sign', 0.8, 'Deadpool & Wolverine · 2024', '#ffd66a'],
   sDD: ['sign', 1.5, 'Avengers: Doomsday', '#ffd66a'], sDate: ['sign', 1.2, '18 ธันวาคม 2026', '#fff'], sTat: ['sign', 1.0, 'แชนนิ่ง เททัม', '#fff'], s2026: ['sign', 0.9, "X-Men '97 ภาคสอง · 2026", '#ffd66a'],
+  oc1: ['paper', 0.9], oc2: ['paper', 0.9], oc3: ['paper', 0.9], oc4: ['paper', 0.9], og1: ['glow', 0.12, 'rgba(255,214,150,1)'], og2: ['glow', 0.12, 'rgba(255,214,150,1)'], og3: ['glow', 0.12, 'rgba(255,214,150,1)'], og4: ['glow', 0.12, 'rgba(255,214,150,1)'],
+  b1: ['boom', 0.45], b2: ['boom', 0.45], b3: ['boom', 0.45], bolt: ['bolt', 1],
   sn1: ['glow', 0.05, W], sn2: ['glow', 0.05, W], sn3: ['glow', 0.05, W], sn4: ['glow', 0.05, W], sn5: ['glow', 0.05, W], sn6: ['glow', 0.05, W], sn7: ['glow', 0.05, W], sn8: ['glow', 0.05, W],
 };
 const qb = (st, a, b, c, t0, t1) => (u) => { const k = U.easeIO(U.clamp((u - t0) / (t1 - t0))), m = 1 - k; return H.at(st, m * m * a[0] + 2 * m * k * b[0] + k * k * c[0], m * m * a[1] + 2 * m * k * b[1] + k * k * c[1], m * m * a[2] + 2 * m * k * b[2] + k * k * c[2]); };
@@ -119,17 +121,28 @@ const cardFx = (who, to, r0, r1) => (r, t, s, o, st) => { if (!o.card || !o[who]
   let p = base; if (fly) { const k = U.easeIO(U.clamp((r - r0) / (r1 - r0))); p = base.clone().lerp(H.at(st, to[0], to[1], to[2]), k); p.y += Math.sin(k * Math.PI) * 1.2; }
   o.card.position.copy(p); o.card.rotation.set(fly ? t * 14 : 1.3, fly ? t * 9 : 0, 0.3); o.card.visible = r < r1;
   if (o.cglow) { o.cglow.position.copy(p); o.cglow.visible = r > r0 - 0.8 && r < r1; o.cglow.scale.setScalar(0.48 * (1 + 0.25 * Math.sin(t * 18))); } };
+/* skill FX: cards orbiting an actor, extra cards thrown from the hand (each lands with a small boom) */
+const OC = [['oc1', 'og1'], ['oc2', 'og2'], ['oc3', 'og3'], ['oc4', 'og4']];
+const cardsA = (n) => { const a = {}; OC.slice(0, n || 4).forEach(([c, g]) => { a[c] = {}; a[g] = {}; }); return a; };
+const noCards = () => { const a = { b1: null, b2: null, b3: null }; OC.forEach(([c, g]) => { a[c] = null; a[g] = null; }); return a; };
+const orbitK = (who, r0, r1, n, rad) => (r, t, s, o) => { if (!o[who]) return; const c = H.pos(o[who], 1.1), L = OC.slice(0, n || 4);
+  L.forEach(([ck, gk], i) => { const a = t * 2.4 + i * 2 * Math.PI / L.length, on = r > r0 && r < r1, p = new T.Vector3(c.x + Math.cos(a) * (rad || 1.15), c.y + 0.3 * Math.sin(a * 2 + i), c.z + Math.sin(a) * (rad || 1.15));
+    if (o[ck]) { o[ck].visible = on; o[ck].position.copy(p); o[ck].rotation.set(1.2, -a, 0.2); } if (o[gk]) { o[gk].visible = on; o[gk].position.copy(p); o[gk].scale.setScalar(0.36 * (1 + 0.25 * Math.sin(t * 16 + i))); } }); };
+const throwK = (who, ck, gk, to, r0, r1, show) => (r, t, s, o, st) => { const c = o[ck]; if (!c || !o[who]) return; const base = H.hand(o[who], 'R').add(new T.Vector3(0, 0.12, 0.14));
+  let p = base; if (r >= r0) { const e = U.easeIO(U.clamp((r - r0) / (r1 - r0))); p = base.clone().lerp(H.at(st, to[0], to[1], to[2]), e); p.y += Math.sin(e * Math.PI) * 1.0; }
+  const vis = r > (show == null ? r0 - 0.5 : show) && r < r1; c.visible = vis; c.position.copy(p); c.rotation.set(r >= r0 ? t * 14 : 1.3, r >= r0 ? t * 9 : 0, 0.3);
+  const g = o[gk]; if (g) { g.visible = vis; g.position.copy(p); g.scale.setScalar(0.4 * (1 + 0.25 * Math.sin(t * 18))); } };
 const both = (...f) => (r, t, s, o, st) => f.forEach((x) => x && x(r, t, s, o, st));
 const pulse = (key, base, sp) => (r, t, s, o) => { if (o[key]) o[key].scale.setScalar(base * (1 + 0.2 * Math.sin(t * (sp || 6)))); };
 const popSeq = (keys, r0, gap) => { const o = {}; keys.forEach((k, i) => (o[k] = { pop: r0 + i * gap })); return o; };
 const C2 = [0, 0, 1.0, 0, 3.8, 0.45, 0], CW = [0, 0, 1.0, -0.5, 5.6, 0.6, 0];
 const SC = {
-  cover: { st: 'NOLA', bg: 'night', cam: [0, 1.6, 1.0, 0, 3.6, 0.42, -0.3], A: { gam: { p: [3.0, 0], f: -20, pose: 'give' }, rog: { p: [4.6, -0.6], f: -35, pose: 'hips' }, card: {}, cglow: {} },
-    fx: cardFx('gam', [0, 0, 0], 99, 100) },
+  cover: { st: 'NOLA', bg: 'night', cam: [0, 1.6, 1.0, 0, 3.6, 0.42, -0.3], A: Object.assign({ gam: { p: [3.0, 0], f: -20, pose: 'give' }, rog: { p: [4.6, -0.6], f: -35, pose: 'hips' }, card: {}, cglow: {} }, cardsA(4)),
+    fx: both(cardFx('gam', [0, 0, 0], 99, 100), orbitK('gam', -1, 99)) },
   b01: { st: 'STUDIO', bg: 'palace', cam: [[0, 0.6, 1.0, 0, 4.4, 0.5, 0.2], [8, 0.4, 1.0, 0, 3.6, 0.42, 0.1]], A: Object.assign({ gam: { p: [1.8, 0], f: -15, pose: 'hips' }, card: {}, cglow: {} },
-      { s1: { p: [-2.4, 0, 3.9], pop: 1.0 }, s2: { p: [-2.4, 0, 3.0], pop: 3.5 }, s3: { p: [-2.4, 0, 2.1], pop: 6.5 } }), sfx: [[1.0, 'pop'], [3.5, 'pop'], [6.5, 'pop']], fx: cardFx('gam', [0, 0, 0], 99, 100) },
+      { s1: { p: [-2.4, 0, 3.9], pop: 1.0 }, s2: { p: [-2.4, 0, 3.0], pop: 3.5 }, s3: { p: [-2.4, 0, 2.1], pop: 6.5 } }, cardsA(4)), sfx: [[1.0, 'pop'], [3.5, 'pop'], [6.5, 'pop'], [9, 'shimmer']], fx: both(cardFx('gam', [0, 0, 0], 99, 100), orbitK('gam', 9, 99)) },
   b02: { st: 'NOLA', bg: 'night', cam: [[0, -1.2, 1.0, 0, 4.4, 0.45, 0.4], [14, 0.8, 1.0, 0, 3.8, 0.42, -0.2]], A: { gam: { p: [-5.5, 0.4], to: [0.4, 0.2, 0.5, 9], f: 0, pose: (c, r) => { if (r > 9) POSE.give(c); }, say: ['เชร์', 14, 18] },
-      ex2: { p: [2.6, 0], f: -40, pose: (c, r) => { if (r > 18) POSE.shrug(c); } }, card: {}, cglow: {} }, sfx: [[9.5, 'shimmer'], [14, 'pop']], fx: cardFx('gam', [0, 0, 0], 99, 100) },
+      ex2: { p: [2.6, 0], f: -40, pose: (c, r) => { if (r > 18) POSE.shrug(c); } }, card: {}, cglow: {}, oc1: {}, og1: {}, oc2: {}, og2: {}, oc3: {}, og3: {} }, sfx: [[1, 'shimmer'], [9.5, 'shimmer'], [14, 'pop']], fx: both(cardFx('gam', [0, 0, 0], 99, 100), orbitK('gam', 0.5, 9, 3, 1.0)) },
   b03: { st: 'STUDIO', bg: 'palace', cam: [[0, 0, 1.0, 0, 3.2, 0.62, 0.2], [9, 0.4, 0.9, 0, 2.6, 0.7, 0.1]], A: { tbl: { p: [0, 0] }, board: { p: [0, 0, 0.88] }, king: { p: [0.5, -0.2, 0.9] }, pawn: { p: [-0.3, 0.1, 0.9], to: [-1.1, 0.5, 4, 6, 0.9] },
       gam: { p: [1.9, 0.4], f: -45, pose: 'think' }, card: null, cglow: null }, sfx: [[4, 'tok'], [6, 'soft']] },
   b04: { st: 'STUDIO', cam: C2, A: { tbl: null, board: null, king: null, pawn: null, gam: { p: [0, 0], f: 0, pose: 'shrug', say: ['?', 1, 99, true] } }, sfx: [[1, 'pop']] },
@@ -141,8 +154,9 @@ const SC = {
       ex1: { p: [-2.2, 0.6], f: 40, pose: 'point', say: ['เล่มพิเศษสิ!', 1, 6] }, ex2: { p: [2.2, 0.6], f: -40, pose: 'fist', say: ['เล่ม 266!', 3, 8] } }, sfx: [[1, 'pop'], [3, 'pop']] },
   b07: { st: 'GUILD', bg: 'hall', cam: [[0, -1.5, 1.0, 0, 4.4, 0.5, 0.2], [10, 0.5, 1.0, 0, 5.2, 0.55, 0], [22, 0.5, 1.0, 0, 4.0, 0.45, 0]], flash: [16.5, 0.3, 'rgba(255,220,170,'], shake: [16.5, 17.2, 0.08],
     A: { frm1: { p: [-1.2, -4.2, 2.2] }, frm2: { p: [1.2, -4.2, 2.2] }, gam: { p: [-4.5, 0.5], to: [-1.2, -1.6, 0.5, 6], f: 0, pose: (c, r) => { if (r > 6 && r < 10) POSE.reach(c); if (r > 13) POSE.give(c); }, say: ['ระวัง!', 13, 15.5] },
-      skid: { p: [5.5, 0.8], to: [1.4, 0.4, 8, 11], f: -60, ex: 'worried' }, dark: { p: [4.5, -1.6, 1.6], pop: 11.5, out: 17 }, boom: { p: [4.5, -1.6, 1.4], pop: 16.4, out: 18 }, card: {}, cglow: {} },
-    sfx: [[6, 'soft'], [11.5, 'zap'], [15.6, 'zip'], [16.4, 'puff'], [22, 'chime']], fx: both(cardFx('gam', [4.5, 1.5, -1.6], 15.6, 16.4), pulse('dark', 2.1, 4)) },
+      skid: { p: [5.5, 0.8], to: [1.4, 0.4, 8, 11], f: -60, ex: 'worried' }, dark: { p: [4.5, -1.6, 1.6], pop: 11.5, out: 17 }, boom: { p: [4.5, -1.6, 1.4], pop: 16.4, out: 18 }, card: {}, cglow: {}, oc1: {}, og1: {}, oc2: {}, og2: {},
+      b1: { p: [3.8, -1.2, 0.9], pop: 16.6, out: 17.8 }, b2: { p: [5.2, -2.0, 2.0], pop: 16.8, out: 18 } },
+    sfx: [[6, 'soft'], [11.5, 'zap'], [15.6, 'zip'], [16.4, 'puff'], [16.8, 'puff'], [22, 'chime']], fx: both(cardFx('gam', [4.5, 1.5, -1.6], 15.6, 16.4), throwK('gam', 'oc1', 'og1', [3.8, 1.0, -1.2], 15.8, 16.6), throwK('gam', 'oc2', 'og2', [5.2, 2.0, -2.0], 16.0, 16.8), pulse('dark', 2.1, 4)) },
   b08: { st: 'STUDIO', bg: 'palace', cam: CW, A: { ex1: { p: [-2, 0], f: 25, pose: 'up', say: ['เท่!', 0.8, 6] }, ex2: { p: [2, 0], f: -25, pose: 'hips', say: ['หมั่นไส้!', 3.5, 9] }, hrt1: { p: [-2, 0, 3.6], pop: 1 }, gam: { p: [0, -1.4], f: 0, pose: 'shrug' } },
     sfx: [[0.8, 'pop'], [3.5, 'pop']], fx: pulse('hrt1', 0.42, 5) },
   b09: { st: 'NOLA', bg: 'night', cam: [[0, -6, 1.6, -2, 6.5, 0.9, 1.0], [4, 5, 1.6, -2, 6.5, 0.9, -1.0]] },
@@ -179,15 +193,15 @@ const SC = {
   b21: { st: 'TUNNEL', cam: [[0, 0, 1.0, 0, 4.4, 0.45, 0], [8, -0.8, 1.0, 0, 4.0, 0.45, 0.2]], A: { ex1: null, ex3: null, mar1: null, mar2: null, puff: null, boom: null,
       gam: { p: [-4.5, 0.6], to: [-0.8, 0.2, 0.5, 3.5], f: 70, fall: [4.6, 5.4], fallDir: 1, ex: 'worried' }, sabre: { p: [1.6, -0.4], f: -70, pose: 'fist', out: 7 }, sarah: { p: [-1.6, -1.6], f: 30, ex: 'cry', pose: 'cry' } },
     sfx: [[4.6, 'tok']], fx: (r, t, s, o, st) => { if (r > 7) { o.gam.rotation.z = 0; o.gam.visible = true; o.gam.position.copy(H.at(st, -0.8 + (r - 7) * -0.7, 0, 0.2)); o.gam.rotation.y = -1.4; POSE.hold(o.gam); o.sarah.position.copy(H.at(st, -1.4 + (r - 7) * -0.7, 0, -0.4)); o.sarah.rotation.y = -1.4; o.sarah.userData.setExpr('worried'); } } },
-  b22: { st: 'MANSION', bg: 'day', cam: [[0, 0, 1.0, 0, 3.8, 0.45, 0], [8, 0, 1.2, 0, 3.0, 0.4, 0]], A: { gam: { p: [0.8, 0], f: -10, pose: 'give', ex: 'giggle' }, card: {}, cglow: {}, sec: { p: [-2.2, -1.5, 3.4], pop: 3 }, dark: { p: [-2.2, -2, 3.0], pop: 2.6 } },
-    sfx: [[3, 'zap']], fx: both(cardFx('gam', [0, 0, 0], 99, 100), pulse('dark', 2.1, 5)) },
-  b23: { st: 'MANSION', cam: [[0, -2, 1.0, 0, 6.6, 0.6, 0], [12, 2, 1.0, 0, 6.6, 0.6, 0]], A: { sec: null, dark: null, card: null, cglow: null, blue: { p: [0, -1.5, 4.4], pop: 0.6 },
+  b22: { st: 'MANSION', bg: 'day', cam: [[0, 0, 1.0, 0, 3.8, 0.45, 0], [8, 0, 1.2, 0, 3.0, 0.4, 0]], A: Object.assign({ gam: { p: [0.8, 0], f: -10, pose: 'give', ex: 'giggle' }, card: {}, cglow: {}, sec: { p: [-2.2, -1.5, 3.4], pop: 3 }, dark: { p: [-2.2, -2, 3.0], pop: 2.6 } }, cardsA(4)),
+    sfx: [[1, 'shimmer'], [3, 'zap']], fx: both(cardFx('gam', [0, 0, 0], 99, 100), orbitK('gam', 0.8, 99), pulse('dark', 2.1, 5)) },
+  b23: { st: 'MANSION', cam: [[0, -2, 1.0, 0, 6.6, 0.6, 0], [12, 2, 1.0, 0, 6.6, 0.6, 0]], A: Object.assign(noCards(), { sec: null, dark: null, card: null, cglow: null, blue: { p: [0, -1.5, 4.4], pop: 0.6 },
       cyc: { p: [-4.8, 0], f: 10, pop: 1.0 }, wol: { p: [-3.2, 0.3], f: 10, pop: 1.8, pose: 'fist' }, rog: { p: [-1.6, 0], f: 5, pop: 2.6, pose: 'hips' }, gam: { p: [0, 0.3], f: 0, pop: 3.4, pose: 'give' },
-      beast: { p: [1.6, 0], f: -5, pop: 4.2 }, psy: { p: [3.2, 0.3], f: -10, pop: 5.0 }, jub: { p: [4.8, 0], f: -15, pop: 5.8, pose: 'wave' } }, sfx: [[0.6, 'bell'], [1, 'pop'], [1.8, 'pop'], [2.6, 'pop'], [3.4, 'pop'], [4.2, 'pop'], [5, 'pop'], [5.8, 'pop']] },
+      beast: { p: [1.6, 0], f: -5, pop: 4.2 }, psy: { p: [3.2, 0.3], f: -10, pop: 5.0 }, jub: { p: [4.8, 0], f: -15, pop: 5.8, pose: 'wave' } }), sfx: [[0.6, 'bell'], [1, 'pop'], [1.8, 'pop'], [2.6, 'pop'], [3.4, 'pop'], [4.2, 'pop'], [5, 'pop'], [5.8, 'pop']] },
   b24: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 4.8, 0.5, 0]], flash: [6.5, 0.2, 'rgba(255,220,170,'], A: { blue: null, cyc: null, rog: null, beast: null, psy: null,
-      gam: { p: [-1.4, 0], f: 70, pose: 'fist', say: ['ช้าไปนะ', 2, 5] }, wol: { p: [1.4, 0], f: -70, pose: 'fist' }, puff: { p: [0, 0], pop: 6.5 }, jub: { p: [4, 0.8], f: -30, pose: 'up' }, cf1: { p: [4, 0.8, 3.2] }, cf2: { p: [4.4, 0.8, 3.6] }, cf3: { p: [3.6, 0.8, 3.7] } },
-    sfx: [[2, 'pop'], [6.5, 'puff'], [12, 'shimmer']], fx: (r, t, s, o, st) => ['cf1', 'cf2', 'cf3'].forEach((k, i) => { const a = t * 3 + i * 2.1; o[k].position.copy(H.at(st, 4 + Math.cos(a) * 0.6, 3.5 + Math.sin(a * 1.3) * 0.4, 0.8)); }) },
-  b25: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 4.2, 0.45, 0]], A: { wol: null, puff: null, jub: null, cf1: null, cf2: null, cf3: null, gam: { p: [-1.2, 0], f: 20, ex: 'giggle' }, rog: { p: [5, -0.4], to: [1.3, 0, 1, 4], f: -40, pose: 'hips' } } },
+      gam: { p: [-1.4, 0], f: 70, pose: (c, r) => { if (r > 5.4 && r < 7) POSE.give(c); else POSE.fist(c, r, r); }, say: ['ช้าไปนะ', 2, 5] }, wol: { p: [1.4, 0], f: -70, pose: 'fist' }, puff: { p: [0.9, 0], pop: 6.5 }, card: {}, cglow: {}, jub: { p: [4, 0.8], f: -30, pose: 'up' }, cf1: { p: [4, 0.8, 3.2] }, cf2: { p: [4.4, 0.8, 3.6] }, cf3: { p: [3.6, 0.8, 3.7] } },
+    sfx: [[2, 'pop'], [5.8, 'zip'], [6.5, 'puff'], [12, 'shimmer']], fx: both(cardFx('gam', [0.9, 1.6, 0], 5.8, 6.5), (r, t, s, o, st) => { ['cf1', 'cf2', 'cf3'].forEach((k, i) => { const a = t * 3 + i * 2.1; o[k].position.copy(H.at(st, 4 + Math.cos(a) * 0.6, 3.5 + Math.sin(a * 1.3) * 0.4, 0.8)); }); if (r > 6.3 && r < 7.2) o.wol.position.y += Math.sin((r - 6.3) / 0.9 * Math.PI) * 0.6; }) },
+  b25: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 4.2, 0.45, 0]], A: { card: null, cglow: null, wol: null, puff: null, jub: null, cf1: null, cf2: null, cf3: null, gam: { p: [-1.2, 0], f: 20, ex: 'giggle' }, rog: { p: [5, -0.4], to: [1.3, 0, 1, 4], f: -40, pose: 'hips' } } },
   b26: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 4.0, 0.45, 0], [7, 0.6, 1.0, 0, 3.4, 0.42, 0]], A: { gam: null, rog: { p: [-0.8, 0], f: 60, pose: (c, r) => { if (r > 3 && r < 6) POSE.give(c); }, ex: 'worried' },
       ex2: { p: [0.8, 0], f: -60, fall: [5, 6], fallDir: -1 }, mem1: { p: [0.8, 0, 2.4], pop: 4, out: 6.5 } }, sfx: [[4, 'shimmer'], [5.5, 'tok']] },
   b27: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 3.6, 0.45, 0], [10, 0, 1.1, 0, 3.0, 0.42, 0]], A: { ex2: null, mem1: null, gam: { p: [-0.75, 0], f: 50, pose: 'give', ex: 'giggle' }, rog: { p: [0.75, 0], f: -50, pose: (c, r) => { if (r < 8) POSE.hips(c); else POSE.reach(c); }, ex: 'happy' },
@@ -229,13 +243,14 @@ const SC = {
   b41: { st: 'STUDIO', cam: [[0, 0, 1.2, -0.6, 4.8, 0.5, 0]], A: { desk: null, gam: null, bk1: null, bk2: null, bk3: null, bk4: null, bk5: null, y1: null, y2: null, y3: null, y4: null, y5: null,
       tv: { p: [0, -3.2] }, sofa: { p: [0, 0.6] }, k1: { p: [-0.6, 0.6, 0.45], f: 180, sit: true }, k2: { p: [0.6, 0.6, 0.45], f: 180, sit: true }, s1992: { p: [0, -3, 4.4], pop: 0.6 } }, sfx: [[0.6, 'bell']] },
   b42: { st: 'GENO', bg: 'war', cam: [[0, 0, 1.4, -1, 6.0, 0.6, 0], [9, -0.6, 1.2, 0, 4.4, 0.5, 0.3]], flash: [13.4, 0.5, 'rgba(255,230,200,'], shake: [13.4, 15, 0.14],
-    A: { giant: { p: [3.5, -5, 4.5], pop: 0.5 }, gam: { p: [-2.4, 0.6], f: 40, pose: (c, r) => { if (r > 6) POSE.give(c); }, ex: 'angry', out: 14 }, card: {}, cglow: {}, boom2: { p: [3.2, -4.4, 3], pop: 13.4, out: 16.5 }, puff: { p: [1, -2], pop: 13.6 } },
-    sfx: [[0.5, 'zap'], [6, 'shimmer'], [12.6, 'zip'], [13.4, 'puff']], fx: both(cardFx('gam', [3.2, 3, -4.4], 12.6, 13.4), pulse('giant', 4, 2), (r, t, s, o) => { if (o.cglow && r > 6 && r < 12.6) o.cglow.scale.setScalar(0.48 * (1 + (r - 6) / 3) * (1 + 0.25 * Math.sin(t * 18))); }) },
-  b43: { st: 'GENO', cam: [[0, 0, 0.6, 0, 3.6, 0.6, 0.2]], A: { giant: null, card: null, cglow: null, boom2: null, puff: null, gam: { p: [-0.3, 0.2], lie: true, f: 90, ex: 'sleepy' }, rog: { p: [0.9, -0.2], f: -70, sit: true, pose: 'cry', ex: 'cry' } } },
+    A: Object.assign({ giant: { p: [3.5, -5, 4.5], pop: 0.5 }, gam: { p: [-2.4, 0.6], f: 40, pose: (c, r) => { if (r > 6) POSE.give(c); }, ex: 'angry', out: 14 }, card: {}, cglow: {}, boom2: { p: [3.2, -4.4, 3], pop: 13.4, out: 16.5 }, puff: { p: [1, -2], pop: 13.6 },
+      b1: { p: [2.4, -3.6, 2.2], pop: 12.9, out: 14 }, b2: { p: [4, -4.8, 3.6], pop: 13.1, out: 14.2 }, b3: { p: [3, -4, 4.2], pop: 13.3, out: 14.4 } }, cardsA(4)),
+    sfx: [[0.5, 'zap'], [3, 'shimmer'], [6, 'shimmer'], [12.2, 'zip'], [12.9, 'puff'], [13.4, 'puff']], fx: both(orbitK('gam', 3, 12.1), throwK('gam', 'oc1', 'og1', [2.4, 2.2, -3.6], 12.2, 12.9, 12.1), throwK('gam', 'oc2', 'og2', [4, 3.6, -4.8], 12.4, 13.1, 12.1), throwK('gam', 'oc3', 'og3', [3, 4.2, -4], 12.6, 13.3, 12.1), cardFx('gam', [3.2, 3, -4.4], 12.6, 13.4), pulse('giant', 4, 2), (r, t, s, o) => { if (o.cglow && r > 6 && r < 12.6) o.cglow.scale.setScalar(0.48 * (1 + (r - 6) / 3) * (1 + 0.25 * Math.sin(t * 18))); }) },
+  b43: { st: 'GENO', cam: [[0, 0, 0.6, 0, 3.6, 0.6, 0.2]], A: Object.assign(noCards(), { giant: null, card: null, cglow: null, boom2: null, puff: null, gam: { p: [-0.3, 0.2], lie: true, f: 90, ex: 'sleepy' }, rog: { p: [0.9, -0.2], f: -70, sit: true, pose: 'cry', ex: 'cry' } }) },
   b44: { st: 'DESERT', bg: 'dust', cam: [[0, 0, 1.2, 0, 5.0, 0.5, 0]], A: { s2026: { p: [0, -2.5, 5.8], pop: 0.5 }, apoc: { p: [0, -3], f: 0, pose: 'up', pop: 1.2 }, dark2: { p: [0, -3.4, 3], pop: 1 },
       gam: { p: [0, 0.6, -1.2], to: [0, 0.6, 3, 7, 0], f: 0, ex: 'angry', pose: 'lift' }, dark: { on: ['gam', 'head'], pop: 3.5 } }, sfx: [[0.5, 'bell'], [1.2, 'zap'], [3.5, 'zap']], fx: both(pulse('dark2', 3.6, 2), pulse('dark', 2.1, 5)) },
   b45: { st: 'DESERT', cam: [[0, 0, 1.0, 0, 4.6, 0.5, 0]], A: { s2026: null, apoc: null, dark2: null, dark: { out: 3 }, gam: { p: [0, 0.6], f: 0, pose: 'down', ex: 'sleepy' },
-      kurt: { p: [-2.2, 0.2], f: 40, pose: 'reach', out: 9, ex: 'happy' }, spark: { p: [-1.1, 0.4, 2], pop: 2, out: 9 }, rog: { p: [5, 0], to: [1.4, 0.4, 7, 10], f: -60, ex: 'cry' } },
+      kurt: { p: [-2.2, 0.2], f: 40, pose: 'reach', out: 9, ex: 'happy' }, puff: { p: [-2.2, 0.2], pop: 8.8 }, spark: { p: [-1.1, 0.4, 2], pop: 2, out: 9 }, rog: { p: [5, 0], to: [1.4, 0.4, 7, 10], f: -60, ex: 'cry' } },
     sfx: [[2, 'shimmer'], [8.6, 'chime']], fx: (r, t, s, o) => { if (r > 9) o.gam.userData.setExpr('happy'); } },
   b46: { st: 'STUDIO', bg: 'palace', cam: [[0, 0, 1.2, -0.6, 4.8, 0.5, 0]], A: { booth: { p: [-1.2, -1.6] }, mon: { p: [1.4, -1.8, 1.0] }, k1: { p: [-1.2, -0.2], f: 180, pose: 'hold' }, k2: { p: [1.4, -0.4], f: 180, pose: 'hold' },
       sGame: { p: [0, -2.6, 4.2], pop: 0.6 }, cf1: { p: [1.4, -1.7, 1.6] }, cf3: { p: [-1.2, -1.5, 1.9] } }, sfx: [[0.6, 'bell'], [4, 'zap'], [7, 'zap']],
@@ -247,20 +262,21 @@ const SC = {
     sfx: [[1, 'pop'], [2.5, 'tok'], [4, 'tok'], [5.5, 'tok'], [9, 'puff']], fx: (r, t, s, o) => { if (r > 9) o.gam.userData.setExpr('cry'); } },
   b50: { st: 'VOID', bg: 'dust', cam: [[0, 0, 1.0, 0, 5.4, 0.55, 0], [14, -0.6, 1.0, 0, 4.0, 0.45, 0.1]], flash: [1, 0.35, 'rgba(255,230,200,'],
     A: { gam: { p: [-1.2, 0.4], f: 40, pop: 1, pose: 'give', say: ['บงชูร์ เชร์!', 8, 12] }, dp: { p: [0.8, 0.2], f: -40, pose: 'shrug', say: ['???', 12.5, 99, true] },
-      elek: { p: [2.4, -0.6], f: -20 }, blade: { p: [-3, -0.8], f: 20, pose: 'hips' }, x23: { p: [3.8, 0], f: -30, pose: 'fist' }, card: {}, cglow: {} },
-    sfx: [[1, 'shimmer'], [8, 'pop'], [12.5, 'pop']], fx: cardFx('gam', [0, 0, 0], 99, 100) },
+      elek: { p: [2.4, -0.6], f: -20 }, blade: { p: [-3, -0.8], f: 20, pose: 'hips' }, x23: { p: [3.8, 0], f: -30, pose: 'fist' }, card: {}, cglow: {},
+    b1: { p: [1.1, 0.8, 0.2], pop: 15.8, out: 17 } },
+    sfx: [[1, 'shimmer'], [8, 'pop'], [12.5, 'pop'], [15, 'zip'], [15.8, 'puff']], fx: both(cardFx('gam', [1.1, 0.2, 0.8], 15, 15.8), (r, t, s, o) => { if (r > 15.8 && r < 16.8) o.dp.position.y += Math.sin((r - 15.8) * Math.PI) * 0.9; }) },
   b51: { st: 'CINEMA', bg: 'palace', cam: [[0, 0, 1.6, -1, 6.0, 0.6, 0], [18, 0, 1.2, -0.5, 4.8, 0.5, 0]], A: { sDD: { p: [0, -6, 4.6], pop: 1 }, sDate: { p: [0, -6, 3.5], pop: 4 }, sTat: { p: [-4.2, -6, 2.6], pop: 8 },
       gam: { p: [0, 0.6], f: 0, pose: (c, r) => { if (r > 18) POSE.fist(c, r, r); else POSE.hips(c); }, ex: 'giggle', say: ['ยังไม่จบหรอก', 20, 24] }, ex2: { p: [-2.6, 1], f: 180, pose: 'up', pop: 12 }, ex4: { p: [2.6, 1], f: 180, pose: 'up', pop: 12.5 } },
     sfx: [[1, 'bell'], [4, 'pop'], [8, 'pop'], [12, 'chime'], [20, 'pop']] },
   b52: { st: 'STUDIO', bg: 'palace', cam: C2, A: { gam: { p: [0, 0], f: 0, pose: 'shrug', ex: 'giggle' } } },
-  b53: { st: 'MANSION', bg: 'day', cam: [[0, 0, 1.0, 0, 5.4, 0.55, 0]], A: { cyc: { p: [-3.4, 0], f: 15, pose: 'point', pop: 0.5 }, wol: { p: [-1.6, 0.2], f: 10, pose: 'fist', pop: 2 }, storm: { p: [0.2, 0], f: 0, pose: 'up', pop: 3.5 },
-      gam: { p: [2.6, 0.6], f: -20, pose: 'shrug', pop: 6, ex: 'giggle' } }, sfx: [[0.5, 'pop'], [2, 'pop'], [3.5, 'pop'], [6, 'pop']] },
-  b54: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 5.4, 0.55, 0]], A: { cyc: { p: [-3.4, 0], f: 30, pose: 'wave' }, wol: { p: [-2.2, -0.8], f: 30 }, storm: { p: [-1.6, 0.6], f: 40, pose: 'wave' },
+  b53: { st: 'MANSION', bg: 'day', cam: [[0, 0, 1.0, 0, 5.4, 0.55, 0]], A: { cyc: { p: [-3.4, 0], f: 15, pose: 'point', pop: 0.5 }, wol: { p: [-1.6, 0.2], f: 10, pose: 'fist', pop: 2 }, storm: { p: [0.2, 0], f: 0, pose: 'up', pop: 3.5 }, bolt: { p: [0.6, -2.4, 0], pop: 4.2, out: 5.6 },
+      gam: { p: [2.6, 0.6], f: -20, pose: 'shrug', pop: 6, ex: 'giggle' } }, sfx: [[0.5, 'pop'], [2, 'pop'], [3.5, 'pop'], [4.2, 'zap'], [6, 'pop']], flash: [4.2, 0.25, 'rgba(220,230,255,'], fx: (r, t, s, o) => { if (o.bolt && r > 4.2 && r < 5.6) o.bolt.visible = Math.sin(t * 40) > -0.3; } },
+  b54: { st: 'MANSION', cam: [[0, 0, 1.0, 0, 5.4, 0.55, 0]], A: { bolt: null, cyc: { p: [-3.4, 0], f: 30, pose: 'wave' }, wol: { p: [-2.2, -0.8], f: 30 }, storm: { p: [-1.6, 0.6], f: 40, pose: 'wave' },
       rog: { p: [-0.4, 0], f: 60, pose: 'reach', ex: 'happy' }, gam: { p: [5, 0.4], to: [0.8, 0.2, 1, 6], f: -80, pose: (c, r) => { if (r > 6) POSE.reach(c); }, ex: 'happy' } } },
   b55: { st: 'STUDIO', bg: 'palace', cam: [[0, 0, 1.0, 0, 3.2, 0.62, 0.2], [10, 0.4, 0.9, 0, 2.6, 0.7, 0.1]], A: { tbl: { p: [0, 0] }, board: { p: [0, 0, 0.88] }, king: { p: [0.5, -0.2, 0.9] }, pawn: { p: [-0.6, 0.2, 0.9], to: [-0.1, -0.1, 3, 5, 0.9] },
       gam: { p: [1.9, 0.4], f: -45, pose: 'give', ex: 'happy' } }, sfx: [[3, 'tok'], [5, 'chime']] },
-  b56: { st: 'NOLA', bg: 'night', cam: [[0, 0, 1.0, 0, 4.4, 0.45, 0], [8, 0, 1.2, 0, 3.6, 0.42, 0]], A: { gam: { p: [-0.7, 0], f: 15, pose: 'wave', ex: 'giggle' }, rog: { p: [0.8, 0], f: -15, pose: 'wave', ex: 'happy' }, card: {}, cglow: {} },
-    sfx: [[1, 'shimmer']], fx: cardFx('gam', [0, 0, 0], 99, 100) },
+  b56: { st: 'NOLA', bg: 'night', cam: [[0, 0, 1.0, 0, 4.4, 0.45, 0], [8, 0, 1.2, 0, 3.6, 0.42, 0]], A: Object.assign({ gam: { p: [-0.7, 0], f: 15, pose: 'wave', ex: 'giggle' }, rog: { p: [0.8, 0], f: -15, pose: 'wave', ex: 'happy' }, card: {}, cglow: {}, cf1: {}, cf2: {}, cf3: {} }, cardsA(4)),
+    sfx: [[1, 'shimmer'], [5, 'chime']], fx: both(cardFx('gam', [0, 0, 0], 99, 100), orbitK('gam', 0.5, 99, 4, 1.2), (r, t, s, o, st) => ['cf1', 'cf2', 'cf3'].forEach((k, i) => { o[k].visible = r > 5; o[k].position.copy(H.at(st, -2 + i * 2 + Math.sin(t + i) * 0.4, 4.6 - ((t * 0.7 + i) % 3.8), -1)); })) },
   facts: { st: 'STUDIO', bg: 'palace', cam: [0, 2.5, 1.0, 0, 5.4, 0.55, 0], A: { gam: { p: [4.2, 0], f: -30, pose: 'hips' }, rog: { p: [5.6, -0.4], f: -40 } } },
   next: { st: 'STUDIO', cam: C2, A: { gam: { p: [-0.6, 0], f: 20, pose: 'wave' }, rog: { p: [0.6, 0], f: -20 } }, sfx: [[0.6, 'pop']] },
   ask: { st: 'STUDIO', cam: C2, A: { gam: { p: [-0.6, 0], f: 20, pose: 'think' }, rog: { p: [0.6, 0], f: -20, pose: 'shrug', say: ['?', 0.6, 99, true] } } },
