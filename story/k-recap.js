@@ -4,7 +4,7 @@
    - pop[id]    = [[time, 'word', { x, y (0..1), px, rot, dur, c }]]   big comic key words
    - third[id]  = [[time, 'name', 'role', dur]]                        character lower third (first appearance)
    - credit[id] = [[time, 'label', 'name', dur]]                       credit plates, stacked on the right
-   - title[id]  = ['kicker', 'line 1', 'line 2']                       full-screen chapter card for that beat (wipes off at its end)
+   - title[id]  = ['kicker', 'line 1', 'line 2', secs]                 full-screen chapter card; wipes off at the beat's end, or after secs (then the subtitles show over it)
    - pages[id]  = [{ t0, t1, x, y, h, rot, from, head, panels, stamp, to }]  floating comic pages; each panel shows a live render of the
                   booth cast: panel.shot = (o, t) => RC.cam(...) after posing booth actors with RC.act(...)
    - booth      = ['castKey', ...] cast entries that only live in the booth (hidden in the main scene)
@@ -45,7 +45,7 @@ const RC = (() => {
   function parts(str) { const out = [], re = /\{([^}]*)\}/g; let i = 0, m; while ((m = re.exec(str))) { if (m.index > i) out.push([str.slice(i, m.index), '#fff']); out.push([m[1], YEL]); i = re.lastIndex; } if (i < str.length) out.push([str.slice(i), '#fff']); return out; }
   function subtitle(g, id, r, W, H) {
     const n = RT.n(id); for (let i = 0; i < n; i++) { const t0 = RT.p(id, i), t1 = RT.e(id, i); if (r < t0 - 0.02 || r >= t1) continue;
-      const ps = parts(R.sub[id][i]), a = U.clamp((r - t0 + 0.02) / 0.1), px = 46; g.save(); g.globalAlpha = a; g.font = K(600, px); g.textBaseline = 'middle'; g.textAlign = 'left'; g.lineJoin = 'round';
+      const ps = parts(R.sub[id][i]), a = U.clamp((r - t0 + 0.02) / 0.1); let px = 46; g.save(); g.globalAlpha = a; g.font = K(600, px); const w0 = ps.reduce((s, p) => s + g.measureText(p[0]).width, 0); if (w0 > W - 280) { px = Math.floor(px * (W - 280) / w0); g.font = K(600, px); } g.textBaseline = 'middle'; g.textAlign = 'left'; g.lineJoin = 'round';
       const w = ps.reduce((s, p) => s + g.measureText(p[0]).width, 0); let x = W / 2 - w / 2; const y = H - 104 + (1 - a) * 8;
       g.lineWidth = 9; g.strokeStyle = 'rgba(21,20,26,.92)'; for (const p of ps) { g.strokeText(p[0], x, y); x += g.measureText(p[0]).width; }
       x = W / 2 - w / 2; for (const p of ps) { g.fillStyle = p[1]; g.fillText(p[0], x, y); x += g.measureText(p[0]).width; } g.restore(); return; }
@@ -63,8 +63,9 @@ const RC = (() => {
       g.font = K(800, 60); g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText(q[1], x + 44, y + 42); g.font = K(600, 30); g.fillStyle = YEL; g.fillText(q[2], x + 40, y + 88); g.restore(); }
   }
   function credits(g, id, r, W, H) {
+    const pg = (R.pages || {})[id], left = !!(pg && pg.some((p) => p.x > 0.5 && r > p.t0 - 0.3 && (p.t1 == null || r < p.t1 + 0.4)));   /* a page on the right: plates go left */
     let slot = 0; for (const q of (R.credit || {})[id] || []) { const d = q[3] || 4, u = r - q[0]; if (u < 0) continue; if (u > d) { continue; } const k = eOut(u / 0.3), a = U.clamp((d - u) / 0.25), y = 210 + slot * 138; slot++;
-      g.save(); g.globalAlpha = a; g.font = K(800, 52); const w = Math.max(g.measureText(q[2]).width + 84, 380), x = W - 96 - w + (1 - k) * 120;
+      g.save(); g.globalAlpha = a; g.font = K(800, 52); const w = Math.max(g.measureText(q[2]).width + 84, 380), x = left ? 96 - (1 - k) * 120 : W - 96 - w + (1 - k) * 120;
       g.fillStyle = INK; para(g, x, y, w, 84, 10); g.fill(); g.font = K(600, 26); const lw = g.measureText(q[1]).width + 36; g.fillStyle = PINK; para(g, x + 6, y - 34, lw, 40, 6); g.fill();
       g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#fff'; g.fillText(q[1], x + 24, y - 13); g.font = K(800, 52); g.fillText(q[2], x + 40, y + 44); g.restore(); }
   }
@@ -72,12 +73,22 @@ const RC = (() => {
     for (let j = 0; j * 30 < H + 30; j++) for (let i = 0; i * 30 < W + 30; i++) { const px = i * 30 + (j % 2) * 15, py = j * 30, d = Math.hypot(px - W, py - H) / Math.hypot(W, H), rad = Math.max(0, 13 * (1 - d * 1.55)); if (rad < 0.6) continue; x.fillStyle = PINK; x.beginPath(); x.arc(px, py, rad, 0, 6.3); x.fill(); }
     x.fillStyle = YEL; para(x, -80, H * 0.67, W * 0.52, 22, 60); x.fill(); return (cardBg = c); }
   function titleCard(g, id, r, W, H) {
-    const tc = (R.title || {})[id]; if (!tc) return; const d = dur(id), w = U.clamp((r - (d - 0.5)) / 0.5), edge = (W + 420) * (1 - U.easeIO(w)) - 210; if (w >= 1) return;
+    const tc = (R.title || {})[id]; if (!tc) return; const d = Math.min(tc[3] || 99, dur(id)), w = U.clamp((r - (d - 0.5)) / 0.5), edge = (W + 420) * (1 - U.easeIO(w)) - 210; if (w >= 1) return;
     g.save(); g.beginPath(); g.moveTo(0, 0); g.lineTo(edge + 200, 0); g.lineTo(edge - 200, H); g.lineTo(0, H); g.closePath(); g.clip(); g.drawImage(halftone(W, H), 0, 0);
     const k = cfgCover ? 1 : eOut(r / 0.4); g.font = K(800, 40); const kw = g.measureText(tc[0]).width + 64; g.fillStyle = PINK; para(g, 150, 250, kw, 68, 10); g.fill(); g.fillStyle = '#fff'; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(tc[0], 180, 286);
     ctext(g, tc[1], 150 + (1 - k) * -60, 440, 150, { al: 'left', rot: 0, c: '#fff', sh: PINK }); if (tc[2]) ctext(g, tc[2], 150 + (1 - k) * -60, 610, 150, { al: 'left', rot: 0, c: YEL, sh: PINK });
     g.font = K(600, 30); g.fillStyle = 'rgba(255,255,255,.8)'; g.textAlign = 'left'; g.fillText(EP.foot || '', 156, H - 120); g.restore();
     if (w > 0) { g.fillStyle = YEL; g.beginPath(); g.moveTo(edge + 200, 0); g.lineTo(edge + 250, 0); g.lineTo(edge - 150, H); g.lineTo(edge - 200, H); g.closePath(); g.fill(); g.fillStyle = PINK; g.beginPath(); g.moveTo(edge + 250, 0); g.lineTo(edge + 276, 0); g.lineTo(edge - 124, H); g.lineTo(edge - 150, H); g.closePath(); g.fill(); }
+  }
+  function facts(g, r, W, H) {
+    if (!EP.facts || !EP.facts.length) return; const d = dur('facts'), n = EP.facts.length, a = U.clamp(r / 0.35) * U.clamp((d - r) / 0.35), gap = Math.min(2.4, (d - 1.6) / n), x = 110, w = Math.min(980, W * 0.51);
+    g.save(); g.globalAlpha = a; const hd = EP.factHead || ['รู้งี้…', '']; g.font = K(800, 64); const hw = g.measureText(hd.join(' ')).width + 80;
+    g.fillStyle = INK; para(g, x, 120, hw, 96, 16); g.fill(); g.fillStyle = PINK; para(g, x, 120, 16, 96, 16); g.fill(); g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = YEL; g.fillText(hd[0], x + 40, 170); g.fillStyle = '#fff'; g.fillText(hd[1] || '', x + 52 + g.measureText(hd[0] + ' ').width, 170);
+    EP.facts.forEach((f, i) => { const u = r - (0.5 + i * gap); if (u < 0) return; const k = eOut(u / 0.35), y = 270 + i * 190, xx = x + (1 - k) * -80; g.save(); g.globalAlpha = a * U.clamp(u / 0.2);
+      g.fillStyle = 'rgba(21,20,26,.9)'; para(g, xx, y, w, 160, 14); g.fill(); g.fillStyle = YEL; para(g, xx - 10, y + 12, 96, 136, 10); g.fill(); g.font = K(800, 72); g.textAlign = 'center'; g.fillStyle = INK; g.fillText(String(i + 1), xx + 38, y + 84);
+      g.textAlign = 'left'; let px = 44; g.font = K(800, px); const lw = g.measureText(f[0]).width; if (lw > w - 160) { px = Math.floor(px * (w - 160) / lw); g.font = K(800, px); } g.fillStyle = '#fff'; g.fillText(f[0], xx + 120, y + 58);
+      g.font = K(600, 32); g.fillStyle = YEL; g.fillText(f[1] || '', xx + 120, y + 112); g.restore(); });
+    if (EP.src) { g.font = K(600, 24); g.textAlign = 'left'; g.fillStyle = 'rgba(255,255,255,.75)'; g.fillText(EP.src, x, H - 190); } g.restore();
   }
   const cfgCover = true;
   function panelBg(g, p, x, y, w, h, t) {
@@ -121,7 +132,8 @@ const RC = (() => {
     g.fillStyle = INK; g.fillRect(0, 0, W, 46); g.fillRect(0, H - 46, W, 46);
     if (!ended) { credits(g, id, r, W, H); thirds(g, id, r, W, H); pops(g, id, r, W, H); if (R.sub && R.sub[id]) subtitle(g, id, r, W, H); }
     g.font = K(800, 26); g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = P.teal; g.fillText('RuNgee รู้งี้', 40, 24); if (EP.series) { g.font = K(600, 22); g.fillStyle = 'rgba(255,255,255,.7)'; g.textAlign = 'right'; g.fillText(EP.series, W - 40, 24); }
-    titleCard(g, id, r, W, H);
+    titleCard(g, id, r, W, H); const tc = (R.title || {})[id]; if (tc && tc[3] && r < tc[3] && R.sub && R.sub[id]) subtitle(g, id, r, W, H);
+    if (id === 'facts') facts(g, r, W, H);
   }
   /* recap camera: SC[id].rc = [[t, lookX, lookY, lookZ, dist, height, angleDeg, cut, drift], ...] (station-relative look point; the camera sits on a circle around it).
      Between two keys everything eases together, so a change of angle is an orbit and a change of look point is a truck; a key with cut = 1 jumps. After the last key
@@ -133,11 +145,15 @@ const RC = (() => {
   }
   function update(t, s, ctx) {
     const id = beatAt(t), r = rel(t, id), v = camState(id, r); if (!v) return; const c = ST[RES[id].st], cam = ctx.camera, a = v[6] * D2R;
-    const lx = c[0] + v[1], ly = c[1] + v[2], lz = c[2] + v[3]; cam.position.set(lx + Math.sin(a) * v[4] + Math.sin(t * 0.5) * 0.08, ly + v[5] + Math.cos(t * 0.4) * 0.04, lz + Math.cos(a) * v[4]); cam.lookAt(lx, ly, lz);
+    let lx = c[0] + v[1], ly = c[1] + v[2], lz = c[2] + v[3];
+    /* comic page up: truck the rig sideways so the people sit on the free side of the frame (SC[id].rcPage = false for hand-made moves) */
+    const pg = (R.pages || {})[id]; if (pg && SC[id].rcPage !== false) { let sh = 0; for (const q of pg) { const i = U.easeIO(U.clamp((r - q.t0 + 0.3) / 0.8)), o = q.t1 != null ? U.easeIO(U.clamp((r - q.t1) / 0.8)) : 0, v1 = (q.x - 0.5) * 1.04 * v[4] * i * (1 - o); if (Math.abs(v1) > Math.abs(sh)) sh = v1; }
+      lx += Math.cos(a) * sh; lz -= Math.sin(a) * sh; } cam.position.set(lx + Math.sin(a) * v[4] + Math.sin(t * 0.5) * 0.08, ly + v[5] + Math.cos(t * 0.4) * 0.04, lz + Math.cos(a) * v[4]); cam.lookAt(lx, ly, lz);
     const sk = SC[id].shake; if (sk && r > sk[0] && r < sk[1]) { const q = 1 - (r - sk[0]) / (sk[1] - sk[0]); cam.position.x += Math.sin(t * 55) * (sk[2] || 0.1) * q; cam.position.y += Math.sin(t * 43) * (sk[2] || 0.1) * 0.8 * q; }
     cam.updateMatrixWorld(true); const p = s.anchorV;
     for (const b of BUB) { b.o.getWorldPosition(p); p.y += (b.dy || 2) * (b.o.scale.y || 1); p.project(cam); b.x = (p.x + 1) / 2 * ctx.W; b.y = (1 - p.y) / 2 * ctx.H; }
   }
   return { setup, hud, update, cam, act, prop, BO, ctext };
 })();
+if (EP.lt) Object.assign(LT, EP.lt);   /* per-film light levels per background, e.g. EP.lt = { night: [hemi, sun, sunColour] } */
 BG.studio = ['#1c1836', '#7a3a5a']; LT.studio = [0.86, 0.85, '#ffe6c8']; ATMO.studio = ['#ffe0a0', 0.08, 0.12, 60, 0, '#ffe0b0', 0.8, '#ffb060', 0.05, 0.45];
