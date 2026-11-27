@@ -696,3 +696,23 @@ function dress(c, o) {
   return c;
 }
 /* DRESS-END */
+
+/* ---- custom models (Nov 2026): plug any hand-built Three.js figure into the story kit ----
+   actor(root, parts, s): root = your Group (feet at y=0, facing +z); parts = { head, armR, armL, handR, handL, setExpr, tick } (all optional).
+   armR/armL = shoulder pivot groups with the arm hanging down -y; armR is the arm on the +x side (screen right when facing camera), like vin's arm1.
+   Size: an adult vin chibi is about 3.6 units tall at AD, so scale your model to match (s).
+   Use in <film>-x.js:  CF.hero = (s) => { const m = myBuilder(); return actor(m.root, { head: m.parts.head, armR: m.parts.leftArm, armL: m.parts.rightArm }, 1.8 * (s || 1)); };
+   The kit poses arms by rotation (x forward, z outward), so build arms as pivot groups at the shoulder. Faces built from meshes have no expressions unless you pass setExpr. */
+if (!T.CapsuleGeometry) T.CapsuleGeometry = function (r, len, capSeg, radSeg) { const pts = [], n = capSeg || 4; for (let i = 0; i <= n; i++) { const a = -Math.PI / 2 + (i / n) * (Math.PI / 2); pts.push(new T.Vector2(Math.max(1e-4, Math.cos(a) * r), Math.sin(a) * r - len / 2)); }
+  for (let i = 0; i <= n; i++) { const a = (i / n) * (Math.PI / 2); pts.push(new T.Vector2(Math.max(1e-4, Math.cos(a) * r), Math.sin(a) * r + len / 2)); } return new T.LatheGeometry(pts, radSeg || 8); };
+function actor(root, parts, s) {
+  parts = parts || {}; const g = new T.Group(), u = g.userData; g.add(root);
+  const dummy = (y) => { const o = new T.Group(); o.position.y = y || 0; g.add(o); return o; };
+  const head = parts.head || dummy(2.4), R = parts.armR || dummy(1.6), L = parts.armL || dummy(1.6);
+  R.userData.hand = parts.handR || R; L.userData.hand = parts.handL || L;
+  let ex = 'happy';
+  Object.assign(u, { vinyl: true, custom: true, head, headSpace: head, arm1: R, 'arm-1': L, hand1: R.userData.hand, 'hand-1': L.userData.hand, arms: { L, R }, eyes: [], body: new T.Object3D(), lap: new T.Object3D(),
+    setExpr: (n) => { if (n !== ex) { ex = n; if (parts.setExpr) parts.setExpr(n); } }, expr: () => ex,
+    tick: (t, o) => { root.position.y = 0.012 * Math.sin(t * 2.4); if (parts.tick) parts.tick(t, o); } });
+  g.scale.setScalar(s || 1); return g;
+}
