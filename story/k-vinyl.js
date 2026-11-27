@@ -763,21 +763,81 @@ FK.livelyBed = function (o) {
   } };
 };
 
-/* ---- slim build (Nov 2026): slim(c, o) reshapes a vin() chibi toward ~2.2-head figurine proportions (smaller head, narrow body, longer legs) so plain
-   extras sit well next to hand-built models. o = { head: 0.82, w: 0.64, d: 0.76, leg: 0.34 (extra leg length), keepH: true (keep the overall height) }.
-   Call it last (after dress()/tag()); capes/coats/vests follow the body, boots and knee pads are not adjusted. Poses, faces and props keep working. ---- */
-function slim(c, o) {
-  const u = c.userData; if (u.slim || !u.head || !u.arm1) return c; const adult = u.head.position.y > 1.6;
-  o = Object.assign({ head: 0.82, w: 0.64, d: 0.76, leg: adult ? 0.34 : 0.2, keepH: true }, o || {});
-  const V = new T.Vector3(), h0 = new T.Box3().setFromObject(c).getSize(V).y, ch = c.children.slice(), up = new T.Group(); up.position.y = o.leg;
-  const body = ch.find((m) => m.isMesh && m.geometry.type === 'SphereGeometry' && Math.abs(m.geometry.parameters.radius - 0.46) < 1e-6); if (!body) return c;
-  for (const m of ch) { if (!m.isMesh || m === body) continue;
-    if (m.geometry.type === 'CylinderGeometry') { const len = m.geometry.parameters.height; m.scale.set(0.84, (len + o.leg) / len, 0.84); m.position.y += o.leg / 2; m.position.x *= 0.82; }   // legs
-    else if (m.geometry.type === 'SphereGeometry') { m.position.x *= 0.82; m.scale.multiplyScalar(0.92); } }                                                             // shoes
-  const bw = new T.Group(); bw.scale.set(o.w, 1, o.d); bw.add(body); if (u.dress) bw.add(u.dress); up.add(bw);
-  for (const s of [-1, 1]) { const a = u['arm' + s]; a.position.x *= o.w * 1.04; a.scale.set(0.9, 1, 0.9); up.add(a); }
-  const P = u.head.position.y - 0.52, hw = new T.Group(); hw.position.y = P * (1 - o.head) - 0.04; hw.scale.setScalar(o.head); hw.add(u.head); up.add(hw);
-  if (u.badge) { u.badge.position.y += o.leg; u.badge.position.z *= o.d; } c.add(up); u.slim = true;
-  if (o.keepH) { const h1 = new T.Box3().setFromObject(c).getSize(V).y; if (h1 > 0) c.scale.multiplyScalar(h0 / h1); }
+/* ---- figurine build (Nov 2026): fig(o) = the vin() head (same faces, hair options, expressions, tick) on a slim ~2.2-head body with real shoulders,
+   bent arms with hands, longer legs and a styled outfit, so plain characters sit well next to hand-built models. Same interface as vin(): poses, H.hand, say, toon.
+   o = all vin()/CK.chibi options (hair, bangs, bun, hood, hat, glasses, lashes, skin, eye, browW, browTilt, freckles, mouth, blush ...) plus
+     outfit: 'long' (default) | 'tee' | 'hoodie' | 'jacket' | 'coat' | 'vest' | 'suit' | 'overalls' | 'dress' | 'robe'   (top = outfit colour, inner = shirt under it, bottom, shoes)
+     shorts, boots (colour), belt (colour), scarf (colour), cape (colour) + capeLen 0..1, pack (colour), gloves (colour), cuff (colour), tie (colour)
+     head extras: ponytail, spikes, beanie (colour) + pom, cap (colour), headband (colour), beard (colour); headK (head size, 0.76)
+     prop: 'card' | 'staff' | 'book' | 'bag' | 'cup' (right hand) + propColor
+   LOOKS = ready-made original looks; CF.person(s, n, kid) builds look n. Never model an existing character's design with these. ---- */
+function fig(o) {
+  o = Object.assign({ outfit: 'long' }, o || {}); const c = vin(o), u = c.userData, adult = (o.scale || 1) >= 1.2, V = new T.Vector3(), PI = Math.PI, fit = o.outfit;
+  const h0 = new T.Box3().setFromObject(c).getSize(V).y, Mt = (col, x) => CK.mat(T, col, Object.assign({ roughness: 0.48 }, x || {})), headY = u.head.position.y;
+  const top = o.top || '#9fd3ff', bot = o.bottom || '#3a3d4d', inner = o.inner || '#f4f1ea', shoe = o.shoes || '#2e2e34', skin = o.skin || CK.pal.skin[0], hairC = o.hair || '#4a3328';
+  for (const m of c.children.slice()) if (m.isMesh && m.geometry.type !== 'CircleGeometry') c.remove(m);   // old legs, shoes and body (tick still animates the detached body harmlessly)
+  const legL = adult ? 0.74 : 0.42, torH = adult ? 0.6 : 0.46, hipY = legL + 0.05, shY = hipY + torH, rT = 0.25, rB = 0.2, dz = 0.74, B = new T.Group(); c.add(B); u.fig = B;
+  const add = (par, geo, col, x, y, z, sx, sy, sz, mo) => { const m = new T.Mesh(geo, Mt(col, mo)); m.position.set(x || 0, y || 0, z || 0); m.scale.set(sx || 1, sy || 1, sz || 1); par.add(m); return m; };
+  const skirt = fit === 'dress', robe = fit === 'robe', layered = fit === 'jacket' || fit === 'coat' || fit === 'vest' || fit === 'suit' || fit === 'overalls', torsoC = layered ? inner : top;
+  for (const s of [-1, 1]) { const lx = s * 0.115;
+    if (o.shorts && !robe && !skirt) { add(B, new T.CylinderGeometry(0.1, 0.094, legL * 0.42, 14), bot, lx, hipY - legL * 0.21); add(B, new T.CylinderGeometry(0.078, 0.07, legL * 0.62, 14), skin, lx, legL * 0.31 + 0.05); }
+    else add(B, new T.CylinderGeometry(0.095, 0.078, legL, 14), skirt || robe ? skin : bot, lx, legL / 2 + 0.05);
+    if (o.boots) add(B, new T.CylinderGeometry(0.102, 0.094, legL * 0.42, 14), o.boots, lx, legL * 0.21 + 0.06);
+    add(B, new T.SphereGeometry(0.125, 16, 12), o.boots || shoe, lx * 1.05, 0.075, 0.05, 1, 0.6, 1.4); }
+  add(B, new T.CylinderGeometry(rT, rB, torH, 24), torsoC, 0, hipY + torH / 2, 0, 1, 1, dz);
+  add(B, new T.SphereGeometry(rT, 24, 12), torsoC, 0, shY, 0, 1, 0.36, dz);
+  add(B, new T.SphereGeometry(rB, 20, 12), skirt || robe ? top : bot, 0, hipY, 0, 1.03, 0.55, dz * 1.03);
+  add(B, new T.CylinderGeometry(0.085, 0.095, 0.16, 12), skin, 0, shY + 0.1, 0);
+  const open = (col, hemY, gap, flare) => { const m = new T.Mesh(new T.LatheGeometry([new T.Vector2(rB + 0.04 + (flare || 0), hemY), new T.Vector2(rB + 0.04, hipY + 0.02), new T.Vector2(rT + 0.035, shY - 0.02), new T.Vector2(rT * 0.78, shY + 0.075)], 30, gap / 2, PI * 2 - gap), Mt(col, { side: T.DoubleSide })); m.scale.z = dz * 1.06; B.add(m); return m; };
+  if (fit === 'jacket') open(top, hipY - 0.06, 0.95); if (fit === 'vest') open(top, hipY + 0.05, 1.25); if (fit === 'coat') open(top, hipY - legL * 0.5, 0.8, 0.07);
+  if (fit === 'suit') { open(top, hipY - 0.08, 0.5); add(B, new T.BoxGeometry(0.06, torH * 0.6, 0.02), o.tie || '#c0392b', 0, hipY + torH * 0.6, rT * dz * 0.94); }
+  if (fit === 'jacket' || fit === 'coat' || fit === 'suit') for (const s of [-1, 1]) { const lp = add(B, new T.BoxGeometry(0.1, 0.2, 0.02), top, s * 0.115, shY - 0.1, rT * dz + 0.035); lp.rotation.set(-0.15, 0, s * 0.5); }
+  if (fit === 'overalls') { add(B, new T.BoxGeometry(0.3, torH * 0.5, 0.03), bot, 0, hipY + torH * 0.36, rB * dz + 0.04); for (const s of [-1, 1]) add(B, new T.BoxGeometry(0.05, torH * 0.55, 0.03), bot, s * 0.12, shY - torH * 0.25, rT * dz * 0.99); }
+  if (fit === 'hoodie') { add(B, new T.SphereGeometry(0.2, 16, 12), top, 0, shY + 0.07, -0.16, 1.15, 0.8, 0.8); add(B, new T.BoxGeometry(0.26, 0.13, 0.03), top, 0, hipY + torH * 0.3, rB * dz + 0.05); for (const s of [-1, 1]) add(B, new T.CylinderGeometry(0.012, 0.012, 0.2, 6), '#f4f1ea', s * 0.06, shY - 0.14, rT * dz + 0.02); }
+  if (skirt || robe) { const L = legL * (robe ? 0.92 : 0.55), sk = new T.Mesh(new T.CylinderGeometry(rB * 1.03, rB + (robe ? 0.2 : 0.22), L, 24, 1, true), Mt(top, { side: T.DoubleSide })); sk.position.y = hipY - L / 2 + 0.04; sk.scale.z = dz * 1.05; B.add(sk); }
+  if (o.belt || robe) { const b = new T.Mesh(new T.TorusGeometry(rB * 1.07, 0.03, 8, 30), Mt(o.belt || '#6a4a2a')); b.rotation.x = PI / 2; b.scale.set(1, dz * 1.08, 1.5); b.position.y = hipY + 0.07; B.add(b); add(B, new T.BoxGeometry(0.09, 0.07, 0.03), '#d8b24a', 0, hipY + 0.07, rB * dz * 1.1 + 0.03); }
+  if (o.scarf) { const sc = new T.Mesh(new T.TorusGeometry(0.15, 0.062, 10, 24), Mt(o.scarf)); sc.rotation.x = PI / 2; sc.position.y = shY + 0.1; B.add(sc); const tl = add(B, new T.BoxGeometry(0.1, 0.3, 0.04), o.scarf, 0.1, shY - 0.08, rT * dz + 0.04); tl.rotation.z = 0.15; }
+  if (o.cape) { const hem = shY - (shY - 0.14) * (o.capeLen == null ? 0.7 : o.capeLen), m = new T.Mesh(new T.LatheGeometry([new T.Vector2(0.44, hem), new T.Vector2(0.27, shY + 0.03)], 20, PI * 0.5 + 0.2, PI - 0.4), Mt(o.cape, { side: T.DoubleSide })); m.scale.z = 0.8; B.add(m); }
+  if (o.pack) { add(B, new T.BoxGeometry(0.32, 0.38, 0.17), o.pack, 0, hipY + torH * 0.55, -(rT * dz + 0.085)); for (const s of [-1, 1]) add(B, new T.BoxGeometry(0.045, torH * 0.7, 0.02), o.pack, s * 0.15, hipY + torH * 0.62, rT * dz * 0.97); }
+  /* arms: shoulder pivot (posed by the kit) -> upper arm -> elbow bent a little forward -> forearm -> hand */
+  const armL = adult ? 0.62 : 0.46, upL = armL * 0.5, foL = armL * 0.5, sleeve = o.sleeve || (fit === 'vest' || fit === 'overalls' ? inner : top), longS = o.short ? false : !(fit === 'tee' || fit === 'dress');
+  for (const s of [-1, 1]) { const a = u['arm' + s]; while (a.children.length) a.remove(a.children[0]); a.position.set(s * (rT + 0.05), shY - 0.03, 0);
+    add(a, new T.SphereGeometry(0.092, 14, 10), sleeve); add(a, new T.CylinderGeometry(0.085, 0.072, upL, 12), sleeve, 0, -upL / 2);
+    const el = new T.Group(); el.position.y = -upL; el.rotation.x = -0.32; a.add(el); add(el, new T.SphereGeometry(0.072, 12, 10), longS ? sleeve : skin);
+    add(el, new T.CylinderGeometry(0.07, 0.058, foL, 12), longS ? sleeve : skin, 0, -foL / 2); if (longS) add(el, new T.CylinderGeometry(0.066, 0.066, 0.05, 12), o.cuff || sleeve, 0, -foL + 0.02);
+    const hand = add(el, new T.SphereGeometry(0.082, 14, 10), o.gloves || skin, 0, -foL - 0.05, 0, 0.9, 1.1, 0.72); add(el, new T.SphereGeometry(0.036, 8, 8), o.gloves || skin, 0, -foL - 0.03, 0.07);
+    u['hand' + s] = hand; a.userData.hand = hand; a.userData.elbow = el; a.userData.handY = -foL - 0.05; }
+  /* head: smaller, on a neck */
+  const hk = o.headK || 0.76, hw = new T.Group(); hw.scale.setScalar(hk); hw.position.y = shY + 0.12 + 0.6 * hk - hk * headY; c.remove(u.head); hw.add(u.head); c.add(hw);
+  const HS = u.headSpace;
+  if (o.ponytail) { add(HS, new T.SphereGeometry(0.2, 14, 12), hairC, 0, 0.3, -0.78); const tl = add(HS, new T.ConeGeometry(0.21, 0.8, 12), hairC, 0, -0.18, -0.98); tl.rotation.x = PI - 0.3; }
+  if (o.spikes) for (const [x, y, z, rx, rz, h] of [[0, 0.8, 0.12, 0.35, 0, 0.5], [-0.3, 0.72, 0.05, 0.2, 0.55, 0.42], [0.3, 0.72, 0.05, 0.2, -0.55, 0.42], [-0.14, 0.76, -0.25, -0.5, 0.2, 0.42], [0.2, 0.74, -0.28, -0.5, -0.3, 0.4]]) { const sp = add(HS, new T.ConeGeometry(0.2, h, 8), hairC, x, y, z); sp.rotation.set(rx, 0, rz); }
+  if (o.beanie) { const b = add(HS, new T.SphereGeometry(0.775, 28, 14, 0, PI * 2, 0, 1.18), o.beanie, 0, 0.02, -0.02); b.rotation.x = -0.2; const bd = new T.Mesh(new T.TorusGeometry(0.71, 0.075, 8, 30), Mt(o.beanie)); bd.rotation.x = PI / 2 - 0.2; bd.position.set(0, 0.28, -0.08); HS.add(bd); add(HS, new T.SphereGeometry(0.13, 12, 10), o.pom || '#f4f1ea', 0, 0.8, -0.2); }
+  if (o.cap) { const b = add(HS, new T.SphereGeometry(0.775, 28, 14, 0, PI * 2, 0, 1.05), o.cap, 0, 0.03, -0.02); b.rotation.x = -0.15; const br = add(HS, new T.BoxGeometry(0.72, 0.045, 0.46), o.cap, 0, 0.4, 0.78); br.rotation.x = 0.16; }
+  if (o.headband) { const hb = new T.Mesh(new T.TorusGeometry(0.7, 0.05, 8, 30), Mt(o.headband)); hb.rotation.x = PI / 2 - 0.22; hb.position.set(0, 0.34, -0.06); HS.add(hb); }
+  if (o.beard) add(HS, new T.SphereGeometry(0.3, 16, 12), o.beard, 0, -0.52, 0.42, 1.25, 0.72, 0.6);
+  if (o.prop) { const el = u.arm1.userData.elbow, g = new T.Group(), pc = o.propColor || '#7a5a3a'; g.position.set(0, -foL - 0.07, 0.08); el.add(g); u.prop = g;
+    if (o.prop === 'card') { add(g, new T.BoxGeometry(0.17, 0.24, 0.008), '#fbfaf6', 0, 0.1, 0.006); add(g, new T.BoxGeometry(0.17, 0.24, 0.008), pc, 0, 0.1, -0.004); g.rotation.x = -0.5; }
+    else if (o.prop === 'staff') { add(g, new T.CylinderGeometry(0.03, 0.03, 2.0, 10), pc, 0, 0.35, 0); g.rotation.x = 0.3; }
+    else if (o.prop === 'book') add(g, new T.BoxGeometry(0.24, 0.32, 0.07), pc, 0, 0, 0.05);
+    else if (o.prop === 'bag') { add(g, new T.BoxGeometry(0.36, 0.28, 0.13), pc, 0, -0.2, 0); const hd = new T.Mesh(new T.TorusGeometry(0.09, 0.018, 6, 16, PI), Mt(pc)); hd.position.y = -0.06; g.add(hd); }
+    else if (o.prop === 'cup') add(g, new T.CylinderGeometry(0.075, 0.06, 0.17, 14), pc, 0, 0.04, 0.06); }
+  u.slim = true; const h1 = new T.Box3().setFromObject(c).getSize(V).y; if (h1 > 0 && o.keepH !== false) c.scale.multiplyScalar(h0 / h1);
   return c;
 }
+/* ready-made original looks for crowds and minor roles (mix of faces, hair and outfits) */
+const LOOKS = [
+  { hair: '#3a2a22', bangs: 'side', freckles: true, mouth: 'smile', outfit: 'hoodie', top: '#6fb7a8', bottom: '#3a3d4d', shoes: '#f4f1ea' },
+  { hair: '#2a2a30', bangs: 'baby', bun: true, scrunchie: '#ffd23f', lashes: true, glasses: true, outfit: 'overalls', inner: '#f6e3a1', bottom: '#4a6fa5', shoes: '#c8405f' },
+  { hair: '#c8405f', bangs: 'short', spikes: true, eye: 'sharp', browW: 1.4, mouth: 'smirk', blush: false, outfit: 'jacket', top: '#2a2a30', inner: '#f4f1ea', bottom: '#3a3a44', boots: '#2a2a30' },
+  { hair: '#b8b8c0', bangs: 'part', bun: true, scrunchie: '#8a6aa8', eye: 'sleepy', glasses: true, skin: CK.pal.skin[1], outfit: 'dress', top: '#8a6aa8', scarf: '#e8d8a8', shoes: '#5a4a6a' },
+  { hair: '#2e2420', bangs: 'part', backLen: 1.7, eye: 'sharp', outfit: 'suit', top: '#3a4a6a', inner: '#f4f1ea', tie: '#c0392b', bottom: '#3a4a6a', shoes: '#1e1e22' },
+  { hair: '#8a5634', bangs: 'side', ponytail: true, headband: '#ff6f9f', lashes: true, mouth: 'smile', skin: CK.pal.skin[1], outfit: 'tee', top: '#ff8a5a', bottom: '#2e3240', shorts: true, shoes: '#f4f1ea' },
+  { hair: '#5a3a2a', bangs: 'short', backLen: 1.7, beard: '#5a3a2a', cap: '#d8a030', eye: 'dot', browW: 1.5, outfit: 'vest', top: '#8a5a3a', inner: '#d8d0c0', bottom: '#4a4a3a', boots: '#3a2a22', belt: '#3a2a20' },
+  { hair: '#3a3a40', hood: '#3a3650', eye: 'sharp', blush: false, outfit: 'robe', top: '#3a3650', scarf: '#6a5a8a', shoes: '#2a2a30' },
+  { hair: '#d8b070', bangs: 'side', beanie: '#3a8ad0', freckles: true, mouth: 'smile', outfit: 'jacket', top: '#e0a030', inner: '#ffffff', bottom: '#4a5068', pack: '#c8405f' },
+  { hair: '#6a3a2a', bangs: 'part', backLen: 2.6, lashes: true, skin: CK.pal.skin[2], outfit: 'coat', top: '#b84a5a', inner: '#f4e8d8', bottom: '#2e2a36', boots: '#3a2a22', scarf: '#f4e8d8' },
+  { hair: '#77716a', bangs: 'short', backLen: 1.7, mustache: '#66605a', glasses: true, eye: 'sleepy', outfit: 'vest', top: '#5a6a4a', inner: '#e8e0c8', bottom: '#4a4038', prop: 'book', propColor: '#8a2a2a' },
+  { hair: '#1e1e22', bangs: 'short', backLen: 1.7, eye: 'sharp', browW: 1.5, browTilt: 8, blush: false, skin: CK.pal.skin[2], outfit: 'long', top: '#5a5e6a', bottom: '#2e3036', scarf: '#8a2a2a', gloves: '#2a2a2e', boots: '#2a2a2e' },
+];
+CF.person = (s, n, kid) => fig(Object.assign({ brow: LOOKS[(n || 0) % LOOKS.length].hair }, LOOKS[(n || 0) % LOOKS.length], { scale: (kid ? 0.8 : AD * 0.95) * (s || 1) }));

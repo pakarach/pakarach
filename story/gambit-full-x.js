@@ -11,41 +11,40 @@ function tag(c, name) {
   const sp = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(cv), transparent: true, depthWrite: false }));
   const k = 1 / (c.scale.x || 1); sp.scale.set(1.25 * k * 1.25, 0.31 * k * 1.25, 1); sp.position.set(0, 1.12, 0.62); sp.renderOrder = 5; c.add(sp); c.userData.badge = sp; return c;
 }
-/* EP.slim = true (or slim() options): plain figures get the slimmer ~2.2-head build so they match hand-built models */
-const SL = (c) => (EP.slim ? slim(c, EP.slim === true ? null : EP.slim) : c);
-const ph0 = (name, o, kid) => (s) => { const c = vin(Object.assign({ brow: o.hair || '#3a2a22', shoes: '#2e2e34', longSleeve: true }, o, { scale: (kid ? 0.8 : AD) * (o.k || 1) * (s || 1) })); return name ? tag(c, name) : c; };
-/* minor roles: plain figures with no badge (kept out of Character Swap on purpose) */
-const ph = (name, o, kid) => (s) => SL(ph0(name, o, kid)(s));
-const phD = (name, o, d, kid) => (s) => { const c = ph0(name, o, kid)(s); dress(c, d); return SL(c); };
+/* EP.slim = true: plain figures use the figurine build fig() (slim body, real arms, styled outfits) so they match hand-built models; otherwise the round vin() chibi */
+const mkc = (o, d, sc) => { if (EP.slim) return fig(Object.assign({}, o, d || {}, { scale: sc })); const c = vin(Object.assign({}, o, { scale: sc })); if (d) dress(c, d); return c; };
+const phD = (name, o, d, kid) => (s) => { const c = mkc(Object.assign({ brow: o.hair || '#3a2a22', shoes: '#2e2e34', longSleeve: true }, o), d, (kid ? 0.8 : AD) * (o.k || 1) * (s || 1)); return name ? tag(c, name) : c; };
+const ph = (name, o, kid) => phD(name, o, null, kid);
+/* minor roles: styled plain figures with no badge (kept out of Character Swap on purpose) */
 const gen = (o, kid) => ph('', o, kid), genD = (o, d, kid) => phD('', o, d, kid);
 
 /* ---- named cast (PLACEHOLDERS) ---- */
 CF.gambit = phD('แกมบิท', { hair: '#4a3328', bangs: 'side', backLen: 1.85, top: '#7d8a99', bottom: '#33384a' }, { prop: 'card', propColor: '#3a4a7a' });
-CF.gambitKid = gen({ hair: '#4a3328', bangs: 'side', top: '#9aa6b4', bottom: '#4a5068' }, true);
+CF.gambitKid = gen({ hair: '#4a3328', bangs: 'side', ahoge: 'small', freckles: true, eye: 'sharp', mouth: 'smirk', outfit: 'vest', top: '#8a6a4a', inner: '#d8c8a8', bottom: '#4a5068', shorts: true }, true);
 CF.baby = (s) => { const g = new T.Group(); const b = new T.Mesh(new T.SphereGeometry(0.34, 18, 14), CK.mat(T, '#f2ece0')); b.scale.set(1.25, 0.8, 0.9); b.position.y = 0.3; g.add(b);
   const h = new T.Mesh(new T.SphereGeometry(0.16, 14, 12), CK.mat(T, CK.pal.skin[0])); h.position.set(0.3, 0.36, 0.05); g.add(h); g.scale.setScalar(s || 1); return g; };
 CF.jeanluc = ph('ฌอง-ลุค', { hair: '#6a6a70', bangs: 'short', backLen: 1.7, mustache: '#5a5a60', top: '#6a5a7a', bottom: '#2e2a36' });
-CF.henri = gen({ hair: '#2e2420', bangs: 'short', backLen: 1.7, top: '#8a9a7a', bottom: '#3a3a30' });
-CF.antiquary = genD({ hair: '#9a9aa0', bald: true, top: '#4a4a52', bottom: '#2a2a30' }, { cape: '#3a3640', capeLen: 0.9 });
-CF.bellaKid = gen({ hair: '#d8c08a', bangs: 'part', backLen: 2.2, lashes: true, top: '#a8c8c0', bottom: '#5a6a70' }, true);
+CF.henri = gen({ hair: '#2e2420', bangs: 'short', backLen: 1.7, cap: '#5a6a4a', mouth: 'smile', outfit: 'vest', top: '#6a7a5a', inner: '#e8e0c8', bottom: '#3a3a30', belt: '#3a2a20' });
+CF.antiquary = genD({ hair: '#9a9aa0', bald: true, beard: '#c8c8cc', eye: 'sleepy', blush: false, outfit: 'robe', top: '#4a3a5a', bottom: '#2a2a30' }, { cape: '#3a3640', capeLen: 0.9 });
+CF.bellaKid = gen({ hair: '#d8c08a', bangs: 'part', backLen: 2.2, lashes: true, headband: '#5a9a90', outfit: 'dress', top: '#7ab8b0', shoes: '#3a5a58' }, true);
 CF.bella = ph('เบลล่า ดอนน่า', { hair: '#d8c08a', bangs: 'part', backLen: 2.4, lashes: true, top: '#a8c8c0', bottom: '#4a5a60' });
 CF.julien = ph('จูเลียน', { hair: '#c8b080', bangs: 'short', backLen: 1.7, top: '#7a8a8a', bottom: '#2e3436' });
 CF.sinister = phD('ซินิสเตอร์', { hair: '#2a2a30', bangs: 'none', backLen: 1.7, top: '#5a6070', bottom: '#2a2e38', k: 1.1 }, { cape: '#3a3e4a', capeLen: 0.85 });
 CF.sabre = ph('เซเบอร์ทูธ', { hair: '#8a8a7a', bangs: 'short', top: '#6a7060', bottom: '#3a3c34', k: 1.15 });
-CF.marauder = gen({ hair: '#3a3a40', bangs: 'short', top: '#5e646e', bottom: '#2e3036' });
-CF.sarah = gen({ hair: '#c8a0b8', bangs: 'baby', pigtails: true, top: '#d8c8b0', bottom: '#8a7a6a' }, true);
+CF.marauder = gen({ hair: '#3a3a40', hood: '#4a4e58', eye: 'sharp', browW: 1.4, browTilt: 8, blush: false, outfit: 'coat', top: '#4a4e58', inner: '#2e3036', bottom: '#2e3036', scarf: '#6a2a34', boots: '#22242a' });
+CF.sarah = gen({ hair: '#c8a0b8', bangs: 'baby', pigtails: true, lashes: true, outfit: 'dress', top: '#d8c8b0', shoes: '#8a7a6a' }, true);
 CF.storm = ph('สตอร์ม', { hair: '#3a2e2a', bangs: 'part', backLen: 2.5, lashes: true, skin: CK.pal.skin[2], top: '#7aa08a', bottom: '#3a4a42' });
-CF.stormKid = gen({ hair: '#3a2e2a', bangs: 'baby', bun: true, lashes: true, skin: CK.pal.skin[2], top: '#a8c0a0', bottom: '#6a7a5a' }, true);
+CF.stormKid = gen({ hair: '#3a2e2a', bangs: 'baby', bun: true, lashes: true, skin: CK.pal.skin[2], outfit: 'tee', top: '#a8c0a0', bottom: '#6a7a5a', shorts: true, scarf: '#d8b060' }, true);
 CF.cyclops = ph('ไซคลอปส์', { hair: '#5a3a2a', bangs: 'short', top: '#8a9aa8', bottom: '#3a4048' });
 CF.wolverine = ph('วูล์ฟเวอรีน', { hair: '#2a2420', bangs: 'short', top: '#7a7a6a', bottom: '#3a3a34', k: 0.95 });
 CF.beast = ph('บีสต์', { hair: '#5a5a5a', bangs: 'short', top: '#9a8a7a', bottom: '#4a4038', k: 1.15 });
 CF.psylocke = ph('ไซล็อค', { hair: '#2a2a2e', bangs: 'side', backLen: 2.5, lashes: true, top: '#7a9a9a', bottom: '#34403e' });
 CF.jubilee = ph('จูบิลี่', { hair: '#2a2a2e', bangs: 'baby', backLen: 1.6, lashes: true, top: '#a0b0c8', bottom: '#4a5060', k: 0.9 });
 CF.rogue = phD('โร้ก', { hair: '#6a4a3a', bangs: 'part', backLen: 2.3, lashes: true, top: '#a08ab0', bottom: '#3a3d4d' }, { gloves: '#e8e4dc' });
-CF.hunter = gen({ hair: '#3a3a3a', bangs: 'short', top: '#6a6460', bottom: '#2e2c2a' });
+CF.hunter = gen({ hair: '#3a3a3a', bangs: 'short', cap: '#4a4038', beard: '#3a3a3a', eye: 'sharp', blush: false, outfit: 'coat', top: '#6a5a48', inner: '#3a3430', bottom: '#2e2c2a', boots: '#2a2420', belt: '#2a2420' });
 CF.erik = phD('อีริคเดอะเรด', { hair: '#6a6a6a', hood: '#5a5258', top: '#5a5258', bottom: '#2a2628' }, { cape: '#4a4248', capeLen: 1 });
 CF.apoc = ph('อะพอคคาลิปส์', { hair: '#3a3a3a', bald: true, top: '#6a6a5a', bottom: '#3a3a30', k: 1.45 });
-CF.horseman = gen({ hair: '#3a3a3a', bangs: 'short', top: '#7a6a5a', bottom: '#3a3430' });
+CF.horseman = gen({ hair: '#3a3a3a', hood: '#5a4a44', eye: 'sleepy', blush: false, outfit: 'robe', top: '#5a4a44', bottom: '#3a3430', belt: '#8a7a4a' });
 CF.sunfire = ph('ซันไฟร์', { hair: '#1e1e22', bangs: 'short', top: '#8a9a8a', bottom: '#3a403a' });
 CF.kitty = ph('คิตตี้ ไพรด์', { hair: '#5a3a2a', bangs: 'part', backLen: 2.1, lashes: true, top: '#b8a8c8', bottom: '#4a4a5a' });
 CF.colossus = ph('โคลอสซัส', { hair: '#3a2a20', bangs: 'short', top: '#8a8a9a', bottom: '#3a3a44', k: 1.2 });
@@ -56,8 +55,9 @@ CF.blade = ph('เบลด', { hair: '#1e1e22', bangs: 'short', skin: CK.pal.sk
 CF.x23 = ph('เอ็กซ์ยี่สิบสาม', { hair: '#2a2420', bangs: 'side', backLen: 2.2, lashes: true, top: '#9aa0a8', bottom: '#3a3e44', k: 0.9 });
 /* unnamed extras (fans, bullies, guild members, guests, morlocks, viewers) */
 CF.extra = (s, n) => { const L = [['#7aa0b8', '#3a2a22', 'short'], ['#c8a070', '#2a2a30', 'part'], ['#a0b088', '#5a3a2a', 'side'], ['#b89ab0', '#6a4a3a', 'baby']][(n || 0) % 4];
-  return SL(vin({ hair: L[1], bangs: L[2], backLen: L[2] === 'part' ? 2.2 : 1.75, lashes: L[2] === 'part', brow: L[1], top: L[0], bottom: '#3a3d4d', shoes: '#2e2e34', longSleeve: true, scale: AD * 0.95 * (s || 1) })); };
-CF.extraKid = (s, n) => { const c = CF.extra(1, n); c.scale.setScalar(0.8 * (s || 1)); return c; };
+  if (EP.slim) return CF.person(s, [0, 1, 8, 5, 9, 4, 6, 10][(n || 0) % 8]);
+  return vin({ hair: L[1], bangs: L[2], backLen: L[2] === 'part' ? 2.2 : 1.75, lashes: L[2] === 'part', brow: L[1], top: L[0], bottom: '#3a3d4d', shoes: '#2e2e34', longSleeve: true, scale: AD * 0.95 * (s || 1) }); };
+CF.extraKid = (s, n) => { if (EP.slim) return CF.person(s, [0, 8, 5, 1][(n || 0) % 4], true); const c = CF.extra(1, n); c.scale.setScalar(0.8 * (s || 1)); return c; };
 /* the giant robot attack: a coloured light, not a design */
 CF.giant = (s) => { const g = CF.streak(1, 'rgba(255,150,110,1)'); g.scale.setScalar(4 * (s || 1)); return g; };
 CF.dark = (s, c) => { const g = softSprite(c || 'rgba(120,60,160,1)', 0.9); g.scale.setScalar(3 * (s || 1)); return g; };

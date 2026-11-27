@@ -32,13 +32,13 @@ Object.assign(RECAP, {
       { r: [0, 0.63, 1, 0.37], bg: ['#ff3d8b', '#ffd23f'], fx: 'speed', shot: PSH.eyes }] }] },
 });
 const ST = { STUDIO: [0, 0, 0] }, ENV = { STUDIO: [['cstudio']] };
-const CAST = { gam: ['gambit', 1], card: ['paper', 0.9], cglow: ['glow', 0.16, 'rgba(255,214,150,1)'], pgam: ['gambit', 1], pkid: ['extra', 1, 1], pcard: ['paper', 0.9], pglow: ['glow', 0.16, 'rgba(255,214,150,1)'] };
+const CAST = { gam: ['gambit', 1], card: ['paper', 0.9], cglow: ['glow', 0.16, 'rgba(255,214,150,1)'], pgam: ['gambit', 1], pkid: ['extra', 1, 1], fan1: ['person', 1, 8], fan2: ['person', 1, 10], fan3: ['person', 1, 5], pcard: ['paper', 0.9], pglow: ['glow', 0.16, 'rgba(255,214,150,1)'] };
 /* camera key in plain units: time, look (x, y, z), distance, height, side, cut */
 const K = (t, lx, ly, lz, d, h, sx, cut) => [t, lx, ly, lz, d / 1.45, h / 1.45, (sx || 0) / 1.45, cut ? 1 : 0];
 const toss = (r, t, s, o) => { if (!o.card || !o.card.visible) return; const h = H.hand(o.gam, 'R'), u = (t * 0.85) % 1, up = Math.sin(u * Math.PI) * 1.0; o.card.position.set(h.x, h.y + 0.16 + up, h.z + 0.16); o.card.rotation.set(1.3 + u * 12.566, 0, 0.3);
   if (o.cglow) { o.cglow.position.copy(o.card.position); o.cglow.scale.setScalar(0.45 * (1 + 0.2 * Math.sin(t * 16))); } };
 const SC = {
-  cover: { st: 'STUDIO', bg: 'studio', cam: [K(0, 2.0, 2.2, 0.3, 10.5, -1.2, -2.2)], rc: [[0, 2.4, 2.2, 0.3, 11, -1.1, -16, 0, 0]], A: { gam: { p: [5.2, 0.6], f: -70 }, card: {}, cglow: {} }, fx: toss },
+  cover: { st: 'STUDIO', bg: 'studio', cam: [K(0, 2.0, 2.2, 0.3, 10.5, -1.2, -2.2)], rc: [[0, 2.4, 2.2, 0.3, 11, -1.1, -16, 0, 0]], A: { gam: { p: [5.2, 0.6], f: -70 }, card: {}, cglow: {}, fan1: { p: [4.7, -3.7], f: 35, pose: 'cheer', ex: 'giggle' }, fan2: { p: [6.0, -3.5], f: -20, pose: 'hold', ex: 'happy' }, fan3: { p: [7.3, -2.5], f: -55, pose: 'wave', ex: 'happy' } }, fx: toss },
   b04: { cut: true, cam: [K(0, 2.0, 2.2, 0.3, 10.5, -1.2, -2.2)],
     /* one move: orbit round him as he walks in, ending on a medium close-up */
     rc: [[0, 2.4, 2.2, 0.3, 11, -1.1, -16], [p4(2, 0.2), 0.8, 2.4, 0.2, 7.0, -0.4, 12]],

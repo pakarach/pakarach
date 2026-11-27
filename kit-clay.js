@@ -32,13 +32,14 @@
     ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, 512, 512); ctx.setTransform(512 / LW, 0, 0, 1, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     const es = o.eyeScale || 1, ink = '#3a2224', sp = o.eyeSpread || 1, hot = ex === 'angry';
-    for (const s of [-1, 1]) {
+    for (const s of o.blush === false ? [] : [-1, 1]) {
       const bx = CX + s * 228, by = 322, g = ctx.createRadialGradient(bx, by, 4, bx, by, 74), c = hot ? '255,70,90' : '255,100,145';
       g.addColorStop(0, 'rgba(' + c + ',' + (hot ? 0.75 : 0.6) + ')'); g.addColorStop(1, 'rgba(' + c + ',0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(bx, by, 78, 48, 0, 0, TAU); ctx.fill();
       ctx.strokeStyle = 'rgba(255,255,255,0.8)'; ctx.lineWidth = 5;
       for (let k = -1; k <= 1; k++) { ctx.beginPath(); ctx.moveTo(bx + k * 18 - 5, by + 9); ctx.lineTo(bx + k * 18 + 5, by - 9); ctx.stroke(); }
     }
+    if (o.freckles) { ctx.fillStyle = 'rgba(150,84,60,0.55)'; for (const s of [-1, 1]) for (const [fx, fy] of [[200, 318], [226, 300], [250, 322], [222, 338], [178, 300]]) { ctx.beginPath(); ctx.arc(CX + s * fx, fy, 6, 0, TAU); ctx.fill(); } }
     const closed = blink || ex === 'giggle' || ex === 'sleepy';
     for (const s of [-1, 1]) {
       const x = CX + s * EX * sp, y = EY, rx = 50 * es * (o.round ? 1.08 : 1), ry = 62 * es;
@@ -47,6 +48,8 @@
         if (ex === 'giggle') ctx.arc(x, y + 26, 40 * es, PI * 1.2, PI * 1.8); else ctx.arc(x, y - 16, 40 * es, PI * 0.22, PI * 0.78);
         ctx.stroke(); continue;
       }
+      if (o.eye === 'dot') { ctx.fillStyle = '#2a1617'; ctx.beginPath(); ctx.ellipse(x, y + 8, 24 * es, 30 * es, 0, 0, TAU); ctx.fill(); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x - 8 * es, y - 4 * es, 8 * es, 0, TAU); ctx.fill();
+        if (ex === 'cry') { ctx.fillStyle = 'rgba(140,210,255,0.92)'; ctx.beginPath(); ctx.ellipse(x + s * 14, y + 70, 13, 60, 0, 0, TAU); ctx.fill(); } continue; }
       ctx.fillStyle = '#2a1617'; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, TAU); ctx.fill();
       const ig = ctx.createLinearGradient(0, y - ry, 0, y + ry); ig.addColorStop(0, '#2a1617'); ig.addColorStop(0.5, o.iris2 || '#6e3d27'); ig.addColorStop(1, o.iris || '#e09a5f');
       ctx.fillStyle = ig; ctx.beginPath(); ctx.ellipse(x, y + 7 * es, rx * 0.82, ry * 0.82, 0, 0, TAU); ctx.fill();
@@ -66,20 +69,25 @@
         const tg = ctx.createLinearGradient(0, y + ry * 0.8, 0, y + ry * 0.8 + 150); tg.addColorStop(0, 'rgba(140,210,255,0.95)'); tg.addColorStop(1, 'rgba(140,210,255,0)');
         ctx.fillStyle = tg; ctx.beginPath(); ctx.ellipse(x + s * 20, y + ry * 0.8 + 70, 15, 80, 0, 0, TAU); ctx.fill();
       }
+      if ((o.eye === 'sharp' || o.eye === 'sleepy') && ex !== 'sick' && ex !== 'angry') { /* lid styles: sharp = slanted upper lid, sleepy = level half lid */
+        const dy = o.eye === 'sharp' ? (s < 0 ? [-0.8, -0.3] : [-0.3, -0.8]) : [-0.3, -0.3]; ctx.globalCompositeOperation = 'destination-out'; ctx.beginPath(); ctx.moveTo(x - rx - 8, y - ry - 12); ctx.lineTo(x + rx + 8, y - ry - 12); ctx.lineTo(x + rx + 8, y + ry * dy[1]); ctx.lineTo(x - rx - 8, y + ry * dy[0]); ctx.closePath(); ctx.fill(); ctx.globalCompositeOperation = 'source-over';
+        ctx.strokeStyle = ink; ctx.lineWidth = 10; ctx.beginPath(); ctx.moveTo(x - rx - 2, y + ry * dy[0]); ctx.lineTo(x + rx + 2, y + ry * dy[1]); ctx.stroke(); }
       if (o.lashes) {
         ctx.strokeStyle = ink; ctx.lineWidth = 9; ctx.beginPath(); ctx.ellipse(x, y, rx + 3, ry + 3, 0, PI * 1.1, PI * 1.9); ctx.stroke();
         const ox = x + s * rx * 0.92, oy = y - ry * 0.5; ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + s * 20, oy - 14); ctx.moveTo(ox - s * 8, oy - 16); ctx.lineTo(ox + s * 8, oy - 33); ctx.stroke();
       }
     }
-    ctx.strokeStyle = o.brow || '#5a3a2a'; ctx.lineWidth = hot ? 15 : 10;
+    ctx.strokeStyle = o.brow || '#5a3a2a'; ctx.lineWidth = (hot ? 15 : 10) * (o.browW || 1);
     for (const s of [-1, 1]) {
-      const x = CX + s * EX * sp, by = EY - 108; let yi = by, yo = by;
+      const x = CX + s * EX * sp, by = EY - 108; let yi = by + (o.browTilt || 0), yo = by - (o.browTilt || 0);
       if (ex === 'worried' || ex === 'cry' || ex === 'sick') { yi = by - 16; yo = by + 4; } else if (hot) { yi = by + 22; yo = by - 16; }
       ctx.beginPath(); ctx.moveTo(x - s * 34, yi); ctx.quadraticCurveTo(x, Math.min(yi, yo) - (ex === 'happy' || ex === 'giggle' ? 12 : 4), x + s * 34, yo); ctx.stroke();
     }
     if (o.paci) return;
     ctx.strokeStyle = '#6e2a30'; ctx.fillStyle = '#8c2f3e'; ctx.lineWidth = 8;
-    if (ex === 'happy') { ctx.beginPath(); ctx.arc(CX - 15, MY - 6, 15, PI * 0.1, PI * 0.9); ctx.stroke(); ctx.beginPath(); ctx.arc(CX + 15, MY - 6, 15, PI * 0.1, PI * 0.9); ctx.stroke(); }
+    if (ex === 'happy' && o.mouth === 'smile') { ctx.beginPath(); ctx.arc(CX, MY - 16, 30, PI * 0.18, PI * 0.82); ctx.stroke(); }
+    else if (ex === 'happy' && o.mouth === 'smirk') { ctx.beginPath(); ctx.moveTo(CX - 26, MY + 4); ctx.quadraticCurveTo(CX + 6, MY + 12, CX + 30, MY - 12); ctx.stroke(); }
+    else if (ex === 'happy') { ctx.beginPath(); ctx.arc(CX - 15, MY - 6, 15, PI * 0.1, PI * 0.9); ctx.stroke(); ctx.beginPath(); ctx.arc(CX + 15, MY - 6, 15, PI * 0.1, PI * 0.9); ctx.stroke(); }
     else if (ex === 'giggle') { ctx.save(); ctx.beginPath(); ctx.moveTo(CX - 36, MY - 12); ctx.quadraticCurveTo(CX, MY - 4, CX + 36, MY - 12); ctx.quadraticCurveTo(CX + 30, MY + 34, CX, MY + 36); ctx.quadraticCurveTo(CX - 30, MY + 34, CX - 36, MY - 12); ctx.closePath(); ctx.fill(); ctx.clip(); ctx.fillStyle = '#ff8a9e'; ctx.beginPath(); ctx.ellipse(CX, MY + 34, 24, 16, 0, 0, TAU); ctx.fill(); ctx.restore(); }
     else if (ex === 'worried' || ex === 'sick') { ctx.beginPath(); ctx.moveTo(CX - 24, MY + 6); ctx.quadraticCurveTo(CX - 12, MY - 6, CX, MY + 4); ctx.quadraticCurveTo(CX + 12, MY + 12, CX + 24, MY + 2); ctx.stroke(); }
     else if (ex === 'cry') { ctx.beginPath(); ctx.moveTo(CX - 30, MY + 22); ctx.quadraticCurveTo(CX, MY - 18, CX + 30, MY + 22); ctx.quadraticCurveTo(CX, MY + 10, CX - 30, MY + 22); ctx.fill(); }
@@ -114,6 +122,7 @@
      top, bottom, shoes, sleeve, stripes(color), inner(color, open cardigan), collar(color),
      glasses, shades(color|true), paci(color), bow(color), hat(color), bib, mustache(color), lashes, eyeScale, eyeSpread, round, brow, iris, scale.
      longSleeve (sleeve covers most of the arm).
+     Face styles (all optional): eye 'sharp' | 'sleepy' | 'dot', browW (width factor), browTilt (px, + = inner end lower), blush: false, freckles: true, mouth 'smile' | 'smirk'.
      userData: head, arm1, arm-1 (shoulder pivots), hand1, hand-1, setExpr(happy|worried|sick|sleepy|giggle|angry|cry), tick(t,{wave,breath}). Angry shows a pop mark, cry adds falling tears. */
   CK.chibi = function (T, o0) {
     o0 = o0 || {};
