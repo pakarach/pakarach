@@ -716,3 +716,49 @@ function actor(root, parts, s) {
     tick: (t, o) => { root.position.y = 0.012 * Math.sin(t * 2.4); if (parts.tick) parts.tick(t, o); } });
   g.scale.setScalar(s || 1); return g;
 }
+
+/* ---- comic look (Nov 2026): EP.toon = true -> every CAST object gets 3-step cel shading (MeshToonMaterial) + inverted-hull ink outline.
+   EP.toon can also be an object: { ink: '#15141a', w: 0.018 (outline width, object units), steps: [95, 160, 205] }. Sets stay as they are. ---- */
+function toon(root, opt) {
+  opt = Object.assign({ ink: '#15141a', w: 0.018, steps: [95, 160, 205] }, typeof opt === 'object' ? opt : {});
+  const TC = toon.cache || (toon.cache = { mats: new Map(), grad: null, out: new Map() });
+  if (!TC.grad) { const d = new Uint8Array(opt.steps); TC.grad = new T.DataTexture(d, d.length, 1, T.LuminanceFormat); TC.grad.minFilter = TC.grad.magFilter = T.NearestFilter; TC.grad.generateMipmaps = false; TC.grad.needsUpdate = true; }
+  const okey = opt.ink + '|' + opt.w; let OUT = TC.out.get(okey);
+  if (!OUT) { OUT = new T.MeshBasicMaterial({ color: opt.ink, side: T.BackSide }); OUT.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', 'vec3 transformed = vec3( position ) + normalize( normal ) * ' + opt.w.toFixed(4) + ';'); }; OUT.customProgramCacheKey = () => 'ink' + okey; TC.out.set(okey, OUT); }
+  const conv = (m) => { if (!m || !m.isMeshStandardMaterial) return m; let n = TC.mats.get(m); if (n) return n;
+    n = new T.MeshToonMaterial({ color: m.color, map: m.map, gradientMap: TC.grad, transparent: m.transparent, opacity: m.opacity, side: m.side, depthWrite: m.depthWrite, polygonOffset: m.polygonOffset, polygonOffsetFactor: m.polygonOffsetFactor, polygonOffsetUnits: m.polygonOffsetUnits, emissive: m.emissive, emissiveIntensity: m.emissiveIntensity, emissiveMap: m.emissiveMap, alphaTest: m.alphaTest, vertexColors: m.vertexColors, flatShading: m.flatShading });
+    TC.mats.set(m, n); return n; };
+  const list = []; root.traverse((o) => { if (o.isMesh && !o.userData.ink) list.push(o); });
+  for (const o of list) { const solid = Array.isArray(o.material) ? o.material.every((m) => m.isMeshStandardMaterial && !m.transparent) : (o.material && o.material.isMeshStandardMaterial && !o.material.transparent);
+    o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material);
+    if (solid && o.geometry && o.geometry.attributes.normal) { const h = new T.Mesh(o.geometry, OUT); h.userData.ink = true; h.raycast = () => {}; o.add(h); } }
+  return root;
+}
+
+/* ---- lively bed (Nov 2026): bright pop-ish loop, ~112 bpm, C G Am F. Soft like FK.chillBed (no sub bass, light clicks instead of kick).
+   EP.bed = 'lively' switches the story kit to it. calm(t) -> pads + sparse plucks only. ---- */
+FK.livelyBed = function (o) {
+  const DUR = o.DUR, calm = o.calm || (() => false), gain = o.gain == null ? 0.75 : o.gain, V = o.vol == null ? 1 : o.vol;
+  const AU = VE.audio, hz = VE.midiHz, BT = 60 / 112, BAR = BT * 4;
+  const CH = [[60, 64, 67], [59, 62, 67], [57, 60, 64], [57, 60, 65]], BS = [48, 55, 57, 53], ARP = [0, 1, 2, 1, 0, 2, 1, 2];
+  const MEL = [[76, 74, 72, 74], [74, 71, 74, 79], [72, 76, 72, 69], [69, 72, 77, 76]];
+  function play(base, from) {
+    const t1 = DUR - 1.6;
+    for (let b = 0, tb = 0.3; tb < t1; b++, tb += BAR) {
+      if (tb + BAR < from) continue; const c = calm(tb), k = b % 4, ch = CH[k], len = Math.min(BAR, t1 - tb);
+      const at = (x) => { const tt = tb + x; return tt >= from && tt < t1 ? base + tt : -1; };
+      let p = at(0); if (p >= 0) for (const n of ch) AU.tone(p, hz(n), Math.max(0.2, len - 0.2), { type: 'sine', vol: 0.011 * V, att: 0.25, rel: 0.5 });
+      for (const q of c ? [0, 2] : [0, 1.5, 2, 3.5]) { p = at(q * BT); if (p >= 0) AU.tone(p, hz(BS[k] + (q === 1.5 || q === 3.5 ? 7 : 0)), BT * 0.8, { type: 'triangle', vol: 0.022 * V, att: 0.01, rel: 0.2 }); }
+      for (let i = 0; i < 8; i += c ? 2 : 1) { p = at(i * BT / 2); if (p >= 0) AU.tone(p, hz(ch[ARP[i]] + 12), 0.18, { type: 'triangle', vol: 0.012 * V, att: 0.005, rel: 0.16 }); }
+      if (!c) { for (const q of [1, 3]) { p = at(q * BT); if (p >= 0) AU.noise(p, 0.09, { type: 'bandpass', f: 1800, q: 0.9, vol: 0.016 * V }); }
+        for (let i = 0; i < 4; i++) { p = at(i * BT + BT / 2); if (p >= 0 && b % 2 === 0) AU.noise(p, 0.04, { type: 'highpass', f: 7500, vol: 0.010 * V }); }
+        for (const q of [0, 2]) { p = at(q * BT); if (p >= 0) AU.noise(p, 0.05, { type: 'bandpass', f: 900, q: 1.2, vol: 0.012 * V }); }
+        if (b % 8 >= 4) MEL[k].forEach((n, i) => { const pp = at(i * BT); if (pp >= 0) AU.tone(pp, hz(n), BT * 0.9, { type: 'sine', vol: 0.014 * V, att: 0.02, rel: 0.4 }); }); }
+    }
+  }
+  return { play(base, from, A) {
+    if (A && A.bus) { A.bus.gain.setValueAtTime(gain, base + Math.max(0, from)); A.bus.gain.setValueAtTime(gain, base + DUR - 0.6); }
+    if (o.voice) o.voice.play(base, from, A);
+    play(base, from);
+  } };
+};

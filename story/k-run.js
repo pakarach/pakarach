@@ -61,7 +61,7 @@ function setupScene(scene) {
   FK.lights(T, scene); s.hemi = scene.children.find((o) => o.isHemisphereLight); s.sun = scene.children.find((o) => o.isDirectionalLight);
   scene.fog = new T.Fog('#a9b4ff', 40, 125); s.fog = scene.fog;
   for (const st in ENV) for (const e of ENV[st]) { const objs = ENVB[e[0]](st, e[1] || {}); objs.forEach((o) => scene.add(o)); }
-  for (const k in CAST) { const c = CAST[k]; const o = CF[c[0]](c[1], c[2], c[3]); o.userData.s0 = o.scale.x; o.userData.key = k; o.visible = false; scene.add(o); s.o[k] = o; }
+  for (const k in CAST) { const c = CAST[k]; const o = CF[c[0]](c[1], c[2], c[3]); if (EP.toon && typeof toon === 'function') toon(o, EP.toon); o.userData.s0 = o.scale.x; o.userData.key = k; o.visible = false; scene.add(o); s.o[k] = o; }
   atmoSetup(scene, s);
   s.anchorV = new T.Vector3(); s.tmpA = new T.Vector3(); s.tmpB = new T.Vector3(); s.tmpC = new T.Vector3();
   return s;
