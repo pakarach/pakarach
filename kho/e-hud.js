@@ -55,9 +55,9 @@ function recapCard(g, t) {
   const r = ph(t, 'recap'), a = U.clamp(r / 0.3) * U.clamp((PLAN.recap - r) / 0.3);
   g.save(); g.globalAlpha = a; panel(g, 60, 280, 960, 1180, 1);
   txt(g, 'สรุป', 540, 370, 56, '#fff', 800); txt(g, 'เราเกิดมาทำไม?', 540, 450, 76, P.gold, 800);
-  const rows = ['ชีวิตเหมือนแม่โค ทุกก้าวใกล้ความตาย', '100 ปี = 36,000 ราตรี · 72,000 มื้อ', 'เกิดเพราะเหตุ: ไม่รู้ + อยาก (โดมิโน)', 'ได้เกิดเป็นคน ยากเหมือนเต่าตาบอดกับแอก', 'เกิดเป็นคน เพื่อทำดี + เรียนรู้จนไม่ต้องเกิดอีก', 'ทีละก้าว: ให้ · ไม่เบียดเบียน · ฝึกใจ'];
-  rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.6) / 0.3); if (k <= 0) return; const y = 570 + i * 132; g.save(); g.globalAlpha = a * k;
-    g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 54, 880, 108, 26); g.fill(); g.fillStyle = i === 5 ? P.gold : P.teal; g.beginPath(); g.arc(166, y, 36, 0, 6.283); g.fill();
+  const rows = ['ชีวิตเหมือนแม่โค ทุกก้าวใกล้ความตาย', '100 ปี = 36,000 ราตรี · 72,000 มื้อ', 'เกิดเพราะเหตุ: ไม่รู้ + อยาก (โดมิโน)', 'เกิด–ตายมาแล้ว นับชาติไม่ถ้วน', 'ได้เกิดเป็นคน ยากเหมือนเต่าตาบอดกับแอก', 'เพื่อทำดี + เรียนรู้จนพ้นทุกข์', 'วันคืนล่วงไป… บัดนี้เราทำอะไรอยู่?'];
+  rows.forEach((s, i) => { const k = U.clamp((r - 0.4 - i * 0.55) / 0.3); if (k <= 0) return; const y = 560 + i * 116; g.save(); g.globalAlpha = a * k;
+    g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 50, 880, 100, 26); g.fill(); g.fillStyle = i >= 5 ? P.gold : P.teal; g.beginPath(); g.arc(166, y, 36, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 38); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 166, y + 2); txt(g, s, 224, y, 38, '#fff', 600, 'left'); g.restore(); });
   g.globalAlpha = a * 0.85; g.font = F(400, 24); g.fillStyle = '#fff'; g.textAlign = 'center';
   g.fillText('ที่มา: พระไตรปิฎก อังคุตตรนิกาย (อรกานุสาสนีสูตร) · วินัยปิฎก มหาวรรค', 540, 1366);
@@ -92,7 +92,7 @@ IRIS.forEach((r) => AUD.push([r.t, 'glide']));
 { let pl = null; for (const id of ORDER) { if (id === 'end' || !SHOT[id]) continue; const L0 = SHOT[id][0][1].look; if (pl && !CUT.has(id) && Math.hypot(pl[0] - L0[0], pl[1] - L0[1]) > 5) AUD.push([at(id), 'glide', { dur: 1.0 }]); pl = SHOT[id][SHOT[id].length - 1][1].look; } }
 for (const id of ['s1', 's2', 's3', 's4', 's5', 's6', 'g1', 'h1', 'm1']) AUD.push([at(id, 0.15), 'bell']);
 for (let i = 0; i < 3; i++) AUD.push([at('q5', 1.6 + i * 0.8), 'pop'], [at('g3', 2.6 + i * 0.6), 'soft']);
-AUD.push([at('q3', 0.6), 'chime'], [at('q4', 1.6), 'pop'], [at('g1', 3.0), 'soft'], [at('h1', 4.3), 'tok'], [at('m1', 1.3), 'glide', { dur: 0.6 }], [end('g4'), 'shimmer'], [end('h3'), 'shimmer'], [end('m3'), 'shimmer'], [at('pay3', 0.8), 'chime']);
+AUD.push([at('sam1', 0.5), 'glide', { dur: 2.0 }], [at('sam2', 0.6), 'soft'], [at('day1', 0.4), 'temple'], [at('day1', 3.6), 'bell'], [at('q3', 0.6), 'chime'], [at('q4', 1.6), 'pop'], [at('g1', 3.0), 'soft'], [at('h1', 4.3), 'tok'], [at('m1', 1.3), 'glide', { dur: 0.6 }], [end('g4'), 'shimmer'], [end('h3'), 'shimmer'], [end('m3'), 'shimmer'], [at('pay3', 0.8), 'chime']);
 AUD.push([at('s7', 0.15), 'chime'], [at('refr', 0.6), 'temple'], [at('ar4', 0.4), 'bell'], [at('bud1', 0.5), 'temple'], [at('why2', 0.4), 'chime'], [at('why2', 0.6), 'shimmer']);
 for (let i = 0; i < 3; i++) AUD.push([at('c1', 0.5 + i * 0.5), 'soft']);
 for (let i = 0; i < 6; i++) AUD.push([at('c3', 0.5 + i * 0.5), 'tok'], [at('th2', 0.8 + i * 0.7), 'tok']);

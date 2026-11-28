@@ -16,6 +16,7 @@ const SHOT = {
   th1: [[0, fx(thx(4), 2.2, 0.3, 9.5, 2.8, -1)]], th2: [[0, fx(thx(16), 2.6, 0.3, 12, 3.4, 0)]], th3: [[0, raw([thx(62), 1.8, 0.2], [thx(30) - 7.5, 3.8, 1.6])]],
   why1: [[0, fr('CAUSE', -10, 2.4, -0.4, 9, 1.6, 0)]], why2: [[0, fr('CAUSE', -10, 2.4, -0.6, 7, 1.0, 0)]],
   dom1: [[0, fr('CAUSE', 0.3, 3.6, 0, 15, 3.4, -2)]], dom2: [[0, fr('CAUSE', 4.4, 3.0, 0, 10, 2.6, 0)]], dom3: [[0, fr('CAUSE', 0.4, 3.6, 0, 16, 5, 0)]],
+  sam1: [[0, raw([ST.CAUSE[0] - 16, 1.6, -2], [ST.CAUSE[0] + 7, 8.5, 12])]], sam2: [[0, fr('CAUSE', -6, 3.0, -1, 15, 3.2, 0)]],
   dom4: [[0, fr('CAUSE', -2.8, 3.4, 0, 13, 3.2, -1)]], dom5: [[0, fr('CAUSE', 0.4, 3.8, 0, 17, 4.6, 0)]],
   t1: [[0, fr('SEA', 0, 6, 0, 22, 2, 0)]], t2: [[0, fr('SEA', 0, 6.4, 0, 17, 3, 0)]], t3: [[0, fr('SEA', 0, 6.4, 0, 17, 1.6, 1)]],
   t4: [[0, fr('OCEAN', 0.6, 1.8, 0, 9, 1.0, 0)]], t5: [[0, fr('OCEAN', 2.0, 2.0, 0, 11, 1.4, 0)]],
@@ -27,6 +28,7 @@ const SHOT = {
   g3: [[0, fr('END', 4.6, 2.2, -0.6, 9.5, 2.4, 0)]], g4: [[0, fr('END', 3.6, 2.0, 0.2, 7.5, 1.8, 0)]],
   h1: [[0, fr('END', 11.4, 2.0, -0.4, 8.5, 2.0, 0)]], h2: [[0, fr('END', 15.6, 1.5, 0.3, 6.5, 2.4, 0)]], h3: [[0, fr('END', 16.6, 2.4, 0.3, 10, 2.6, 0)]],
   m1: [[0, fr('END', 20.6, 1.9, 0.6, 8.5, 1.8, 0)]], m2: [[0, fr('END', 20.6, 1.8, 1.0, 6.5, 1.3, 0)]], m3: [[0, fr('END', 20.8, 1.9, 0.8, 7.5, 1.6, 0)]],
+  day1: [[0, fr('END', 20.6, 3.6, -0.6, 10, 0.6, 0)]],
   a6: [[0, fr('END', 24.6, 3.2, 0.3, 12, 2.4, -2)]],
   pay1: [[0, fr('END', 27.2, 2.4, 0.6, 8.5, 1.8, -1.5)]], pay2: [[0, fr('END', 30, 3.4, -1.5, 12, 2.4, 0)]],
   pay3: [[0, raw([ST.END[0] + 31, 2.2, -9], [ST.END[0] + 28.5, 4.6, 6.5])]],
@@ -58,13 +60,15 @@ function bgKey(t) {
   const id = beatAt(t);
   if (id.startsWith('ar')) return 'past';
   if (id === 'bud1') return 'warm';
-  if (id.startsWith('why') || id.startsWith('dom')) return 'night';
+  if (id.startsWith('why') || id.startsWith('dom') || id.startsWith('sam')) return 'night';
   if (['t1', 't2', 't3'].includes(id)) return 'space';
   if (['t4', 't5'].includes(id)) return 'ocean';
   if (between(t, 'a6', 'end')) return 'dawn';
   return 'day';
 }
-function bgAt(t) { return BG[bgKey(t)]; }
+const mixC = (a, b, k) => { const ca = new T.Color(a), cb = new T.Color(b); return '#' + ca.lerp(cb, k).getHexString(); };
+const dayK = (t) => 0.5 + 0.5 * Math.cos(ph(t, 'day1') * 2 * Math.PI / 2.0);
+function bgAt(t) { if (inB(t, 'day1')) { const k = dayK(t); return [mixC(BG.space[0], BG.day[0], k), mixC(BG.space[1], BG.day[1], k)]; } return BG[bgKey(t)]; }
 const LT = { day: [0.75, 0.85, '#fff4e0'], past: [0.7, 0.8, '#ffd9a0'], warm: [0.75, 0.8, '#ffe0b0'], night: [0.55, 0.6, '#c8b8ff'], space: [0.55, 0.9, '#ffffff'], ocean: [0.8, 0.8, '#e8f4ff'], dawn: [0.65, 0.75, '#ffc090'] };
 
 const vis = (o, on) => { o.visible = !!on; };
@@ -90,7 +94,7 @@ function cowPlan(t) {
 
 function update(t, s, { camera, W, H }) {
   BUB.length = 0; const id = beatAt(t), bk = bgKey(t);
-  { const L0 = LT[bk]; s.hemi.intensity = L0[0]; s.sun.intensity = L0[1]; s.sun.color.set(L0[2]); }
+  { const L0 = LT[bk]; s.hemi.intensity = L0[0]; s.sun.intensity = L0[1]; s.sun.color.set(L0[2]); if (inB(t, 'day1')) { const k = dayK(t); s.hemi.intensity = 0.35 + 0.4 * k; s.sun.intensity = 0.25 + 0.6 * k; } }
   s.fog.color.set(bgAt(t)[1]); s.fog.near = bk === 'space' ? 60 : t < at('ar1') ? 16 : 30; s.fog.far = bk === 'space' ? 160 : t < at('ar1') ? 52 : 95;
 
   /* cow + herder + rope + footprints */
@@ -163,6 +167,9 @@ function update(t, s, { camera, W, H }) {
     Z.dom.forEach((d, i) => { const q = U.clamp((t - fallAt(i)) / 0.45); let ang = (i < 5 ? tilt : Math.PI / 2 * 0.98) * (q * q); if (rewind > 0) ang *= 1 - rewind; d.rotation.z = -ang;
       d.position.set(ST.CAUSE[0] - 4.5 + i * 1.9, i === 0 ? lifted * 3.2 : 0, ST.CAUSE[2]); d.visible = !(i === 0 && lifted >= 0.999 && inB(t, 'dom5')); d.userData.lb.visible = !(i === 0 && lifted > 0.5); });
     { const k = between(t, 'dom1', 'dom3') ? U.easeBack(sm(0, 0.5, (t - fallAt(4) - 0.4) * PLAN.dom1 / dur('dom1'))) : 0; Z.cradle.scale.setScalar(Math.max(0.001, k)); Z.cradle.visible = k > 0.01; setP(Z.cradle, 'CAUSE', -4.5 + 4 * 1.9 + 0.6, 0, 2.0); }
+    Z.chain.visible = between(t, 'sam1', 'dom3');
+    { const lv = inB(t, 'sam2') ? U.easeIO(sm(0.6, 4.6, ph(t, 'sam2'))) * 1.1 : inB(t, 'dom3') ? 1.1 * (1 - sm(0, 1.2, ph(t, 'dom3'))) : 0; Z.sea.visible = lv > 0.01; Z.sea.position.y = lv;
+      Z.tears.forEach((d) => { const on = inB(t, 'sam2'); d.visible = on; if (!on) return; const u = (t * 0.45 + d.userData.ph) % 1; d.position.set(ST.CAUSE[0] + d.userData.x, 9 - u * 9, ST.CAUSE[2] + d.userData.z); if (d.position.y < lv) d.visible = false; }); }
     { const on = inB(t, 'dom4') && ph(t, 'dom4') > 1.0; Z.hand.visible = on; if (on) { const r = ph(t, 'dom4'); const dn = sm(1.0, 1.6, r), up = sm(1.6, 2.8, r); Z.hand.position.set(ST.CAUSE[0] - 4.7, 6.8 - dn * 3.1 + up * 3.2, ST.CAUSE[2]); } } }
 
   /* sea */
@@ -232,8 +239,10 @@ function update(t, s, { camera, W, H }) {
     if (inB(t, 'm2')) { const r = ph(t, 'm2'); E.anger.visible = r < 3.6; E.anger.position.set(me.position.x, 1.5, me.position.z); E.anger.material.opacity = 0.75 * (1 - sm(0.6, 3.6, r)); me.userData.eyes.forEach((e) => (e.scale.y = 0.15));
       E.rings.forEach((rg, i) => { const u = ((r - 0.4) / 1.6 - i * 0.33); const f = u - Math.floor(u); rg.visible = r > 0.4 && r < 5.4; rg.position.set(me.position.x, 1.0, me.position.z); rg.scale.setScalar(0.6 + f * 2.2); rg.material.opacity = 0.8 * (1 - f); }); }
     if (inB(t, 'm3')) me.userData.eyes.forEach((e) => (e.scale.y = 1));
+    if (inB(t, 'day1')) { face(me, 0, 1); me.userData.head.rotation.x = -0.35; }
     vis(E.exit, t >= at('q2')); E.exit.userData.glow.material.opacity = 0.55 + 0.25 * Math.sin(t * 1.5) + (t >= at('pay3') ? 0.2 : 0);
-    vis(E.sunrise, t >= at('a6')); E.sunrise.position.set(ST.END[0] + 36, 3 + 6 * sm(at('a6'), at('pay2') + 2, t), -60);
+    vis(E.sunrise, t >= at('day1')); E.sunrise.position.set(ST.END[0] + 36, 3 + 6 * sm(at('a6'), at('pay2') + 2, t), -60);
+    if (inB(t, 'day1')) { const u = (ph(t, 'day1') / 2.0) % 1; E.sunrise.position.set(ST.END[0] + 20.6 + U.lerp(-12, 12, u), 0.5 + 6.5 * Math.sin(u * Math.PI), -40); E.sunrise.visible = u > 0.02 && u < 0.98; }
     void id2; }
 
   /* camera + bubble projection */

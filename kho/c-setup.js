@@ -120,6 +120,12 @@ function setupScene(scene) {
   DN.forEach((d, i) => { const dm = domino(d[0], d[1]); place(dm, 'CAUSE', -4.5 + i * 1.9, 0, 0); dm.rotation.order = 'YXZ'; scene.add(dm); s.cz.dom.push(dm); });
   s.cz.cradle = new T.Group(); { const c = mk(new T.SphereGeometry(0.55, 12, 8, 0, 6.283, Math.PI / 2, Math.PI / 2), '#c9a06a'); c.scale.set(1.3, 0.7, 0.9); c.position.y = 0.45; s.cz.cradle.add(c); const bb = chibi({ robe: '#ffd0e0', skin: '#f0c8a8', s: 0.38, closed: true }); bb.position.y = 0.3; s.cz.cradle.add(bb); }
   scene.add(s.cz.cradle);
+  /* endless chain: past lives (fallen) behind, more births ahead */
+  { const n = 80, im = new T.InstancedMesh(new T.BoxGeometry(0.45, 3.0, 1.6), M('#d8d4cc'), n), q = new T.Object3D();
+    for (let i = 0; i < n; i++) { const back = i < 40, k = back ? i + 1 : i - 39; q.position.set(back ? ST.CAUSE[0] - 4.5 - k * 1.9 - 0.9 : ST.CAUSE[0] + 5.3 + k * 1.9 + 1.2, back ? 1.25 : 1.5, ST.CAUSE[2]); q.rotation.set(0, 0, back ? -0.62 : 0); q.updateMatrix(); im.setMatrixAt(i, q.matrix); im.setColorAt(i, new T.Color(back ? '#9a96a8' : '#f4f1ea')); }
+    scene.add(im); s.cz.chain = im; }
+  s.cz.sea = new T.Mesh(new T.PlaneGeometry(220, 60), M('#3a78c8', { transparent: true, opacity: 0.75, roughness: 0.2, emissive: new T.Color('#0a2a6a'), emissiveIntensity: 0.4 })); s.cz.sea.rotation.x = -Math.PI / 2; s.cz.sea.position.set(ST.CAUSE[0] - 40, 0, ST.CAUSE[2] - 10); scene.add(s.cz.sea);
+  s.cz.tears = []; for (let i = 0; i < 26; i++) { const d = new T.Mesh(new T.SphereGeometry(0.16, 8, 6), M('#bfe4ff', { emissive: new T.Color('#3a7aaa'), emissiveIntensity: 0.5 })); d.scale.y = 1.4; d.userData.ph = rnd(); d.userData.x = -22 + rnd() * 30; d.userData.z = -6 + rnd() * 9; scene.add(d); s.cz.tears.push(d); }
   s.cz.hand = new T.Group(); { const arm = mk(new T.CylinderGeometry(0.16, 0.16, 3, 8), '#e2ae86'); arm.position.y = 1.5; const h = mk(new T.SphereGeometry(0.3, 10, 8), '#e2ae86'); s.cz.hand.add(arm, h); } scene.add(s.cz.hand);
 
   /* ---------- sea: water globe + ocean close-up ---------- */
