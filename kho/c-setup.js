@@ -137,15 +137,40 @@ function setupScene(scene) {
   s.sea.ot = turtle(); scene.add(s.sea.ot);
   s.sea.splash = new T.Mesh(new T.RingGeometry(0.6, 0.8, 28), basic('#e8f6ff', { transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false })); s.sea.splash.rotation.x = -Math.PI / 2; scene.add(s.sea.splash);
 
-  /* ---------- end road: give, do no harm, train the mind ---------- */
+  /* ---------- end road: the answer + 3 good steps (x relative to END) ---------- */
+  const EX = (x) => ST.END[0] + x;
   s.end = { me: chibi({ robe: P.teal, hair: '#2a2228', ring: P.teal }) }; scene.add(s.end.me);
-  s.end.old = chibi({ robe: '#9a8f7a', hair: '#e8e8e8', beard: '#e8e8e8', s: 0.95 }); setSit(s.end.old, true); place(s.end.old, 'END', -9.2, 0, -1.6); face(s.end.old, 0.3, 1); scene.add(s.end.old);
-  s.end.gift = bowl('#e8e0d0'); scene.add(s.end.gift);
-  s.end.ants = []; for (let i = 0; i < 12; i++) { const a = mk(new T.SphereGeometry(0.07, 6, 4), '#1a1418'); a.scale.set(1.5, 0.8, 1); scene.add(a); s.end.ants.push(a); }
-  const mt = tree(2.0, '#2f7f4a'); place(mt, 'END', 9, 0, -3.3); scene.add(mt);
-  s.end.medi = chibi({ robe: P.teal, hair: '#2a2228', ring: P.teal, closed: true }); setSit(s.end.medi, true); lapHands(s.end.medi); place(s.end.medi, 'END', 9, 0, -0.6); scene.add(s.end.medi);
-  s.end.calm = softSprite('rgba(120,240,220,1)', 0.6); s.end.calm.scale.setScalar(3.2); place(s.end.calm, 'END', 9, 1.2, -0.6); scene.add(s.end.calm);
-  s.end.lights = []; for (let i = 0; i < 3; i++) { const o = orb(['rgba(255,210,120,1)', 'rgba(80,240,210,1)', 'rgba(190,170,255,1)'][i]); place(o, 'END', -9 + i * 9, 3.2, -1.2); scene.add(o); s.end.lights.push(o); }
+    s.end.old = chibi({ robe: '#9a8f7a', hair: '#e8e8e8', beard: '#e8e8e8', s: 0.95 }); setSit(s.end.old, true); s.end.old.position.set(EX(-13.5), 0, -1.6); face(s.end.old, 0.3, 1); scene.add(s.end.old);
+  /* mini dominoes (callback) */
+  s.end.mini = []; [['ไม่รู้', P.violet], ['อยาก', P.coral], ['ยึด', '#ff9a5a']].forEach((d, i) => { const dm = domino(d[0], d[1]); dm.scale.setScalar(0.42); dm.position.set(EX(-5.4 + i * 0.85), 0, -0.9); dm.userData.lb.scale.multiplyScalar(1.6); scene.add(dm); s.end.mini.push(dm); });
+  /* companion domino "อยาก" that follows me from g4 on */
+  s.end.buddy = domino('อยาก', P.coral); s.end.buddy.scale.setScalar(0.36); s.end.buddy.userData.lb.scale.multiplyScalar(1.8); scene.add(s.end.buddy);
+  /* station 1: bench + friend + lunchbox; blood tent */
+  const bench = mk(new T.BoxGeometry(2.2, 0.12, 0.7), '#9a6a3a'); bench.position.set(EX(-1), 0.55, -1.3); scene.add(bench);
+  for (const x of [-0.9, 0.9]) { const lg = mk(new T.BoxGeometry(0.12, 0.55, 0.6), '#7a5030'); lg.position.set(EX(-1 + x), 0.27, -1.3); scene.add(lg); }
+  s.end.friend = chibi({ robe: '#f0a0b8', hair: '#2a2228', bun: true, s: 0.95 }); setSit(s.end.friend, true); s.end.friend.position.set(EX(-0.4), 0.42, -1.3); face(s.end.friend, -0.2, 1); scene.add(s.end.friend);
+  s.end.box = [0, 1].map(() => { const g = new T.Group(); const bx = mk(new T.BoxGeometry(0.42, 0.14, 0.3), '#f4f1ea'); const rice = mk(new T.BoxGeometry(0.36, 0.05, 0.24), '#fffbe8'); rice.position.y = 0.08; const egg = mk(new T.SphereGeometry(0.06, 8, 6), P.gold); egg.position.set(0.08, 0.13, 0); g.add(bx, rice, egg); scene.add(g); return g; });
+  s.end.tent = new T.Group(); { const tb = mk(new T.BoxGeometry(2.6, 1.6, 1.8), '#f4f1ea'); tb.position.y = 0.8; const tr = mk(new T.ConeGeometry(2.1, 1.0, 4), '#ffffff'); tr.rotation.y = Math.PI / 4; tr.position.y = 2.1; tr.scale.z = 0.75; const c1 = mk(new T.BoxGeometry(0.6, 0.16, 0.05), '#d8343a'); c1.position.set(0, 1.05, 0.93); const c2 = mk(new T.BoxGeometry(0.16, 0.6, 0.05), '#d8343a'); c2.position.set(0, 1.05, 0.93); s.end.tent.add(tb, tr, c1, c2); }
+  s.end.tent.position.set(EX(5.2), 0, -2.2); scene.add(s.end.tent);
+  s.end.bag = mk(new T.BoxGeometry(0.34, 0.48, 0.1), '#c4202a', { emissive: new T.Color('#600a10'), emissiveIntensity: 0.4 }); scene.add(s.end.bag);
+  s.end.pat = []; for (let i = 0; i < 3; i++) { const c = chibi({ robe: '#d9e8f0', hair: '#2a2228', s: 0.7 }); c.position.set(EX(6.9 + i * 0.75), 0, -0.6 + (i % 2) * 0.3); face(c, -0.3, 1); scene.add(c); const h = softSprite('rgba(255,120,140,1)', 0.9); h.scale.setScalar(0.9); scene.add(h); c.userData.glow = h; s.end.pat.push(c); }
+  /* station 2: market stall + vendor, ants */
+  s.end.stall = new T.Group(); { const tb = mk(new T.BoxGeometry(2.4, 0.9, 1.0), '#b8873a'); tb.position.y = 0.45; s.end.stall.add(tb); for (let i = 0; i < 5; i++) { const st = mk(new T.BoxGeometry(0.5, 0.06, 1.4), i % 2 ? '#ffffff' : '#e8505a'); st.position.set(-1.0 + i * 0.5, 2.1, 0.1); st.rotation.x = 0.25; s.end.stall.add(st); } for (const x of [-1.15, 1.15]) { const p = mk(new T.CylinderGeometry(0.05, 0.05, 2.1, 5), '#7a5030'); p.position.set(x, 1.05, 0.5); s.end.stall.add(p); } for (let i = 0; i < 6; i++) { const f = mk(new T.SphereGeometry(0.13, 8, 6), ['#ffb347', '#7fc25a', '#e8505a'][i % 3]); f.position.set(-0.8 + i * 0.32, 0.98, 0.1); s.end.stall.add(f); } }
+  s.end.stall.position.set(EX(11), 0, -1.9); scene.add(s.end.stall);
+  s.end.vendor = chibi({ robe: '#7fb3d5', hair: '#2a2228', bun: true, s: 0.95 }); s.end.vendor.position.set(EX(11), 0, -2.8); face(s.end.vendor, 0, 1); scene.add(s.end.vendor);
+  s.end.coin = mk(new T.CylinderGeometry(0.12, 0.12, 0.04, 14), P.gold, { emissive: new T.Color('#6a4a00'), emissiveIntensity: 0.4, metalness: 0.5 }); s.end.coin.rotation.x = Math.PI / 2; scene.add(s.end.coin);
+  s.end.ants = []; for (let i = 0; i < 14; i++) { const a = mk(new T.SphereGeometry(0.07, 6, 4), '#1a1418'); a.scale.set(1.5, 0.8, 1); scene.add(a); s.end.ants.push(a); }
+  /* station 3: motorbike cut-in, breath rings */
+  s.end.bike = new T.Group(); { for (const x of [-0.55, 0.55]) { const w = mk(new T.TorusGeometry(0.28, 0.08, 6, 12), '#222'); w.position.set(x, 0.3, 0); s.end.bike.add(w); } const bd = mk(new T.BoxGeometry(1.2, 0.3, 0.35), '#d8343a'); bd.position.y = 0.6; s.end.bike.add(bd); const rider = chibi({ robe: '#3a3f55', hair: '#2a2228', s: 0.75 }); rider.position.set(-0.1, 0.55, 0); face(rider, 1, 0); s.end.bike.add(rider); }
+  scene.add(s.end.bike);
+  s.end.anger = softSprite('rgba(255,70,60,1)', 0.8); s.end.anger.scale.setScalar(2.6); scene.add(s.end.anger);
+  s.end.rings = []; for (let i = 0; i < 3; i++) { const r = new T.Mesh(new T.TorusGeometry(0.7, 0.05, 6, 32), basic(P.teal, { transparent: true, depthWrite: false })); r.rotation.x = Math.PI / 2; scene.add(r); s.end.rings.push(r); }
+  /* three lights (one per good step) */
+  s.end.lights = []; for (let i = 0; i < 3; i++) { const o = orb(['rgba(255,210,120,1)', 'rgba(80,240,210,1)', 'rgba(190,170,255,1)'][i]); scene.add(o); s.end.lights.push(o); }
+  /* exit path off the cow's road */
+  s.end.exit = new T.Group(); { const pth = mk(new T.BoxGeometry(1.6, 0.07, 22), '#f6e6b0', { emissive: new T.Color('#c8a040'), emissiveIntensity: 0.55 }); pth.position.set(0, 0.05, -11); s.end.exit.add(pth); const gl = softSprite('rgba(255,236,170,1)', 0.9); gl.scale.setScalar(12); gl.position.set(0, 3, -24); s.end.exit.add(gl); s.end.exit.userData.glow = gl; }
+  s.end.exit.position.set(EX(31), 0, -0.8); scene.add(s.end.exit);
+  const mt = tree(2.0, '#2f7f4a'); mt.position.set(EX(23.5), 0, -2.6); scene.add(mt);
   s.end.sunrise = sun(); s.end.sunrise.scale.setScalar(3); scene.add(s.end.sunrise);
 
   s.anchorV = new T.Vector3();

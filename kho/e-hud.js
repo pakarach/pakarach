@@ -11,12 +11,12 @@ function bubble(g, b) {
 }
 function cowIcon(g, x, y, s) { g.save(); g.translate(x, y); g.scale(s, s); g.fillStyle = '#efe6d6'; rr(g, -18, -9, 30, 18, 6); g.fill(); rr(g, 10, -16, 14, 14, 4); g.fill(); g.fillStyle = '#6b4a3a'; g.beginPath(); g.arc(-6, -2, 5, 0, 6.283); g.fill(); g.fillStyle = '#efe6d6'; for (const lx of [-14, -6, 4, 9]) g.fillRect(lx, 8, 4, 9); g.fillStyle = '#f6f0de'; g.fillRect(12, -21, 3, 6); g.fillRect(20, -21, 3, 6); g.restore(); }
 function chapter(g, t) {
-  const n = CHAP.length, w = 150, gap = 8, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
+  const n = CHAP.length, w = 132, gap = 6, x0 = 540 - (n * w + (n - 1) * gap) / 2, y = 238;
   let cur = -1; CHAP.forEach((c, i) => { if (t >= at(c[1])) cur = i; });
   CHAP.forEach((c, i) => {
     const x = x0 + i * (w + gap); g.save(); g.globalAlpha = 0.95; g.fillStyle = i < cur ? 'rgba(46,230,197,.35)' : i === cur ? P.teal : 'rgba(255,255,255,.14)'; rr(g, x, y, w, 40, 20); g.fill();
     if (i === cur) { const k = U.clamp((t - at(c[1])) / (end(c[2]) - at(c[1]))); g.fillStyle = 'rgba(15,22,48,.25)'; rr(g, x + w * k, y, w * (1 - k), 40, 20); g.fill(); }
-    g.font = F(600, 24); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
+    g.font = F(600, 22); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = i === cur ? '#0f1630' : '#fff'; g.fillText(c[0], x + w / 2, y + 21); g.restore();
   });
 }
 function tagPill(g, k, t, id) {
@@ -55,7 +55,7 @@ function recapCard(g, t) {
   const r = ph(t, 'recap'), a = U.clamp(r / 0.3) * U.clamp((PLAN.recap - r) / 0.3);
   g.save(); g.globalAlpha = a; panel(g, 60, 280, 960, 1180, 1);
   txt(g, 'สรุป', 540, 370, 56, '#fff', 800); txt(g, 'เราเกิดมาทำไม?', 540, 450, 76, P.gold, 800);
-  const rows = ['อรกะ: คนอายุ 6 หมื่นปี ชีวิตยังนับว่าน้อย', 'อุปมา 7 ข้อ ข้อสุดท้าย = แม่โคไปที่ฆ่า', '100 ปี = 36,000 ราตรี · 72,000 มื้อ', 'เกิดเพราะเหตุ เหมือนโดมิโน', 'ได้เกิดเป็นคน ยากเหมือนเต่าตาบอดกับแอก', 'ก้าวที่เหลือ: ให้ · ไม่เบียดเบียน · ฝึกใจ'];
+  const rows = ['ชีวิตเหมือนแม่โค ทุกก้าวใกล้ความตาย', '100 ปี = 36,000 ราตรี · 72,000 มื้อ', 'เกิดเพราะเหตุ: ไม่รู้ + อยาก (โดมิโน)', 'ได้เกิดเป็นคน ยากเหมือนเต่าตาบอดกับแอก', 'เกิดเป็นคน เพื่อทำดี + เรียนรู้จนไม่ต้องเกิดอีก', 'ทีละก้าว: ให้ · ไม่เบียดเบียน · ฝึกใจ'];
   rows.forEach((s, i) => { const k = U.clamp((r - 0.5 - i * 0.6) / 0.3); if (k <= 0) return; const y = 570 + i * 132; g.save(); g.globalAlpha = a * k;
     g.fillStyle = 'rgba(255,255,255,.07)'; rr(g, 100, y - 54, 880, 108, 26); g.fill(); g.fillStyle = i === 5 ? P.gold : P.teal; g.beginPath(); g.arc(166, y, 36, 0, 6.283); g.fill();
     g.fillStyle = '#0f1630'; g.font = F(800, 38); g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(i + 1, 166, y + 2); txt(g, s, 224, y, 38, '#fff', 600, 'left'); g.restore(); });
@@ -69,7 +69,7 @@ function hud(g, t, { W, H }) {
   if (id.startsWith('ar')) { g.fillStyle = 'rgba(120,80,30,0.12)'; g.fillRect(0, 0, W, H); }
   for (const b of BUB) bubble(g, b);
   if (t >= at('ar1') && t < at('recap')) { chapter(g, t);
-    const k = U.clamp((t - at('ar1')) / (at('recap') - at('ar1'))); cowIcon(g, 540 - 466 + 932 * k, 214, 0.8); }
+    const k = U.clamp((t - at('ar1')) / (at('recap') - at('ar1'))); cowIcon(g, 540 - 480 + 960 * k, 214, 0.8); }
   if (TAG[id]) tagPill(g, TAG[id], t, id);
   if (id.startsWith('ar') && id !== 'ar1') gauge(g, t);
   if (inB(t, 'bud1') || inB(t, 'th1')) gauge(g, t);
@@ -77,7 +77,7 @@ function hud(g, t, { W, H }) {
   if (inB(t, 'c3')) counter(g, 72000 * U.easeIO(sm(0.4, 3.6, ph(t, 'c3'))), 'มื้อ', P.gold, '1 จุด = 1 มื้อ');
   if (inB(t, 'th2')) counter(g, 10950 * U.easeIO(sm(0.6, PLAN.th2 - 0.8, ph(t, 'th2'))), 'ก้าว', P.gold, '1 ก้าว = 1 วัน');
   if (inB(t, 't4')) counter(g, Math.min(100, 1 + 99 * sm(0, 1.8, ph(t, 't4'))), 'ปี', P.teal, 'เต่าโผล่ขึ้นมา 1 ครั้ง');
-  const AI = ['a3', 'a4', 'a5']; if (AI.includes(id)) dots(g, 'ก้าวดี', 3, AI.indexOf(id) + 1, P.gold);
+  const GI = { g1: 1, g2: 1, g3: 1, g4: 1, h1: 2, h2: 2, h3: 2, m1: 3, m2: 3, m3: 3 }; if (GI[id]) dots(g, 'ก้าวดี', 3, GI[id], P.gold);
   if (inB(t, 'recap')) recapCard(g, t);
 }
 
@@ -90,7 +90,9 @@ for (let x = 0.6; x < at('ar1') - 0.5; x += 1.6) AUD.push([x, 'cowbell']);
 for (let x = at('s7') + 0.3; x < end('s7'); x += 1.6) AUD.push([x, 'cowbell']);
 IRIS.forEach((r) => AUD.push([r.t, 'glide']));
 { let pl = null; for (const id of ORDER) { if (id === 'end' || !SHOT[id]) continue; const L0 = SHOT[id][0][1].look; if (pl && !CUT.has(id) && Math.hypot(pl[0] - L0[0], pl[1] - L0[1]) > 5) AUD.push([at(id), 'glide', { dur: 1.0 }]); pl = SHOT[id][SHOT[id].length - 1][1].look; } }
-for (const id of ['s1', 's2', 's3', 's4', 's5', 's6', 'a3', 'a4', 'a5']) AUD.push([at(id, 0.15), 'bell']);
+for (const id of ['s1', 's2', 's3', 's4', 's5', 's6', 'g1', 'h1', 'm1']) AUD.push([at(id, 0.15), 'bell']);
+for (let i = 0; i < 3; i++) AUD.push([at('q5', 1.6 + i * 0.8), 'pop'], [at('g3', 2.6 + i * 0.6), 'soft']);
+AUD.push([at('q3', 0.6), 'chime'], [at('q4', 1.6), 'pop'], [at('g1', 3.0), 'soft'], [at('h1', 4.3), 'tok'], [at('m1', 1.3), 'glide', { dur: 0.6 }], [end('g4'), 'shimmer'], [end('h3'), 'shimmer'], [end('m3'), 'shimmer'], [at('pay3', 0.8), 'chime']);
 AUD.push([at('s7', 0.15), 'chime'], [at('refr', 0.6), 'temple'], [at('ar4', 0.4), 'bell'], [at('bud1', 0.5), 'temple'], [at('why2', 0.4), 'chime'], [at('why2', 0.6), 'shimmer']);
 for (let i = 0; i < 3; i++) AUD.push([at('c1', 0.5 + i * 0.5), 'soft']);
 for (let i = 0; i < 6; i++) AUD.push([at('c3', 0.5 + i * 0.5), 'tok'], [at('th2', 0.8 + i * 0.7), 'tok']);

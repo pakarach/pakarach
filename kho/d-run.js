@@ -20,10 +20,17 @@ const SHOT = {
   t1: [[0, fr('SEA', 0, 6, 0, 22, 2, 0)]], t2: [[0, fr('SEA', 0, 6.4, 0, 17, 3, 0)]], t3: [[0, fr('SEA', 0, 6.4, 0, 17, 1.6, 1)]],
   t4: [[0, fr('OCEAN', 0.6, 1.8, 0, 9, 1.0, 0)]], t5: [[0, fr('OCEAN', 2.0, 2.0, 0, 11, 1.4, 0)]],
   t6: [[0, fr('END', -12, 2.2, 0.3, 9, 2.2, 0)]],
-  a1: [[0, raw([ST.END[0] + 4, 2.6, 0], [ST.END[0] - 19, 4.4, 4.6])]], a2: [[0, fr('END', -10, 2.4, 0.3, 10, 3, 0)]], a3: [[0, fr('END', -9, 2.0, -0.6, 7.5, 2.0, 0.6)]],
-  a4: [[0, fr('END', -0.9, 1.8, 0.2, 7, 2.6, 0)]], a5: [[0, fr('END', 9, 2.0, -1.2, 7.5, 1.6, 0)]], a6: [[0, fr('END', 12, 3.4, 0.3, 13, 3, -2)]],
-  pay1: [[0, fr('END', 13.5, 2.6, 0.8, 9, 2.0, -2)]], pay2: [[0, fr('END', 15.5, 3.6, 0.3, 11, 2.2, -1.5)]],
-  recap: [[0, fr('END', 20, 4.4, 0.3, 14, 3, 0)]], ask: [[0, fr('END', 23, 2.4, 0.8, 8.5, 1.8, -1.5)]],
+  q1: [[0, fr('END', -6.4, 2.0, 0, 8.5, 2.0, 0)]], q2: [[0, fr('END', -6.2, 2.8, 0, 10.5, 2.4, 0)]],
+  q3: [[0, raw([ST.END[0] + 22, 2.6, -1], [ST.END[0] - 12, 4.2, 4.2])]], q4: [[0, fr('END', -6.6, 1.7, -0.3, 7.8, 1.6, -0.8)]],
+  q5: [[0, raw([ST.END[0] + 9, 2.6, 0], [ST.END[0] - 13, 4.4, 4.8])]],
+  g1: [[0, fr('END', -1.2, 1.9, -0.4, 7.5, 1.8, 0)]], g2: [[0, fr('END', -1.0, 1.5, -0.6, 5.5, 1.3, 0.3)]],
+  g3: [[0, fr('END', 4.6, 2.2, -0.6, 9.5, 2.4, 0)]], g4: [[0, fr('END', 3.6, 2.0, 0.2, 7.5, 1.8, 0)]],
+  h1: [[0, fr('END', 11.4, 2.0, -0.4, 8.5, 2.0, 0)]], h2: [[0, fr('END', 15.6, 1.5, 0.3, 6.5, 2.4, 0)]], h3: [[0, fr('END', 16.6, 2.4, 0.3, 10, 2.6, 0)]],
+  m1: [[0, fr('END', 20.6, 1.9, 0.6, 8.5, 1.8, 0)]], m2: [[0, fr('END', 20.6, 1.8, 1.0, 6.5, 1.3, 0)]], m3: [[0, fr('END', 20.8, 1.9, 0.8, 7.5, 1.6, 0)]],
+  a6: [[0, fr('END', 24.6, 3.2, 0.3, 12, 2.4, -2)]],
+  pay1: [[0, fr('END', 27.2, 2.4, 0.6, 8.5, 1.8, -1.5)]], pay2: [[0, fr('END', 30, 3.4, -1.5, 12, 2.4, 0)]],
+  pay3: [[0, raw([ST.END[0] + 31, 2.2, -9], [ST.END[0] + 28.5, 4.6, 6.5])]],
+  recap: [[0, raw([ST.END[0] + 31, 3.6, -10], [ST.END[0] + 27, 6.0, 7.5])]], ask: [[0, fr('END', 31.2, 2.2, -7.8, 8.0, 1.6, -0.6)]],
 };
 const CUT = new Set(['ar1', 'bud1', 'why1', 't1', 't4', 't6']);
 const IRIS = [...CUT].map((id) => ({ t: at(id) - 0.25, dur: 0.5, type: 'iris' }));
@@ -77,7 +84,7 @@ function cowPlan(t) {
   if (t < end('hook4')) return [-1.5 + t * 0.2, 1];
   if (between(t, 's7', 'ans1')) return [ST.S7[0] - 1 + (t - at('s7')) * 0.4, 1];
   if (between(t, 'th1', 'th3')) { if (inB(t, 'th1')) return [thx(0) + 0.2, 0]; if (inB(t, 'th2')) { const k = U.easeIO(sm(0.6, PLAN.th2 - 0.8, ph(t, 'th2'))); return [U.lerp(thx(0) + 0.2, thx(30), k), k > 0 && k < 1 ? 1 : 0]; } return [thx(30) + ph(t, 'th3') * 0.5, 0.6]; }
-  if (t >= at('t6')) { const x = ST.END[0] - 15 + (t - at('t6')) * 1.0; return x < ST.END[0] + 29 ? [x, 1] : [ST.END[0] + 29, 0]; }
+  if (t >= at('t6')) { const x = ST.END[0] - 15 + (t - at('t6')) * 1.6; return x < ST.END[0] + 41 ? [x, 1] : [ST.END[0] + 41, 0]; }
   return null;
 }
 
@@ -99,7 +106,7 @@ function update(t, s, { camera, W, H }) {
       if (t < end('hook4') || between(t, 's7', 'ans1') || t >= at('t6')) s.steps.forEach((f, i) => { const fx0 = x - 0.9 - i * 0.55; f.visible = true; f.position.set(fx0, 0.07, 0.4 + (i % 2 ? 0.18 : -0.18)); f.material.opacity = 0.75 * (1 - i / s.steps.length); });
       if (inB(t, 'hook2') && ph(t, 'hook2') > 2.2) C.userData.head.rotation.y = -0.35 * sm(2.2, 2.8, ph(t, 'hook2'));
     }
-    const gateOn = t < end('hook4') ? 24 : t >= at('t6') ? ST.END[0] + 32 : null; vis(s.gate, gateOn !== null); if (gateOn !== null) s.gate.position.set(gateOn, 0, 0.4); }
+    const gateOn = t < end('hook4') ? 24 : t >= at('t6') ? ST.END[0] + 44 : null; vis(s.gate, gateOn !== null); if (gateOn !== null) s.gate.position.set(gateOn, 0, 0.4); }
 
   /* Araka */
   { const A = s.ar, on = between(t, 'ar1', 'ar5'); A.snow.forEach((f) => (f.visible = false)); A.heat.visible = false; A.cup.visible = false;
@@ -179,24 +186,55 @@ function update(t, s, { camera, W, H }) {
       if (r5 > 3.2 && r5 < 5.6) BUB.push({ o: Sx.oy, dy: 1.0, dx: -0.5, txt: 'เกือบ!', c: '#fff', big: true }); } }
 
   /* end road */
-  { const E = s.end, me = E.me; rest(me); setSit(me, false); me.userData.ring.visible = true; E.gift.visible = false; E.ants.forEach((a) => (a.visible = false)); vis(E.medi, false);
-    const onE = t >= at('t6'); vis(me, onE); vis(E.old, onE); vis(E.calm, between(t, 'a5', 'end')); E.lights.forEach((o, i) => { const sh = t >= at('a1') && (inB(t, 'a1') ? ph(t, 'a1') > 1.4 + i * 0.7 : true); o.visible = sh; o.position.y = ST.END[1] + 3.2 + Math.sin(t * 2 + i) * 0.15; });
-    let mx = ST.END[0] - 11.5, mz = 2.2, wk = 0, fx0 = 1, fz0 = 0;
-    if (inB(t, 't6')) { const r = ph(t, 't6'); fx0 = 0.4; fz0 = -1; if (r > 2.8) { fx0 = 1; fz0 = 0.6; } }
-    else if (inB(t, 'a1')) { fx0 = 0.6; fz0 = 1; }
-    else if (inB(t, 'a2')) { const k = U.easeIO(sm(0.4, 4.4, ph(t, 'a2'))); mx = U.lerp(ST.END[0] - 11.5, ST.END[0] - 8.0, k); mz = U.lerp(2.2, 0.0, k); wk = k > 0 && k < 1 ? 1 : 0; fx0 = 1; fz0 = -0.6; }
-    else if (inB(t, 'a3')) { const r = ph(t, 'a3'); mx = ST.END[0] - 8.0; mz = 0; fx0 = -0.6; fz0 = -1; me.userData.arms.R.rotation.set(-1.3 * sm(0.4, 1.2, r), 0, 0.1); me.userData.arms.L.rotation.set(-1.3 * sm(0.4, 1.2, r), 0, -0.1);
-      E.gift.visible = true; me.updateMatrixWorld(true); me.userData.arms.R.userData.hand.getWorldPosition(tmpV); const k = sm(1.6, 2.6, r); const ox = E.old.position;
-      E.gift.position.set(U.lerp(tmpV.x - 0.15, ox.x + 0.3, k), U.lerp(tmpV.y, 0.95, k), U.lerp(tmpV.z, ox.z + 0.4, k)); if (r > 2.8) BUB.push({ o: E.old, dy: 1.8, txt: 'ขอบใจนะหลาน', c: '#fff' }); }
-    else if (inB(t, 'a4')) { const r = ph(t, 'a4'); const k = U.easeIO(sm(0, 1.6, r)); mx = U.lerp(ST.END[0] - 8.0, ST.END[0] - 1.6, k); mz = 0.3; wk = k < 1 ? 1 : 0; fx0 = 1; fz0 = 0.2; if (k >= 1) { me.userData.head.rotation.x = 0.45; }
-      E.ants.forEach((a, i) => { a.visible = true; const u = (t * 0.12 + i / 12) % 1; a.position.set(ST.END[0] - 0.2 + Math.sin(i) * 0.08, 0.08, 2.4 - u * 4.2); }); }
-    else if (t >= at('a5')) { mx = ST.END[0] + 9; mz = -1.3; if (inB(t, 'a5') && ph(t, 'a5') < 1.0) { const k = U.easeIO(sm(0, 1.0, ph(t, 'a5'))); mx = U.lerp(ST.END[0] + 6.5, ST.END[0] + 9, k); mz = U.lerp(0.2, -1.3, k); wk = 1; } else { setSit(me, true); lapHands(me); me.userData.eyes.forEach((e) => (e.scale.y = 0.15)); }
-      if (t >= at('a6')) { setSit(me, false); rest(me); me.userData.eyes.forEach((e) => (e.scale.y = 1)); const k = (t - at('a6')) * 0.5; mx = ST.END[0] + 9 + k; mz = 1.6; wk = 1; } fx0 = t >= at('a6') ? 1 : 0; fz0 = t >= at('a6') ? 0 : 1; }
-    if (!(t >= at('a5') && t < at('a6') && ph(t, 'a5') >= 1.0) && !inB(t, 'a5')) me.userData.eyes.forEach((e) => (e.scale.y = 1));
-    me.position.set(mx, 0, mz); face(me, fx0, fz0); if (wk) walk(me, t, 1);
-    if (t >= at('a6')) E.lights.forEach((o, i) => { o.position.set(me.position.x - 1.2 - i * 0.9, 2.4 + Math.sin(t * 2 + i) * 0.2, me.position.z + Math.sin(t + i) * 0.4); });
-    vis(E.sunrise, t >= at('a6')); E.sunrise.position.set(ST.END[0] + 26, 3 + 6 * sm(at('a6'), at('pay2') + 2, t), -48);
-    E.calm.material.opacity = 0.4 + 0.2 * Math.sin(t * 2); E.calm.position.set(ST.END[0] + 9, 1.2, -1.3); if (t >= at('a6')) E.calm.visible = false; }
+  { const E = s.end, me = E.me, onE = t >= at('t6'), X = (x) => ST.END[0] + x;
+    rest(me); setSit(me, false); me.userData.eyes.forEach((e) => (e.scale.y = 1)); me.position.y = 0;
+    vis(me, onE); vis(E.old, onE); E.box.forEach((b) => (b.visible = false)); E.bag.visible = false; E.coin.visible = false; E.ants.forEach((a) => (a.visible = false)); E.anger.visible = false; E.rings.forEach((r) => (r.visible = false)); vis(E.bike, false);
+    E.pat.forEach((c) => (c.userData.glow.visible = false));
+    /* my path: [t, x, z] keys (END-relative) */
+    const K = [[at('t6'), -11.5, 2.2], [at('q1'), -11.5, 2.2], [at('q1', 1.6), -7.4, 1.2], [at('g1'), -7.4, 1.2], [at('g1', 2.0), -1.6, 0.5], [at('g3'), -1.6, 0.5], [at('g3', 1.6), 3.4, 0.6], [at('h1'), 3.4, 0.6],
+      [at('h1', 1.4), 10.6, 0.5], [at('h1', 1.9), 10.6, 0.5], [at('h1', 2.8), 12.3, 0.5], [at('h1', 3.2), 12.3, 0.5], [at('h1', 3.9), 11.1, 0.5], [at('h2'), 11.1, 0.5], [at('h2', 1.2), 14.9, 0.4], [at('h2', 2.4), 14.9, 0.4], [at('h2', 3.2), 16.2, 0.4],
+      [at('h3'), 16.2, 0.4], [at('h3', 1.6), 17.4, 0.6], [at('m1'), 17.4, 0.6], [at('m1', 1.1), 20.6, 1.5], [at('a6'), 20.6, 1.5], [at('a6', 4.5), 24.6, 1.0], [at('pay1'), 24.6, 1.0], [at('pay1', 2.6), 27.6, 0.4],
+      [at('pay2'), 27.6, 0.4], [at('pay2', 1.6), 30.9, 0.1], [at('pay3'), 30.9, 0.1], [at('pay3', 4.6), 31.1, -5.8], [at('recap'), 31.1, -5.8], [at('recap', 6), 31.2, -7.8], [DUR, 31.2, -7.8]];
+    let mx = K[0][1], mz = K[0][2], moving = false, dx = 1, dz = 0;
+    for (let i = 0; i < K.length - 1; i++) { const a = K[i], b = K[i + 1]; if (t >= a[0] && t < b[0]) { const k = (t - a[0]) / Math.max(0.001, b[0] - a[0]), e = U.easeIO(k); mx = U.lerp(a[1], b[1], e); mz = U.lerp(a[2], b[2], e); const d = Math.hypot(b[1] - a[1], b[2] - a[2]); moving = d > 0.05; if (moving) { dx = b[1] - a[1]; dz = b[2] - a[2]; } break; } if (t >= b[0]) { mx = b[1]; mz = b[2]; } }
+    me.position.set(X(mx), 0, mz); if (moving) { face(me, dx, dz); walk(me, t, 1); } else face(me, 0.25, 1);
+    const id2 = beatAt(t);
+    if (inB(t, 't6')) { const r = ph(t, 't6'); face(me, r < 3 ? 0.6 : 0.3, r < 3 ? -1 : 1); }
+    if (inB(t, 'q4')) { const r = ph(t, 'q4'), k = sm(1.0, 1.8, r); face(me, 1, -0.4); me.userData.arms.R.rotation.set(-1.4 * k, 0, 0.2); }
+    /* mini dominoes: the first one is lifted out in q4 */
+    E.mini.forEach((d, i) => { const show = between(t, 'q1', 'q5'); d.visible = show; let lift = 0; if (i === 0) lift = inB(t, 'q4') ? U.easeIO(sm(1.6, 2.8, ph(t, 'q4'))) : t >= end('q4') ? 1 : 0; d.position.y = lift * 1.6; d.position.z = -0.9 + lift * 1.2; d.rotation.z = i > 0 && inB(t, 'q1') ? -0.2 * Math.max(0, Math.sin(ph(t, 'q1') * 3)) : 0; d.userData.lb.visible = lift < 0.3; });
+    /* companion domino "อยาก" */
+    { const on = t >= at('g4') && t < end('m3'); vis(E.buddy, on); if (on) { E.buddy.position.set(me.position.x - 1.0, 0, me.position.z - 0.7); const g4k = inB(t, 'g4') ? U.easeIO(sm(0.8, 2.6, ph(t, 'g4'))) : 1; E.buddy.scale.set(0.36 * (1 + 0.5 * g4k), 0.36 * (1 - 0.35 * g4k), 0.36 * (1 + 0.6 * g4k));
+      let tilt = 0; if (inB(t, 'm1') && ph(t, 'm1') > 2.0) tilt = 0.35 + 0.1 * Math.sin(t * 9); if (inB(t, 'm2')) tilt = 0.35 * (1 - sm(1.0, 4.0, ph(t, 'm2'))); if (inB(t, 'm3')) tilt = Math.max(0, 0.18 * Math.sin(ph(t, 'm3') * 4) * (1 - sm(0, 3.5, ph(t, 'm3')))); E.buddy.rotation.z = -tilt; } }
+    /* three lights: appear in q5 over the stations, then follow me once each step is done */
+    const LS = [X(-0.6), X(10.8), X(20.6)], done = [end('g4'), end('h3'), end('m3')];
+    E.lights.forEach((o, i) => { const sh = t >= at('q5') && (inB(t, 'q5') ? ph(t, 'q5') > 1.6 + i * 0.8 : true); o.visible = sh; if (!sh) return;
+      const k = U.easeIO(U.clamp((t - done[i]) / 1.2)); const ax = LS[i], ay = 3.4 + Math.sin(t * 2 + i) * 0.15, az = -1.2, bx = me.position.x - 0.9 - i * 0.7, by = 2.5 + Math.sin(t * 2.4 + i) * 0.15, bz = me.position.z + 0.2; o.position.set(U.lerp(ax, bx, k), U.lerp(ay, by, k), U.lerp(az, bz, k)); });
+    /* station 1: share lunch, blood */
+    if (between(t, 'g1', 'g2')) { const r = inB(t, 'g1') ? ph(t, 'g1') : 9; E.box.forEach((b, i) => (b.visible = true)); const sp = sm(2.6, 3.6, r); E.box[0].position.set(X(-1.45) - sp * 0.05, 0.75, -0.75); E.box[1].position.set(U.lerp(X(-1.25), X(-0.45), sp), U.lerp(0.75, 0.95, sp), U.lerp(-0.75, -0.95, sp));
+      face(me, -0.3, -1); me.userData.arms.R.rotation.set(-1.1 * sm(2.2, 2.8, r) * (1 - sm(3.8, 4.4, r)), 0, 0.1); if (r > 3.8) BUB.push({ o: E.friend, dy: 1.8, txt: 'ขอบใจนะ!', c: '#fff' });
+      if (inB(t, 'g2')) { const r2 = ph(t, 'g2'); E.friend.userData.arms.R.rotation.set(-1.0 - Math.max(0, Math.sin(r2 * 5)) * 0.4, 0, 0.2); me.userData.arms.R.rotation.set(-1.0 - Math.max(0, Math.sin(r2 * 5 + 1.5)) * 0.4, 0, 0.2); } }
+    else { E.friend.userData.arms.R.rotation.set(0, 0, 0.14); }
+    if (inB(t, 'g3')) { const r = ph(t, 'g3'); E.bag.visible = r > 1.4; E.bag.position.set(X(4.4), 1.7 + Math.sin(t * 3) * 0.08, -0.6); E.bag.scale.setScalar(1 + 0.08 * Math.sin(t * 6)); face(me, 0.4, -1);
+      E.pat.forEach((c, i) => { const on = r > 2.6 + i * 0.6; c.userData.glow.visible = on; c.updateMatrixWorld(true); c.getWorldPosition(c.userData.glow.position); c.userData.glow.position.y += 1.6; c.userData.glow.material.opacity = 0.7 + 0.2 * Math.sin(t * 5 + i); if (on) c.userData.arms.R.rotation.z = 2.4; else rest(c); }); }
+    else E.pat.forEach((c) => rest(c));
+    if (inB(t, 'g4')) face(me, 0.3, 1);
+    /* station 2: change returned, ants */
+    if (inB(t, 'h1')) { const r = ph(t, 'h1'); if (r > 1.4 && r < 1.9) face(me, 0, -1); if (r > 2.9 && r < 3.3) { face(me, -1, 0); me.userData.head.rotation.x = 0.3; }
+      if (r > 3.9) { face(me, 0, -1); E.coin.visible = r < 4.9; const k = sm(3.9, 4.7, r); E.coin.position.set(U.lerp(me.position.x + 0.2, X(11), k), 1.1 + Math.sin(k * Math.PI) * 0.6, U.lerp(me.position.z - 0.3, -1.6, k)); E.vendor.userData.arms.R.rotation.set(-1.2 * sm(4.2, 4.6, r), 0, 0.2); }
+      if (r > 1.4 && r < 2.6) BUB.push({ o: me, dy: 2.1, txt: '…เกินมา 100', c: '#fff' }); if (r > 4.6) BUB.push({ o: E.vendor, dy: 2.0, txt: 'โอ้ ขอบใจจ้ะ', c: '#fff' }); }
+    else E.vendor.userData.arms.R.rotation.set(0, 0, 0.14);
+    if (between(t, 'h2', 'h3')) { E.ants.forEach((a, i) => { a.visible = true; const u = (t * 0.1 + i / 14) % 1; a.position.set(X(15.6) + Math.sin(i * 1.7) * 0.07, 0.08, 2.6 - u * 5.2); });
+      if (inB(t, 'h2')) { const r = ph(t, 'h2'); if (r > 1.2 && r < 2.4) me.userData.head.rotation.x = 0.45; if (r > 2.4 && r < 3.2) me.position.y = Math.sin(sm(2.4, 3.2, r) * Math.PI) * 0.45; } }
+    /* station 3: bike cut-in, anger, breathing */
+    if (inB(t, 'm1')) { const r = ph(t, 'm1'), k = sm(1.2, 2.3, r); E.bike.visible = k > 0 && k < 1; E.bike.position.set(X(U.lerp(15.5, 26, k)), 0, 0.5); E.bike.rotation.y = 0; face(me, 0.6, -0.4);
+      if (r > 2.0) { E.anger.visible = true; E.anger.position.set(me.position.x, 1.5, me.position.z); E.anger.material.opacity = 0.75 + 0.15 * Math.sin(t * 12); me.userData.arms.L.rotation.set(0, 0, -0.9); me.userData.arms.R.rotation.set(0, 0, 0.9); BUB.push({ o: me, dy: 2.1, txt: 'เฮ้ย!', c: '#fff', big: true }); } }
+    if (inB(t, 'm2')) { const r = ph(t, 'm2'); E.anger.visible = r < 3.6; E.anger.position.set(me.position.x, 1.5, me.position.z); E.anger.material.opacity = 0.75 * (1 - sm(0.6, 3.6, r)); me.userData.eyes.forEach((e) => (e.scale.y = 0.15));
+      E.rings.forEach((rg, i) => { const u = ((r - 0.4) / 1.6 - i * 0.33); const f = u - Math.floor(u); rg.visible = r > 0.4 && r < 5.4; rg.position.set(me.position.x, 1.0, me.position.z); rg.scale.setScalar(0.6 + f * 2.2); rg.material.opacity = 0.8 * (1 - f); }); }
+    if (inB(t, 'm3')) me.userData.eyes.forEach((e) => (e.scale.y = 1));
+    vis(E.exit, t >= at('q2')); E.exit.userData.glow.material.opacity = 0.55 + 0.25 * Math.sin(t * 1.5) + (t >= at('pay3') ? 0.2 : 0);
+    vis(E.sunrise, t >= at('a6')); E.sunrise.position.set(ST.END[0] + 36, 3 + 6 * sm(at('a6'), at('pay2') + 2, t), -60);
+    void id2; }
 
   /* camera + bubble projection */
   VE.camAt(CAM, t, camera, 0.12); camera.updateMatrixWorld(true);
